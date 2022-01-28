@@ -18,11 +18,10 @@ let permalink = 'https://example.com/';
 
 <html lang="en">
     <head>
-        {/*// @ts-ignore */}
         <BaseHead {permalink} {description} {title} />
     </head>
 
-    <body>
+    <body class="flex flex-col min-h-screen px-64">
         <BlogHeader />
 
         <main>
