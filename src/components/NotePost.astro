@@ -2,20 +2,21 @@
 export interface Props {
 	post: any;
 }
+import BaseSection from "./kit/BaseSection.astro"
 
 const { post  } = Astro.props;
 const {title, publishDate} = post
 const { html } = post.content
 ---
-    
-<div>
-    <article>
-        <hr />
-        <p>
-        <h2 class="text-red-800">{title}</h2>
-        <span>{publishDate}</span>
-        </p>
-        {html}
-        <hr />
-    </article>
-</div>
+<>
+    <hr />
+    <BaseSection>
+        <article>
+            <p>
+            <h2 class="text-red-800">{title}</h2>
+            <span>{publishDate}</span>
+            </p>
+            {html}
+        </article>
+    </BaseSection>
+</>

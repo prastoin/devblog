@@ -2,24 +2,16 @@
 import ColorThemeSwitch from '../components/ColorThemeSwitch.tsx';
 ---
 
-<header class="flex flex-row justify-between">
-    <h1>
-        <a href="/" class="flex items-center flex-row">
-            <img
-                width="80"
-                height="100"
-                src="/assets/logo.png"
-                alt="devblog logo"
-            />
-            <span>home</span>
-        </a>
-    </h1>
+<header class="flex flex-row justify-between prose dark:prose-invert">
+    <a href="/" class="flex items-center flex-row mr-1">
+        <img />
+        <div class="w-20 h-24 bg-green-400 text-center">LOGO</div>
+        <span class="">home</span>
+    </a>
 
     <ColorThemeSwitch client:idle />
 
-    <div>
-        <a href="/notes">
-            <span>Notes</span>
-        </a>
-    </div>
+    <a href="/notes" class="flex items-center flex-row">
+        <span>Notes</span>
+    </a>
 </header>
