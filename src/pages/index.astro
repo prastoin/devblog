@@ -1,16 +1,17 @@
 ---
 // Component Imports
-import BaseHead from '../components/BaseHead.astro';
-import BlogHeader from '../components/BlogHeader.astro';
+import BaseHead from '../layouts/BaseHead.astro';
+import BaseBody from '../layouts/BaseBody.astro';
+
 // You can import components from any supported Framework here!
 
 // Component Script:
 // You can write any JavaScript/TypeScript that you'd like here.
 // It will run during the build, but never in the browser.
 // All variables are available to use in the HTML template below.
-let title = 'prastoin';
-let description = 'description';
-let permalink = 'https://example.com/';
+const title = 'prastoin | home';
+const description = 'Welcome to my devblog home !';
+const permalink = 'https://example.com/';
 
 // Full Astro Component Syntax:
 // https://docs.astro.build/core-concepts/astro-components/
@@ -18,17 +19,17 @@ let permalink = 'https://example.com/';
 
 <html lang="en">
     <head>
-        <BaseHead {permalink} {description} {title} />
+        <BaseHead {title} {description} {permalink} />
     </head>
 
-    <body class="flex flex-col min-h-screen px-64">
-        <BlogHeader />
-
+    <BaseBody>
         <main>
-            <div class="flex flex-row  w-full justify-evenly">
+            <div
+                class="flex flex-row self-center prose sm:prose-sm md:prose-lg lg:prose-xl"
+            >
                 <span>OUIOUI</span>
                 <span>NONNON</span>
             </div>
         </main>
-    </body>
+    </BaseBody>
 </html>
