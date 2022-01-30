@@ -12,9 +12,9 @@ const { html } = post.content
     <hr />
     <BaseSection>
         <article>
-            <p>
-            <h2 class="text-red-800">{title}</h2>
-            <span>{publishDate}</span>
+            <p class="prose dark:prose-invert">
+                <h3 class="text-red-800">{title}</h3>
+                <span>{publishDate}</span>
             </p>
             {html}
         </article>
