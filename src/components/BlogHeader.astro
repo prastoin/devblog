@@ -1,3 +1,7 @@
+---
+import ColorThemeSwitch from '../components/ColorThemeSwitch.tsx';
+---
+
 <header class="flex flex-row justify-between">
     <h1>
         <a href="/" class="flex items-center flex-row">
@@ -10,6 +14,8 @@
             <span>home</span>
         </a>
     </h1>
+
+    <ColorThemeSwitch client:idle />
 
     <div>
         <a href="/notes">
