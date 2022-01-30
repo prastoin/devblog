@@ -37,9 +37,14 @@ const toggleColorThemeMachine = createMachine(
             },
 
             dark: {
-                invoke: {
-                    src: 'addDarkFromDocumentClassList',
-                },
+                invoke: [
+                    {
+                        src: 'saveColorThemeInLocalStorage',
+                    },
+                    {
+                        src: 'addDarkFromDocumentClassList',
+                    },
+                ],
 
                 on: {
                     TOGGLE: {
@@ -49,9 +54,14 @@ const toggleColorThemeMachine = createMachine(
                 },
             },
             light: {
-                invoke: {
-                    src: 'removeDarkFromDocumentClassList',
-                },
+                invoke: [
+                    {
+                        src: 'saveColorThemeInLocalStorage',
+                    },
+                    {
+                        src: 'removeDarkFromDocumentClassList',
+                    },
+                ],
 
                 on: {
                     TOGGLE: {
@@ -72,6 +82,15 @@ const toggleColorThemeMachine = createMachine(
                 event.colorTheme === 'light',
         },
         services: {
+            saveColorThemeInLocalStorage: (context) => () => {
+                if (typeof window === 'undefined')
+                    throw new Error('page not built');
+
+                if (context.colorTheme !== undefined) {
+                    localStorage.setItem('color-theme', context.colorTheme);
+                }
+            },
+
             removeDarkFromDocumentClassList: () => () => {
                 document.documentElement.classList.remove('dark');
             },
