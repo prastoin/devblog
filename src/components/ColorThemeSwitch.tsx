@@ -102,6 +102,17 @@ const toggleColorThemeMachine = createMachine(
             retrieveColorThemeFromLocalStorage: () => (sendBack) => {
                 if (typeof window === 'undefined')
                     throw new Error('page not built');
+
+                //First looking for browser media
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    sendBack({
+                        type: '__RETRIEVED_COLOR_THEME',
+                        colorTheme: 'dark',
+                    });
+
+                    return;
+                }
+
                 const localStorageColorThemeValue =
                     localStorage.getItem('color-theme');
 
