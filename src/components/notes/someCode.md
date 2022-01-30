@@ -1,13 +1,18 @@
 ---
-title: code integ
+title: Code block
 publishDate: 17 Sep 2021
-name: devessier
 value: 128
 description: super code
 ---
 
-To solve this issue, SvelteKit provides a way to create links that trigger a real browser navigation, by specifying the `rel="external"` attribute on `a` tags:
+Some bash
 
 ```bash
 $ git worktree add ../path-to-new-worktree
+```
+
+To do fix the following block, it should be linted
+
+```ts
+console.log(new Date().now());
 ```
