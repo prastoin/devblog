@@ -1,6 +1,6 @@
 ---
 title: Adonis custom exceptions
-publishDate: 1 fub 2022
+publishDate: 1 feb 2022
 name: prastoin
 ---
 
@@ -65,14 +65,4 @@ Route.get('dashboard', async ({ auth, response }) => {
 
     // business logic
 });
-```
-
-# Shiki demo
-
-```js
-var foo = 'bar';
-
-function doSomething() {
-    return foo;
-}
 ```
