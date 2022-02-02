@@ -1,4 +1,16 @@
+import astroRemark from '@astrojs/markdown-remark';
+
 export default {
+  // Enable Custom Markdown options, plugins, etc.
+	markdownOptions: {
+		render: [
+			astroRemark,
+			{
+				syntaxHighlight: 'shiki',
+				shikiTheme: 'one-dark-pro',
+			},
+		],
+	},
   // projectRoot: '.',     // Where to resolve all URLs relative to. Useful if you have a monorepo project.
   // pages: './src/pages', // Path to Astro components, pages, and data
   // dist: './dist',       // When running `astro build`, path to final static output
