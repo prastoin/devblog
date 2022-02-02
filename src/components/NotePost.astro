@@ -16,7 +16,8 @@ const { html } = post.content
                 <h3 class="text-red-800">{title}</h3>
                 <span>{publishDate}</span>
             </p>
-            {html}
+            <Fragment set:html={html}>
+            </Fragment>
         </article>
     </BaseSection>
 </>
