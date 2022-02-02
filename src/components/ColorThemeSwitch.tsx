@@ -103,29 +103,29 @@ const toggleColorThemeMachine = createMachine(
                 if (typeof window === 'undefined')
                     throw new Error('page not built');
 
-                //First looking for browser media
-                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    sendBack({
-                        type: '__RETRIEVED_COLOR_THEME',
-                        colorTheme: 'dark',
-                    });
-
-                    return;
-                }
-
-                const localStorageColorThemeValue =
+                const colorThemeLocalStorageValue =
                     localStorage.getItem('color-theme');
 
-                switch (localStorageColorThemeValue) {
-                    case 'light':
-                    case 'dark': {
+                const colorThemeLocalStorageIsDefined =
+                    colorThemeLocalStorageValue === 'dark' ||
+                    colorThemeLocalStorageValue === 'light';
+
+                if (colorThemeLocalStorageIsDefined) {
+                    sendBack({
+                        type: '__RETRIEVED_COLOR_THEME',
+                        colorTheme: colorThemeLocalStorageValue,
+                    });
+                } else {
+                    const browserMediaPreferenceIsDark = window.matchMedia(
+                        '(prefers-color-scheme: dark)',
+                    ).matches;
+
+                    if (browserMediaPreferenceIsDark) {
                         sendBack({
                             type: '__RETRIEVED_COLOR_THEME',
-                            colorTheme: localStorageColorThemeValue,
+                            colorTheme: 'dark',
                         });
-                        break;
-                    }
-                    default: {
+                    } else {
                         sendBack({
                             type: '__RETRIEVED_COLOR_THEME',
                             colorTheme: 'light',
