@@ -5,7 +5,7 @@ name: prastoin
 ---
 
 While implementing some authentication logic on an adonis project. I needed at some point to throw a specific http code status
-In this case a `403 forbidden`.
+In this case a **403 forbidden**.
 
 Adonis thanks to it's [global exceptions handler](https://docs.adonisjs.com/guides/exception-handling#handling-exceptions-globally) will manage exceptions for you.
 
@@ -65,4 +65,14 @@ Route.get('dashboard', async ({ auth, response }) => {
 
     // business logic
 });
+```
+
+# Shiki demo
+
+```js
+var foo = 'bar';
+
+function doSomething() {
+    return foo;
+}
 ```
