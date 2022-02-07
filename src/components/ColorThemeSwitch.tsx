@@ -52,7 +52,6 @@ const toggleColorThemeMachine =
                 },
 
                 goingDefault: {
-                    //refactor using choose ? not typegen friendly ?
                     entry: [
                         'assignDefaultToColorTheme',
                         'saveColorThemeInLocalStorage',
