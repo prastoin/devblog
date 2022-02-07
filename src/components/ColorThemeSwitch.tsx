@@ -1,168 +1,187 @@
 import { useMachine } from '@xstate/react';
 import { assign, createMachine } from 'xstate';
 
-type ColorTheme = 'dark' | 'light';
+type ColorTheme = 'dark' | 'light' | 'default';
 
-const toggleColorThemeMachine = createMachine(
-    {
-        schema: {
-            context: {
-                colorTheme: undefined,
-            } as { colorTheme: undefined | ColorTheme },
-            events: {} as
-                | { type: '__RETRIEVED_COLOR_THEME'; colorTheme: ColorTheme }
-                | { type: 'TOGGLE' },
-        },
-        initial: 'retrievingColorThemeFromLocalStorage',
-        states: {
-            retrievingColorThemeFromLocalStorage: {
-                invoke: {
-                    src: 'retrieveColorThemeFromLocalStorage',
+const toggleColorThemeMachine =
+    /** @xstate-layout N4IgpgJg5mDOIC5QAoC2BDAxgCwJYDswBKAOigHsCoARdAJwGsBiRUAB3NlwBddz9WIAB6IALAHYAHCQCMANjkBmSQAZxKgJziNMgDQgAnog0AmRSRWiArIpMzRimRo2KNAXzf60WPIVIUqABlcKGxuFiQQDi5efkERBFE5DRIrexUrURMNFRUZSX0jBDlxOVkzKxVHOVFRXMUPLwwcAmIySnwaMAAzdABXABtwwWiePgFIhOsUkpLnKUlkk0krQsR7cRJsmx0ZcUUatRNGkG8WvyYAcQB5AH1qAEEAJQBpEc4xuMnEORVU0R0GkkjnEVisklKawQMhUkhSdkylkUsLq4mOnlOzV8xCud0CAElLgAJAAq7xi43iPz+mUBwL2YIhcihkiyWxc4N+dUkMgOJzO2KIuPuAFEAGIPACqgTJkVGsQmoASv3+dJBjMhhkQVg0VhIinEexK4n2di0Hgx+HIEDgggFrVIdDA3DouDAADcqABhcgDch0EnYMCoMBiujkVCBciYdADADK3H96Bg5M+iuE1NVTnpoPBmqKElEJCyMjMJjspZMyVE-KxDvaVFojFTCqpCBsZVKeWW+Rs4IKWuhmhS1VLDhklTkVlrPnrAU6wVC3BblO+7YOJC7pZ5K0U-ZZVhM+o0DhUXPEEnsM-ObXnXV6g2Xco+rbXHc3v23vb3kgHRV+eoSCYogQiaQImnI16CiuXxKogG60tm6p5syg4qjUDiglIuw8g0FpAA */
+    createMachine(
+        {
+            tsTypes: {} as import('./ColorThemeSwitch.typegen').Typegen0,
+            schema: {
+                context: {
+                    colorTheme: undefined,
+                } as { colorTheme: undefined | ColorTheme },
+                events: {} as
+                    | { type: 'GO_DARK' }
+                    | { type: 'GO_LIGHT' }
+                    | { type: 'GO_DEFAULT' },
+            },
+
+            id: '(machine)',
+            initial: 'retrievingColorThemeFromLocalStorage',
+            states: {
+                retrievingColorThemeFromLocalStorage: {
+                    invoke: {
+                        src: 'retrieveColorThemeFromLocalStorage',
+                    },
                 },
 
-                on: {
-                    __RETRIEVED_COLOR_THEME: [
-                        {
-                            cond: 'isDark',
-                            actions: 'assignDarkToColorTheme',
-                            target: 'dark',
-                        },
-                        {
-                            cond: 'isLight',
-                            actions: 'assignLightToColorTheme',
-                            target: 'light',
-                        },
+                goingDark: {
+                    entry: [
+                        'assignDarkToColorTheme',
+                        'saveColorThemeInLocalStorage',
+                        'addDarkFromDocumentClassList',
                     ],
+
+                    on: {
+                        GO_DARK: undefined,
+                    },
+                },
+
+                goingLight: {
+                    entry: [
+                        'assignLightToColorTheme',
+                        'saveColorThemeInLocalStorage',
+                        'removeDarkFromDocumentClassList',
+                    ],
+
+                    on: {
+                        GO_LIGHT: undefined,
+                    },
+                },
+
+                goingDefault: {
+                    //refactor using choose ? not typegen friendly ?
+                    entry: [
+                        'assignDefaultToColorTheme',
+                        'saveColorThemeInLocalStorage',
+                    ],
+
+                    on: {
+                        GO_DEFAULT: undefined,
+                    },
                 },
             },
 
-            dark: {
-                invoke: [
+            on: {
+                GO_DARK: {
+                    target: '#(machine).goingDark',
+                },
+                GO_LIGHT: {
+                    target: '#(machine).goingLight',
+                },
+                GO_DEFAULT: [
                     {
-                        src: 'saveColorThemeInLocalStorage',
+                        cond: 'browserMediaPreferenceIsDark',
+                        actions: 'addDarkFromDocumentClassList',
+                        target: '#(machine).goingDefault',
                     },
                     {
-                        src: 'addDarkFromDocumentClassList',
+                        actions: 'removeDarkFromDocumentClassList',
+                        target: '#(machine).goingDefault',
                     },
                 ],
-
-                on: {
-                    TOGGLE: {
-                        target: 'light',
-                        actions: 'assignLightToColorTheme',
-                    },
-                },
-            },
-            light: {
-                invoke: [
-                    {
-                        src: 'saveColorThemeInLocalStorage',
-                    },
-                    {
-                        src: 'removeDarkFromDocumentClassList',
-                    },
-                ],
-
-                on: {
-                    TOGGLE: {
-                        target: 'dark',
-                        actions: 'assignDarkToColorTheme',
-                    },
-                },
             },
         },
-    },
-    {
-        guards: {
-            isDark: (_context, event) =>
-                event.type === '__RETRIEVED_COLOR_THEME' &&
-                event.colorTheme === 'dark',
-            isLight: (_context, event) =>
-                event.type === '__RETRIEVED_COLOR_THEME' &&
-                event.colorTheme === 'light',
-        },
-        services: {
-            saveColorThemeInLocalStorage: (context) => () => {
-                if (typeof window === 'undefined')
-                    throw new Error('page not built');
-
-                if (context.colorTheme !== undefined) {
-                    localStorage.setItem('color-theme', context.colorTheme);
-                }
+        {
+            guards: {
+                browserMediaPreferenceIsDark: () =>
+                    window.matchMedia('(prefers-color-scheme: dark)').matches,
             },
+            services: {
+                retrieveColorThemeFromLocalStorage: () => (sendBack) => {
+                    if (typeof window === 'undefined')
+                        throw new Error('page not built');
 
-            removeDarkFromDocumentClassList: () => () => {
-                document.documentElement.classList.remove('dark');
-            },
+                    const colorThemeLocalStorageValue =
+                        localStorage.getItem('color-theme');
 
-            addDarkFromDocumentClassList: () => () => {
-                document.documentElement.classList.add('dark');
-            },
+                    const colorThemeLocalStorageIsDark =
+                        colorThemeLocalStorageValue === 'dark';
 
-            retrieveColorThemeFromLocalStorage: () => (sendBack) => {
-                if (typeof window === 'undefined')
-                    throw new Error('page not built');
+                    const colorThemeLocalStorageIsLight =
+                        colorThemeLocalStorageValue === 'light';
 
-                //First looking for browser media
-                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    sendBack({
-                        type: '__RETRIEVED_COLOR_THEME',
-                        colorTheme: 'dark',
-                    });
-
-                    return;
-                }
-
-                const localStorageColorThemeValue =
-                    localStorage.getItem('color-theme');
-
-                switch (localStorageColorThemeValue) {
-                    case 'light':
-                    case 'dark': {
+                    if (colorThemeLocalStorageIsDark) {
                         sendBack({
-                            type: '__RETRIEVED_COLOR_THEME',
-                            colorTheme: localStorageColorThemeValue,
+                            type: 'GO_DARK',
                         });
-                        break;
-                    }
-                    default: {
+                    } else if (colorThemeLocalStorageIsLight) {
                         sendBack({
-                            type: '__RETRIEVED_COLOR_THEME',
-                            colorTheme: 'light',
+                            type: 'GO_LIGHT',
+                        });
+                    } else {
+                        sendBack({
+                            type: 'GO_DEFAULT',
                         });
                     }
-                }
+                },
+            },
+            actions: {
+                saveColorThemeInLocalStorage: (context) => {
+                    if (typeof window === 'undefined')
+                        throw new Error('page not built');
+
+                    if (context.colorTheme !== undefined) {
+                        localStorage.setItem('color-theme', context.colorTheme);
+                    }
+                },
+
+                removeDarkFromDocumentClassList: () => {
+                    document.documentElement.classList.remove('dark');
+                },
+
+                addDarkFromDocumentClassList: () => {
+                    document.documentElement.classList.add('dark');
+                },
+
+                assignDarkToColorTheme: assign({
+                    colorTheme: () => 'dark',
+                }),
+                assignLightToColorTheme: assign({
+                    colorTheme: () => 'light',
+                }),
+                assignDefaultToColorTheme: assign({
+                    colorTheme: () => 'default',
+                }),
             },
         },
-        actions: {
-            assignDarkToColorTheme: assign({
-                colorTheme: () => 'dark' as ColorTheme,
-            }),
-            assignLightToColorTheme: assign({
-                colorTheme: () => 'light' as ColorTheme,
-            }),
-        },
-    },
-);
+    );
 
 const ColorThemeSwitch: React.FC = () => {
-    const [state, send] = useMachine(toggleColorThemeMachine);
-
-    const handleOnClick = () => {
-        send({
-            type: 'TOGGLE',
-        });
-    };
+    const [_state, send] = useMachine(toggleColorThemeMachine);
 
     return (
-        <button
-            onClick={() => {
-                console.log('coucou');
-                handleOnClick();
-            }}
-        >
-            {state.context.colorTheme || 'loading'}
-        </button>
+        <>
+            <button
+                onClick={() => {
+                    send({
+                        type: 'GO_DARK',
+                    });
+                }}
+            >
+                Go dark
+            </button>
+            <button
+                onClick={() => {
+                    send({
+                        type: 'GO_LIGHT',
+                    });
+                }}
+            >
+                Go light
+            </button>
+            <button
+                onClick={() => {
+                    send({
+                        type: 'GO_DEFAULT',
+                    });
+                }}
+            >
+                Go default
+            </button>
+        </>
     );
 };
 
