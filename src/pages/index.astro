@@ -1,7 +1,7 @@
 ---
 // Component Imports
-import BaseHead from '../layouts/BaseHead.astro';
-import BaseBody from '../layouts/BaseBody.astro';
+import BaseHead from '../components/kit/BaseHead.astro';
+import BaseBody from '../components/kit/BaseBody.astro';
 
 // You can import components from any supported Framework here!
 
@@ -23,12 +23,10 @@ const permalink = 'https://example.com/';
     </head>
 
     <BaseBody>
-        <main>
-            <div
-                class="max-w-full flex flex-row self-center prose dark:prose-invert sm:prose-sm md:prose-lg lg:prose-xl"
-            >
-                Welcome Home
-            </div>
+        <main
+            class="max-w flex flex-row self-center prose dark:prose-invert sm:prose-sm md:prose-lg lg:prose-xl"
+        >
+            Welcome Home
         </main>
     </BaseBody>
 </html>
