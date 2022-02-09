@@ -1,0 +1,25 @@
+---
+import BaseHead from '../components/kit/BaseHead.astro';
+import BaseBody from '../components/kit/BaseBody.astro';
+
+import WritingPost from '../components/writing/WritingPost.astro';
+
+const { content } = Astro.props;
+const { title, description, publishDate, author, heroImage, permalink, alt } =
+    content;
+const writingArticleHtml = content.astro.html;
+---
+
+<html lang={content.lang || 'en'}>
+    <head>
+        <BaseHead {title} {description} {permalink} />
+    </head>
+
+    <BaseBody>
+        <main
+            class="w-full mx-auto prose dark:prose-invert sm:prose-md md:prose-lg lg:prose-xl"
+        >
+            <WritingPost {title} {publishDate} {writingArticleHtml} />
+        </main>
+    </BaseBody>
+</html>
