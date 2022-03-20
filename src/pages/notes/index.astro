@@ -2,13 +2,14 @@
 import NotePost from '../../components/NotePost.astro';
 import BaseBody from '../../components/kit/BaseBody.astro';
 import BaseHead from '../../components/kit/BaseHead.astro';
+import '../../styles/global.css'
 
 const title = 'prastoin | Today I learned';
 const description = 'Everything I learn everyday';
 const permalink = 'https://example.com'; //TODO update ?
 
 // Data Fetching: List all Markdown posts in the repo.
-let allNotes = Astro.fetchContent('../../components/notes/*.md');
+let allNotes = await Astro.fetchContent('../../components/notes/*.md');
 allNotes = allNotes.sort(
     (a, b) =>
         new Date(b.publishDate).valueOf() - new Date(a.publishDate).valueOf(),
