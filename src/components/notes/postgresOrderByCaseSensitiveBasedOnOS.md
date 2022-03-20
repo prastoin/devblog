@@ -1,0 +1,12 @@
+---
+title: PostgresQL collation implementation depending on OS
+publishDate: 10 feb 2022
+name: prastoin
+---
+
+While creating integration tests on an **adonisJS** server connected to a **Postgres** database.
+I've faced an issue where javascript sort by string weight wasn't matching to **Postgres** order_by results.
+It turns out that **Postgres** uses the collation implementation from the OS he hosted on. ([source](https://dba.stackexchange.com/questions/
+106964/why-is-my-postgresql-order-by-case-insensitive/131471#131471))<br/>
+On a linux OS it's then not case sensitive at all.
+Hopefully using docker will easily avoid any further issue in the team you're working with as everyone will be hosting the **Postgres** inside identical docker containers.<br/>

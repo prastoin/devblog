@@ -150,7 +150,6 @@ const toggleColorThemeMachine =
 
 const ColorThemeSwitch: React.FC = () => {
     const [_state, send] = useMachine(toggleColorThemeMachine);
-
     return (
         <>
             <button

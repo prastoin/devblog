@@ -7,7 +7,11 @@ export default {
 			astroRemark,
 			{
 				syntaxHighlight: 'shiki',
-				shikiTheme: 'one-dark-pro',
+        shikiConfig: {
+					theme: 'one-dark-pro',
+					// Learn more about this configuration here:
+					// https://docs.astro.build/en/guides/markdown-content/#syntax-highlighting
+				},
 			},
 		],
 	},

@@ -1,5 +1,5 @@
 ---
-import ColorThemeSwitch from '../components/ColorThemeSwitch.tsx';
+import ColorThemeSwitch from '../ColorThemeSwitch.tsx';
 ---
 
 <header class="flex flex-row justify-between prose dark:prose-invert">
@@ -10,6 +10,10 @@ import ColorThemeSwitch from '../components/ColorThemeSwitch.tsx';
 
     <a href="/notes" class="flex items-center flex-row">
         <span>Notes</span>
+    </a>
+
+    <a href="/writing" class="flex items-center flex-row">
+        <span>Writing</span>
     </a>
 
     <ColorThemeSwitch client:idle />

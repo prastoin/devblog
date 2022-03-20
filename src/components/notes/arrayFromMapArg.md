@@ -4,7 +4,7 @@ publishDate: 7 feb 2022
 name: prastoin
 ---
 
-Today I learned that **Array.from** method takes an function as second argument that will be used to fill the created array.
+Today I learned that **Array.from** method takes a function as second argument that will be used to fill the created array.
 
 ```ts
 const array = Array.from({ length: 5 }, (_value, index) => index);
