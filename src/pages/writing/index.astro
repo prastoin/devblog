@@ -30,11 +30,11 @@ const allPosts = (await Astro.fetchContent('./posts/*.md')).sort(
             class="w-full flex flex-col self-center prose dark:prose-invert sm:prose-sm md:prose-lg lg:prose-xl"
         >
             <section class="intro">
-                <h1 class="latest">{title}</h1>
+                <h1 class="latest">Articles</h1>
                 <p>{description}</p>
             </section>
             <section aria-label="Blog post list">
-                {allPosts.map((p) => <WritingPostPreview post={p} />)}
+                {allPosts.map(({title, publishDate, description, url}) => <WritingPostPreview {title} {publishDate} {description} {url} />)}
             </section>
         </main>
     </BaseBody>

@@ -1,16 +1,24 @@
 ---
+import BaseSection from '../kit/BaseSection.astro';
 export interface Props {
-    post: any;
+    title: string;
+    publishDate: string;
+    url: string;
+    description: string;
 }
 
-const { post } = Astro.props;
+const { title, publishDate, url, description } = Astro.props;
 ---
 
-<article>
-    <header>
-        <p>{post.publishDate}</p>
-        <a href={post.url}><h1>{post.title}</h1></a>
-    </header>
-    <p>{post.description}</p>
-    <a href={post.url}>Read more</a>
-</article>
+<div>
+    <BaseSection>
+        <header>
+            <a href={url}><h3 class="text-red-800">{title}</h3></a>
+            <p>{publishDate}</p>
+        </header>
+        <p>
+            {description}
+        </p>
+        <a href={url}>Read more</a>
+    </BaseSection>
+</div>

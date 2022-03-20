@@ -12,10 +12,10 @@ const { html } = post.content
     <hr />
     <BaseSection>
         <article>
-            <p class="prose dark:prose-invert">
+            <header class="prose dark:prose-invert">
                 <h3 class="text-red-800">{title}</h3>
                 <span>{publishDate}</span>
-            </p>
+            </header>
             <Fragment set:html={html} />
         </article>
     </BaseSection>
