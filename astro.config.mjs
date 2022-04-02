@@ -1,4 +1,8 @@
 import astroRemark from '@astrojs/markdown-remark';
+import rehypeSlug from 'rehype-slug';
+import remarkSmartypants from 'remark-smartypants';
+import remarkGfm from 'remark-gfm';
+import remarkTwoslash from 'remark-shiki-twoslash';
 
 export default {
   // Enable Custom Markdown options, plugins, etc.
@@ -6,7 +10,27 @@ export default {
 		render: [
 			astroRemark,
 			{
-				syntaxHighlight: 'shiki',
+        // Add a Remark plugin to your project.
+        remarkPlugins: [
+          // [
+          //   remarkTwoslash.default, 
+          //   {
+          //     theme: "dark-plus",
+          //     defaultCompilerOptions: {
+          //       types: ["node"],
+          //     },
+          //   },
+          // ],
+          remarkSmartypants,
+          remarkGfm,
+        ],
+
+        // Add a Rehype plugin to your project.
+        rehypePlugins: [
+          [rehypeSlug, {bahavior: 'prepend'}]
+        ],
+
+        syntaxHighlight: 'shiki',
         shikiConfig: {
 					theme: 'one-dark-pro',
 					// Learn more about this configuration here:
@@ -15,6 +39,12 @@ export default {
 			},
 		],
 	},
+  // vite: {
+  //   ssr: {
+  //     external: ['remark-shiki-twoslash']
+  //   },
+  // },
+  
   // projectRoot: '.',     // Where to resolve all URLs relative to. Useful if you have a monorepo project.
   // pages: './src/pages', // Path to Astro components, pages, and data
   // dist: './dist',       // When running `astro build`, path to final static output

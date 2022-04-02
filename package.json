@@ -18,6 +18,10 @@
   "dependencies": {
     "@astrojs/renderer-react": "^0.4.1",
     "@xstate/react": "^2.0.0",
+    "rehype-slug": "^5.0.1",
+    "remark-gfm": "^3.0.1",
+    "remark-smartypants": "^2.0.0",
+    "remark-shiki-twoslash": "^3.0.9",
     "xstate": "^4.29.0"
   }
 }
