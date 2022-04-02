@@ -6,30 +6,42 @@ name: prastoin
 description: Guarding http routes with Adonis/Auth is really common. But sometimes we wanna need to apply authentication on socket connection nor events listener too. In this article we see a way to do so with both Adonis/Auth and Socket-io.
 ---
 
-# Adonis Authentication and Socket-io
+## Table of contents
 
-# Table of contents
+- [Table of contents](#table-of-contents)
+- [TL;DR](#tldr)
+- [Introduction](#introduction)
+- [Quick Adonis/auth overview](#quick-adonisauth-overview)
+- [Socket-io and Authentication](#socket-io-and-authentication)
+- [Using Adonis/auth and Socket-io together](#using-adonisauth-and-socket-io-together)
+- [Api Tokens example](#api-tokens-example)
+- [Web Auth example](#web-auth-example)
+- [Ending](#ending)
 
-1. [Introduction](#introduction)
-2. [Quick Adonis/auth overview](#adonisAuthOverview)
-3. [Socket-io and Authentication](#socketIoAndAuthentication)
-4. [Using Adonis/auth and Socket-io together](#adonisAndSocketIO)
-    1. [Api Tokens Example](#apiTokensExample)
-    2. [Web Auth Example](#webAuthExample)
-5. [TL;DR](#TLDR)
-6. [Conclusion](#TLDR2)
+## TL;DR
 
-## 1/ Introduction <a name="introduction"></a>
+Depending on the adonis/auth authentication you wanna use ( `Web Auth`, `Api Tokens`, `Basic Auth` ) the implementation will differ.
+Overall, server-side inside a socket-io middleware we wanna have acces to an `AuthContract` instance to be able to test the provided authentication information. `AuthContract` itself depends on an `HttpContextContract` instance that you can create using the `HttpContext.create` method, then by using `AuthManager.getAuthForRequest` and passing the created context we will be able to create an `AuthContract` instance.
+
+Web Auth:
+Client-side we have to instanciate the socket-io-client using the `withCredentials` option to true to forward the client cookies
+Server-side we will have to init the adonis/session using `ctx.session.initiate()` method and to set the **credentials** to `true` inside the socket-io server config
+
+Api Token:
+Client-side we will have to pass the token inside the `socket-io-client` `socket.auth` accessible at anytime via the `socket.auth` props
+Server-side we will have to manually define the `request.headers.authorization` prop to allow adonis/auth to retrive the token.
+
+## Introduction
 
 Often in applications will be used using both authentication and socket protocol.
 Sometimes you will need to guard specific http routes and not others. It can be the same for socket events listener.
 Depending on your framework there's a lot of idiomatic ways to handle authenticated http communication between a client and a server.
 As far as socket event/listener are concerned this can be quite unusual.
-<br/>
+
 Some official documentation about adonis & socket-io can be found [here](https://docs.adonisjs.com/cookbooks/socketio-with-adonisjs). But for the moment unless I'm mistaken, nothing about adonis/auth and socket-io.
 This is why in this article I'll describe an implementation of adonis authenticated/guarded socket-io listeners using socket-io middlewares.
 
-## 2/ Quick Adonis/auth overview <a name="adonisAuthOverview"></a>
+## Quick Adonis/auth overview
 
 Adonis provides a plug and play [authentication package](https://docs.adonisjs.com/guides/auth/introduction)
 It provides three ways to authenticate your user:
@@ -66,7 +78,7 @@ Route.get('dashboard', async ({ auth, response }) => {
 }
 ```
 
-## 3/ Socket-io and Authentication <a name="socketIoAndAuthentication"></a>
+## Socket-io and Authentication
 
 Socket-io provides middlewares via `io.use` where you can prevent listeners to be reached.
 An socket-io server & adonis example can be found below.
@@ -129,7 +141,7 @@ socket.auth = {
 
 Note: [autoConnect](https://socket.io/fr/docs/v3/client-initialization/#autoconnect) socket-io-client config props can be usefull if you don't want to perform a socket connection for an unauthenticated user on your app start.
 
-## 4/ Using Adonis/auth and Socket-io together <a name="adonisAndSocketIO"></a>
+## Using Adonis/auth and Socket-io together
 
 From there we know both what expect adonis/auth and socket-io concerning the authentication, lets see how we can use them together.
 We know that we will have access to each `Api Tokens` or `Basic Auth` or `Web Auth` token, credentials or cookies inside the socket-io middleware.
@@ -161,7 +173,7 @@ io.use((socket, next) => {
 
 Now that we have everything we need there're still few things to setup specific to each authentication mode before being able to perform an authentication check successfully,
 
-## Api Tokens example <a name="apiTokenExample"></a>
+## Api Tokens example
 
 As we know Api Tokens involves a crypted token. That we store inside `socket.handshake.auth`.
 The problem is, adonis/auth doesn't know about it all, it will check the request `Authorization` header searching for the token ! As we can't set the socket initial http request headers we will have to do it by hand inside socket-io middleware.
@@ -190,6 +202,7 @@ io.use((socket, next) => {
 
     if (apiAuthToken === undefined || apiAuthToken === null) {
         next(new Error('no api auth token provided'));
+        return;
     }
     //We set the request header authorization, be careful about the Bearer prefix
     socket.request.headers.authorization = apiAuthToken;
@@ -228,7 +241,7 @@ io.use((socket, next) => {
 });
 ```
 
-## Web Auth example <a name="webAuthExample"></a>
+## Web Auth example
 
 The Web Auth authentication mode depends on the adonis/session package. The we need to initiate it manually inside the socket-io middleware and that's it !
 
@@ -287,24 +300,11 @@ io.use((socket, next) => {
 });
 ```
 
-## 5/ TL;DR <a name="TLDR"></a>
-
-Depending on the adonis/auth authentication you wanna use ( `Web Auth`, `Api Tokens`, `Basic Auth` ) the implementation will differ.
-Overall, server-side inside a socket-io middleware we wanna have acces to an `AuthContract` instance to be able to test the provided authentication information. `AuthContract` itself depends on an `HttpContextContract` instance that you can create using the `HttpContext.create` method, then by using `AuthManager.getAuthForRequest` and passing the created context we will be able to create an `AuthContract` instance.
-
-Web Auth:
-Client-side we have to instanciate the socket-io-client using the `withCredentials` option to true to forward the client cookies
-Server-side we will have to init the adonis/session using `ctx.session.initiate()` method and to set the **credentials** to `true` inside the socket-io server config
-
-Api Token:
-Client-side we will have to pass the token inside the `socket-io-client` `socket.auth` accessible at anytime via the `socket.auth` props
-Server-side we will have to manually define the `request.headers.authorization` prop to allow adonis/auth to retrive the token.
-
-## 6/ Ending <a name="TLDR2"></a>
+## Ending
 
 In my opinion Adonis itself is really powerfull.
 I found it really smooth to be working with Adonis as it provides a lot of idiomatic tools avoiding wobbly hacks.
-<br/>
+
 Lets say we're working on cross platform app, mobile and web. That then needs to use both `Web Auth` and `Api Tokens` authentication modes.
 Nothing is blocking us to verify both authentication modes inside the socket-io middleware !
 If you're really interested in something like that you can have a look at this [file](https://github.com/AdonisEnProvence/MusicRoom/blob/master/packages/server/start/socket.ts)
