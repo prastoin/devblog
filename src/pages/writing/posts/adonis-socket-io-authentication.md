@@ -52,6 +52,8 @@ In this article we will be implementing both Web guard and API Tokens authentica
 For HTTP protocol adonis allows you to check for authentication using authentication guards and routes middlewares:
 
 ```ts
+import Route from '@ioc:Adonis/Core/Route'
+
 //Api Tokens and Web Auth guarded get route using auth guards and route middleware
 Route.get('dashboard', async ({ auth, response }) => {
     // authenticated operations...
@@ -64,6 +66,8 @@ Of course you can custom guards
 But there's also an other way to look for your user authentication, using the auth `AuthContract` that allows you to use whenever you want any authentication guards. Note that to be able to retrieve a `AuthContract` instance you need to have access to a `HttpContextContract`, we will come back to this point later.
 
 ```ts
+import Route from '@ioc:Adonis/Core/Route'
+
 //Api Tokens and  guarded get route using AuthContract
 Route.get('dashboard', async ({ auth, response }) => {
     const user = await auth.use('api').authenticate();
@@ -115,7 +119,7 @@ io.use((socket, next) => {
 As described above Socket-io-client also needs that we define [withCredentials](https://socket.io/fr/docs/v3/client-initialization/#withcredentials) prop to true to be able to forward every `Web auth` encrypted cookies in the initial HTTP socket initialization request to the server.
 
 ```ts
-export { io } from 'socket.io-client';
+import { io } from 'socket.io-client';
 
 io(SERVER_ENDPOINT, {
     query,
@@ -132,7 +136,7 @@ io(SERVER_ENDPOINT, {
 Note: You can access `socket.Auth` everywhere in your client, for example after authentication operation.
 
 ```ts
-export { socket } from 'socket.io-client';
+import { socket } from 'socket.io-client';
 
 socket.auth = {
     Authorization: `Bearer ${token}`,
@@ -180,8 +184,6 @@ The problem is, adonis/auth doesn't know about it all, it will check the request
 
 Note: You can use socket-io handshake to forward authenticated user to following events listener
 
-Warning: At the moment I'm writing this article, using the `auth.use('api').check()` looks like not working for the `Api Tokens` authentication mode. Anyway using the `auth.use('api').authenticate()` will do the job just beware of catching the exception.
-
 ```ts
 import AdonisServer from '@ioc:Adonis/Core/Server';
 import { Server } from 'socket.io';
@@ -213,14 +215,18 @@ io.use((socket, next) => {
     const auth = AuthManager.getAuthForRequest(ctx);
 
     try {
-        // /!\ Warning I wasn't able to make this work using auth.use('api').check() /!\
-        const user = await auth.use('api').authenticate();
+        const isAuthenticated = await auth.use('api').check();
 
-        //Will display `false` but above user is correctly defined when authenticated
-        console.log(auth.isLoggedIn);
-
-        socket.handshake['user'] = user;
-        next();
+        if (isAuthenticated) {
+            socket.handshake['user'] = auth.user;
+            next();
+        } else {
+            next(
+                new Error(
+                    'User must be authenticated to perform socket protocol',
+                ),
+            );
+        }
     } catch (e) {
         console.log('Error api tokens auth socket failed');
         next(new Error('User must be authenticated to init socket connection'));
@@ -228,7 +234,7 @@ io.use((socket, next) => {
 }).on('connection', (socket) => {
     try {
         const user = socket.handshake['user'];
-        //Notifying typescript should never occurs
+        //Notifying typescript, should never occurs
         if (!user instanceof User) {
             throw new Error('Didnot receive User model instance');
         }
@@ -267,7 +273,7 @@ io.use((socket, next) => {
 
     try {
         const readyOnly = true;
-        await ctx.session.initiate(true);
+        await ctx.session.initiate(readyOnly);
         const isAuthenticated = await auth.use('web').check();
 
         if (isAuthenticated) {
