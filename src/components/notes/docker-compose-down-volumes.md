@@ -1,6 +1,6 @@
 ---
 title: Docker compose down volumes
-publishDate: 2 mar 2022
+publishDate: 21 apr 2022
 name: prastoin
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: Git checkout less
-publishDate: 18 mar 2022
+publishDate: 7 apr 2022
 name: prastoin
 ---
 
