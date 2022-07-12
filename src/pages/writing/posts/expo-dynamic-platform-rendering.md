@@ -1,9 +1,9 @@
 ---
 layout: ../../../layouts/WritingLayout.astro
-title: Expo dynamic plaftorm OS rendering with Typescript
+title: Expo dynamic platform OS rendering with Typescript
 publishDate: 30 mar 2022
 name: prastoin
-description: Render idiomatic and dynamic react component depending on the device platform OS. Using expo Platform select tool.
+description: Idiomatically render dynamic react component depending on the device platform OS. Using expo Platform select method.
 ---
 
 ## Table of contents
@@ -13,16 +13,13 @@ description: Render idiomatic and dynamic react component depending on the devic
   - [Platform dynamic style declaration example:](#platform-dynamic-style-declaration-example)
 - [The map example](#the-map-example)
   - [Dynamic component rendering example:](#dynamic-component-rendering-example)
-- [[Optionnal] Installation](#optionnal-installation)
-  - [Create the app](#create-the-app)
-  - [Setup typescript](#setup-typescript)
 - [Platform OS specific component](#platform-os-specific-component)
 - [Ending](#ending)
 - [Working example](#working-example)
 
 ## Introduction
 
-Expo is a great tool. Allowing anyone to create a react-native mobile and web app. But comes to a point where a lib you need is not supported by default on every OS you want to build.
+[Expo](https://expo.dev/) is a great tool. Allowing anyone to create a react-native mobile and web app. But comes to a point where a lib you need is not supported by default on every OS you want to build on.
 Here is the list of OS where an expo app can be run:
 
 ```ts
@@ -82,30 +79,6 @@ const Component = Platform.select({
 <Component />;
 ```
 
-## [Optionnal] Installation
-
-To create and setup the demonstration repository you need to have [Expo](https://docs.expo.dev/get-started/installation/) and [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) installed on your computer.
-
-### Create the app
-
-```bash
-npx create-expo-app YOUR-APP-NAME
-```
-
-### Setup typescript
-
-To setup typescript create an empty `tsconfig.json` file.
-
-```bash
-touch tsconfig.json
-```
-
-Then run `expo start`, it will scan the `tsconfig.json` and detect that typescript dependencies are not installed and will ask to install them.
-
-```bash
-expo start
-```
-
 ## Platform OS specific component
 
 Our component have to be sharing same typed props.
@@ -128,7 +101,7 @@ export type MapFunctionComponent = React.FC<MapComponentProps>;
 
 We want to display this component on web:
 
-ps: note that div are then available in a web context.
+PS: note that div are then available in a web context.
 
 ```tsx
 // web.tsx
@@ -182,7 +155,7 @@ const NativeMaps: MapFunctionComponent = ({ defaultMapCenterCoords }) => {
 export default NativeMaps;
 ```
 
-Now that we have both what we want to render on web and native, the last thing to do is to compute every inside a `Platform.select` call and export the resulting component.
+Now that we have both what we want to render on web and native, the last thing to do is to compute everything inside a `Platform.select` call and export the resulting component.
 
 ```tsx
 // index.tsx
@@ -231,8 +204,8 @@ export default function App() {
 
 ## Ending
 
-Discovering expo we could easily think that ejecting would be a required end at some point.
-But using expo is really smooth, it provides a lot of tools to answer specific need idiomatically.
+During discovering expo we could easily think that ejecting would be a required end at some point.
+But using expo is really smooth, it provides a lot of tools to answer specific needs idiomatically.
 Combining advanced `react-native` and `platform.select` usage, such as `ExoticComponent` to type safely forward `refs` can lead to powerful and readable architecture.
 
 ## Working example
