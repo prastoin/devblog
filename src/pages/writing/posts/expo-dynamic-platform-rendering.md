@@ -1,21 +1,21 @@
 ---
 layout: ../../../layouts/WritingLayout.astro
 title: Expo dynamic platform OS rendering with Typescript
-publishDate: 30 mar 2022
+publishDate: 12 jul 2022
 name: prastoin
 description: Idiomatically render dynamic react component depending on the device platform OS. Using expo Platform select method.
 ---
 
 ## Table of contents
 
-- [Table of contents](#table-of-contents)
-- [Introduction](#introduction)
-  - [Platform dynamic style declaration example:](#platform-dynamic-style-declaration-example)
-- [The map example](#the-map-example)
-  - [Dynamic component rendering example:](#dynamic-component-rendering-example)
-- [Platform OS specific component](#platform-os-specific-component)
-- [Ending](#ending)
-- [Working example](#working-example)
+-   [Table of contents](#table-of-contents)
+-   [Introduction](#introduction)
+    -   [Platform dynamic style declaration example:](#platform-dynamic-style-declaration-example)
+-   [The map example](#the-map-example)
+    -   [Dynamic component rendering example:](#dynamic-component-rendering-example)
+-   [Platform OS specific component](#platform-os-specific-component)
+-   [Ending](#ending)
+-   [Working example](#working-example)
 
 ## Introduction
 
