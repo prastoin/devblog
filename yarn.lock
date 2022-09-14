@@ -97,6 +97,14 @@
   dependencies:
     prismjs "^1.28.0"
 
+"@astrojs/react@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@astrojs/react/-/react-1.1.2.tgz#52d18339255457023ab5a1a33b911480eb6b0aa5"
+  integrity sha512-qGXI7SeKauJoeChb5vcwFELVMyth5kmakgcb6vm9+PBXNauSo983b9qOYd1ptB+kTK+eYGmezGh/YT3Rjhggag==
+  dependencies:
+    "@babel/core" ">=7.0.0-0 <8.0.0"
+    "@babel/plugin-transform-react-jsx" "^7.17.12"
+
 "@astrojs/renderer-react@^0.4.1":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@astrojs/renderer-react/-/renderer-react-0.4.1.tgz#e72913182bb6a47ad765d6ea0f9e5417c9e45fb6"
@@ -146,7 +154,7 @@
   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.19.0.tgz#2a592fd89bacb1fcde68de31bee4f2f2dacb0e86"
   integrity sha512-y5rqgTTPTmaF5e2nVhOxw+Ur9HDJLsWb6U/KpgUzRZEdPfE6VOubXBKLdbcUTijzRptednSBDQbYZBOSqJxpJw==
 
-"@babel/core@^7.18.2":
+"@babel/core@>=7.0.0-0 <8.0.0", "@babel/core@^7.18.2":
   version "7.19.0"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.19.0.tgz#d2f5f4f2033c00de8096be3c9f45772563e150c3"
   integrity sha512-reM4+U7B9ss148rh2n1Qs9ASS+w94irYXga7c2jaQv9RVzpS7Mv1a9rnYYwuDa45G+DkORt9g6An2k/V4d9LbQ==
