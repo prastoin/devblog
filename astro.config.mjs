@@ -7,14 +7,12 @@ import tailwind from "@astrojs/tailwind";
 export default defineConfig({
   // Enable Custom Markdown options, plugins, etc.
   markdown: {
-    render: [astroRemark, {
-      syntaxHighlight: 'shiki',
-      shikiConfig: {
-        theme: 'one-dark-pro' // Learn more about this configuration here:
-        // https://docs.astro.build/en/guides/markdown-content/#syntax-highlighting
+    syntaxHighlight: 'shiki',
+    shikiConfig: {
+      theme: 'one-dark-pro' // Learn more about this configuration here:
+      // https://docs.astro.build/en/guides/markdown-content/#syntax-highlighting
 
-      }
-    }]
+    }
   },
   // projectRoot: '.',     // Where to resolve all URLs relative to. Useful if you have a monorepo project.
   // pages: './src/pages', // Path to Astro components, pages, and data
