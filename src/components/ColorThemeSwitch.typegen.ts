@@ -2,14 +2,6 @@
 
 export interface Typegen0 {
     '@@xstate/typegen': true;
-    eventsCausingActions: {
-        addDarkFromDocumentClassList: 'GO_DEFAULT' | 'GO_DARK';
-        removeDarkFromDocumentClassList: 'GO_DEFAULT' | 'GO_LIGHT';
-        assignDarkToColorTheme: 'GO_DARK';
-        saveColorThemeInLocalStorage: 'GO_DARK' | 'GO_LIGHT' | 'GO_DEFAULT';
-        assignLightToColorTheme: 'GO_LIGHT';
-        assignDefaultToColorTheme: 'GO_DEFAULT';
-    };
     internalEvents: {
         'xstate.init': { type: 'xstate.init' };
     };
@@ -22,17 +14,29 @@ export interface Typegen0 {
         guards: never;
         delays: never;
     };
+    eventsCausingActions: {
+        addDarkFromDocumentClassList: 'GO_DARK' | 'GO_DEFAULT';
+        assignDarkToColorTheme: 'GO_DARK';
+        assignDefaultToColorTheme: 'GO_DEFAULT';
+        assignLightToColorTheme: 'GO_LIGHT';
+        removeDarkFromDocumentClassList: 'GO_DEFAULT' | 'GO_LIGHT';
+        saveColorThemeInLocalStorage: 'GO_DARK' | 'GO_DEFAULT' | 'GO_LIGHT';
+    };
     eventsCausingServices: {
-        retrieveColorThemeFromLocalStorage: 'xstate.init';
+        retrieveColorThemeFromLocalStorage:
+            | 'GO_DARK'
+            | 'GO_DEFAULT'
+            | 'GO_LIGHT'
+            | 'xstate.init';
     };
     eventsCausingGuards: {
         browserMediaPreferenceIsDark: 'GO_DEFAULT';
     };
     eventsCausingDelays: {};
     matchesStates:
-        | 'retrievingColorThemeFromLocalStorage'
         | 'goingDark'
+        | 'goingDefault'
         | 'goingLight'
-        | 'goingDefault';
+        | 'retrievingColorThemeFromLocalStorage';
     tags: never;
 }

@@ -4,13 +4,10 @@ import BaseBody from '../components/kit/BaseBody.astro';
 import '../styles/global.css';
 import WritingPost from '../components/writing/WritingPost.astro';
 
-const { content } = Astro.props;
-const { title, description, publishDate, author, heroImage, permalink, alt } =
-    content;
-const writingArticleHtml = content.astro.html;
+const { title, description, publishDate, permalink } = Astro.props.content;
 ---
 
-<html lang={content.lang || 'en'}>
+<html lang="en">
     <head>
         <BaseHead {title} {description} {permalink} />
     </head>
@@ -19,7 +16,9 @@ const writingArticleHtml = content.astro.html;
         <main
             class="w-full mx-auto prose dark:prose-invert sm:prose-md md:prose-lg lg:prose-xl"
         >
-            <WritingPost {title} {publishDate} {writingArticleHtml} />
+            <WritingPost {title} {publishDate}>
+                <slot />
+            </WritingPost>
         </main>
     </BaseBody>
 </html>

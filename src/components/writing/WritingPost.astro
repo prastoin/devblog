@@ -3,10 +3,9 @@ import BaseSection from '../kit/BaseSection.astro';
 export interface Props {
     title: string;
     publishDate: string;
-    writingArticleHtml: any;
 }
 
-const { title, publishDate, writingArticleHtml } = Astro.props;
+const { title, publishDate } = Astro.props;
 ---
 
 <BaseSection>
@@ -15,6 +14,6 @@ const { title, publishDate, writingArticleHtml } = Astro.props;
             <h3 class="text-red-800">{title}</h3>
             <span>{publishDate}</span>
         </header>
-        <Fragment set:html={writingArticleHtml} />
+        <slot />
     </article>
 </BaseSection>
