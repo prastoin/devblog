@@ -9,7 +9,7 @@ const description = 'Everything I learn everyday';
 const permalink = 'https://example.com'; //TODO update ?
 
 // Data Fetching: List all Markdown posts in the repo.
-let allNotes = await Astro.fetchContent('../../components/notes/*.md');
+let allNotes = await Astro.glob('../../components/notes/*.md');
 allNotes = allNotes.sort(
     (a, b) =>
         new Date(b.publishDate).valueOf() - new Date(a.publishDate).valueOf(),
