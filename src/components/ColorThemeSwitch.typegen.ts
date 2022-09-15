@@ -3,10 +3,22 @@
 export interface Typegen0 {
     '@@xstate/typegen': true;
     internalEvents: {
+        'done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]': {
+            type: 'done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]';
+            data: unknown;
+            __tip: 'See the XState TS docs to learn how to strongly type this.';
+        };
+        'error.platform.(machine).Retrieving color theme from localStorage:invocation[0]': {
+            type: 'error.platform.(machine).Retrieving color theme from localStorage:invocation[0]';
+            data: unknown;
+        };
+        'xstate.after(LOCALSTORAGE_RETRY_DELAY)#(machine).Wait for localStorage retry': {
+            type: 'xstate.after(LOCALSTORAGE_RETRY_DELAY)#(machine).Wait for localStorage retry';
+        };
         'xstate.init': { type: 'xstate.init' };
     };
     invokeSrcNameMap: {
-        retrieveColorThemeFromLocalStorage: 'done.invoke.(machine).retrievingColorThemeFromLocalStorage:invocation[0]';
+        'Retrieve color theme from localStorage': 'done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]';
     };
     missingImplementations: {
         actions: never;
@@ -15,28 +27,53 @@ export interface Typegen0 {
         delays: never;
     };
     eventsCausingActions: {
-        addDarkFromDocumentClassList: 'GO_DARK' | 'GO_DEFAULT';
-        assignDarkToColorTheme: 'GO_DARK';
-        assignDefaultToColorTheme: 'GO_DEFAULT';
-        assignLightToColorTheme: 'GO_LIGHT';
-        removeDarkFromDocumentClassList: 'GO_DEFAULT' | 'GO_LIGHT';
-        saveColorThemeInLocalStorage: 'GO_DARK' | 'GO_DEFAULT' | 'GO_LIGHT';
-    };
-    eventsCausingServices: {
-        retrieveColorThemeFromLocalStorage:
+        'Apply dark theme to document':
+            | 'GO_DARK'
+            | 'GO_DEFAULT'
+            | 'done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]';
+        'Assign dark theme to context':
+            | 'GO_DARK'
+            | 'done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]';
+        'Assign default theme to context':
+            | 'GO_DEFAULT'
+            | 'done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]';
+        'Assign light theme to context':
+            | 'GO_LIGHT'
+            | 'done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]';
+        'Persist context colorTheme value into LocalStorage':
             | 'GO_DARK'
             | 'GO_DEFAULT'
             | 'GO_LIGHT'
+            | 'done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]';
+        'Remove dark theme from document':
+            | 'GO_DEFAULT'
+            | 'GO_LIGHT'
+            | 'done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]';
+    };
+    eventsCausingServices: {
+        'Retrieve color theme from localStorage':
+            | 'GO_DARK'
+            | 'GO_DEFAULT'
+            | 'GO_LIGHT'
+            | 'xstate.after(LOCALSTORAGE_RETRY_DELAY)#(machine).Wait for localStorage retry'
             | 'xstate.init';
     };
     eventsCausingGuards: {
-        browserMediaPreferenceIsDark: 'GO_DEFAULT';
+        'Browser media preference is dark': 'GO_DEFAULT';
+        'Retrieved dark from localStorage': 'done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]';
+        'Retrieved light from localStorage': 'done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]';
     };
-    eventsCausingDelays: {};
+    eventsCausingDelays: {
+        LOCALSTORAGE_RETRY_DELAY: 'error.platform.(machine).Retrieving color theme from localStorage:invocation[0]';
+    };
     matchesStates:
+        | 'Retrieving color theme from localStorage'
+        | 'Wait for localStorage retry'
         | 'goingDark'
         | 'goingDefault'
+        | 'goingDefault.dark'
+        | 'goingDefault.light'
         | 'goingLight'
-        | 'retrievingColorThemeFromLocalStorage';
-    tags: never;
+        | { goingDefault?: 'dark' | 'light' };
+    tags: 'Loading localStorage';
 }

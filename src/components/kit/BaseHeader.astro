@@ -2,19 +2,21 @@
 import ColorThemeSwitch from '../ColorThemeSwitch';
 ---
 
-<header class="flex flex-row justify-between prose dark:prose-invert">
+<header class="flex flex-row justify-between items-center prose dark:prose-invert max-w-none">
     <a href="/" class="flex items-center flex-row mr-1">
         <img />
         <div class="w-20 h-24 bg-green-400 text-center">LOGO</div>
     </a>
 
-    <a href="/notes" class="flex items-center flex-row">
+    <a href="/notes">
         <span>Notes</span>
     </a>
 
-    <a href="/writing" class="flex items-center flex-row">
+    <a href="/writing">
         <span>Writing</span>
     </a>
 
-    <ColorThemeSwitch client:idle />
+    <div>
+        <ColorThemeSwitch client:idle />
+    </div>
 </header>
