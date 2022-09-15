@@ -13,6 +13,7 @@ import '../styles/global.css';
 const title = 'prastoin | home';
 const description = 'Welcome to my devblog home !';
 const permalink = 'https://example.com/';
+const randomImageIndex = Math.round(Math.random() * (2 - 0) + 0);
 
 // Full Astro Component Syntax:
 // https://docs.astro.build/core-concepts/astro-components/
@@ -20,10 +21,28 @@ const permalink = 'https://example.com/';
 
 <html lang="en">
     <head>
-        <BaseHead {title} {description} {permalink} />
+        <BaseHead title={title} description={description} permalink={permalink} />
     </head>
 
     <BaseBody>
+        <div class="max-w flex flex-col self-center prose dark:prose-invert">
+            <nav class="flex flex-row w-full items-center my-3">
+                <a
+                    href="/"
+                    class="relative flex flex-col items-center w-full hover:no-underline"
+                >
+                    <!-- TODO create svg nor image -->
+                    <h2 class="text-5xl my-2">Paul</h2>
+                    <h2 class="text-secondary text-5xl my-2">Rastoin</h2>
+                    <img
+                        class="absolute -z-50 top-50 left-50 translate-y-1/6 max-h-full	"
+                        src={`/assets/olive_branch_${randomImageIndex}.png`}
+                        alt="olive branch image"
+                    />
+                </a>
+            </nav>
+        
+        </div>
         <main
             class="max-w flex flex-row self-center prose dark:prose-invert sm:prose-sm md:prose-lg lg:prose-xl"
         >
