@@ -1,21 +1,24 @@
 ---
 import ColorThemeSwitch from '../ColorThemeSwitch';
-
 ---
 
 <header class="flex flex-col prose dark:prose-invert max-w-none w-full">
-    <nav class="flex flex-row justify-between items-center mt-3">
-        <a href="/">
-            <span>Home</span>
-        </a>
+    <nav
+        class="relative mx-auto flex w-full max-w-4xl items-center justify-between py-4 text-gray-900 sm:pb-6"
+    >
+        <div class="flex space-x-5">
+            <a href="/">
+                <span>Home</span>
+            </a>
 
-        <a href="/notes">
-            <span>Notes</span>
-        </a>
+            <a href="/notes">
+                <span>Notes</span>
+            </a>
 
-        <a href="/writing">
-            <span>Writing</span>
-        </a>
+            <a href="/writing">
+                <span>Writing</span>
+            </a>
+        </div>
 
         <div>
             <ColorThemeSwitch client:idle />
