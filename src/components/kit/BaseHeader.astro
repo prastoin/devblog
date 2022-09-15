@@ -1,22 +1,37 @@
 ---
 import ColorThemeSwitch from '../ColorThemeSwitch';
+
+const randomImageIndex = Math.round(Math.random() * (2 - 0) + 0);
 ---
 
-<header class="flex flex-row justify-between items-center prose dark:prose-invert max-w-none">
-    <a href="/" class="flex items-center flex-row mr-1">
-        <img />
-        <div class="w-20 h-24 bg-green-400 text-center">LOGO</div>
-    </a>
+<header class="flex flex-col prose dark:prose-invert max-w-none w-full">
+    <nav class="flex flex-row w-full items-center my-3">
+        <a
+            href="/"
+            class="relative flex flex-col items-center w-full hover:no-underline"
+        >
+            <!-- TODO create svg nor image -->
+            <h2 class="text-5xl my-2">Paul</h2>
+            <h2 class="text-secondary text-5xl my-2">Rastoin</h2>
+            <img
+                class="absolute -z-50 top-50 left-50 translate-y-1/6 max-h-full	"
+                src={`/assets/olive_branch_${randomImageIndex}.png`}
+                alt="olive branch image"
+            />
+        </a>
+    </nav>
 
-    <a href="/notes">
-        <span>Notes</span>
-    </a>
+    <nav class="flex flex-row justify-between items-center mt-3">
+        <a href="/notes">
+            <span>Notes</span>
+        </a>
 
-    <a href="/writing">
-        <span>Writing</span>
-    </a>
+        <a href="/writing">
+            <span>Writing</span>
+        </a>
 
-    <div>
-        <ColorThemeSwitch client:idle />
-    </div>
+        <div>
+            <ColorThemeSwitch client:idle />
+        </div>
+    </nav>
 </header>

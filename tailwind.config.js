@@ -12,7 +12,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'hi': 'hi'
+        'hi': 'hi',
+        "primary": "#24491F",
+        "secondary": "#63945D"
       },
       typography: {
         DEFAULT: {
@@ -33,11 +35,11 @@ module.exports = {
             'code::before': false,
             'code::after': false,
             'a:hover': {
-              color: '#31cdce !important',
-              textDecoration: 'underline !important',
+              color: '#63945D !important',
+              textDecoration: 'underline',
             },
             a: {
-              color: '#3182ce',
+              color: '#24491F',
               textDecoration: 'none',
             },
             "a code": {
