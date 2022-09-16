@@ -132,14 +132,10 @@ const toggleColorThemeMachine =
                 // LOCALSTORAGE_RETRY_SUCCESS_ANIMATION_DELAY: 200
             },
             guards: {
-                "Retrieved dark from localStorage": (_context, e) => {
-                    const event = e as DoneInvokeEvent<ColorTheme>
-
+                "Retrieved dark from localStorage": (_context, event) => {
                     return event.data === "dark"
                 },
-                "Retrieved light from localStorage": (_context, e) => {
-                    const event = e as DoneInvokeEvent<ColorTheme>
-
+                "Retrieved light from localStorage": (_context, event) => {
                     return event.data === "light"
                 },
 
