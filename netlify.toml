@@ -1,0 +1,12 @@
+[[redirects]]
+    from = "https://rastoin.dev/*"
+    to = "https://paul.rastoin.dev/:splat"
+    status = 301
+    force = true
+
+[[redirects]]
+    from = "https://prastoin.netlify.app/*"
+    to = "https://paul.rastoin.dev/:splat"
+    status = 301
+    force = true
+
