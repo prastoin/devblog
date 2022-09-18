@@ -26,13 +26,10 @@ const allNotes = (await fetchAllNotes()).sort(
     </head>
 
     <BaseBody>
-        <main
-            class="max-w-full mx-auto prose dark:prose-invert sm:prose-md md:prose-lg lg:prose-xl"
-        >
-            <h1>Today I learned</h1>
-            <section aria-label="Blog post list">
-                {allNotes.map((post) => <NotePost postFrontmatter={post.frontmatter} compiledContent={post.compiledContent()}/>)}
-            </section>
-        </main>
+        
+        <h1 class="text-4xl mb-6 mt-2 font-bold text-dark dark:text-white">Today I learned</h1>
+        <section aria-label="Blog post list">
+            {allNotes.map((post, index) => <NotePost noteIndex={index} postFrontmatter={post.frontmatter} compiledContent={post.compiledContent()}/>)}
+        </section>
     </BaseBody>
 </html>
