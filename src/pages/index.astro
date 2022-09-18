@@ -3,6 +3,8 @@
 import BaseHead from '../components/kit/BaseHead.astro';
 import BaseBody from '../components/kit/BaseBody.astro';
 import '../styles/global.css';
+import BaseSection from '../components/kit/BaseSection.astro';
+import BaseLink from '../components/kit/BaseLink.astro';
 
 // You can import components from any supported Framework here!
 
@@ -13,7 +15,6 @@ import '../styles/global.css';
 const title = 'Paul Rastoin | home';
 const description = 'Welcome to my devblog home !';
 const permalink = 'https://example.com/';
-const randomImageIndex = Math.round(Math.random() * (2 - 0) + 0);
 
 // Full Astro Component Syntax:
 // https://docs.astro.build/core-concepts/astro-components/
@@ -31,22 +32,130 @@ const randomImageIndex = Math.round(Math.random() * (2 - 0) + 0);
                     href="/"
                     class="relative flex flex-col items-center w-full hover:no-underline"
                 >
-                    <!-- TODO create svg nor image -->
-                    <h2 class="text-5xl my-2">Paul</h2>
-                    <h2 class="text-secondary text-5xl my-2">Rastoin</h2>
+                    <h2
+                        class="text-5xl my-2 font-bold text-dark dark:text-white"
+                    >
+                        Paul
+                    </h2>
+                    <h2 class="text-secondary text-5xl my-2 font-bold">
+                        Rastoin
+                    </h2>
                     <img
                         class="absolute -z-50 top-50 left-50 translate-y-1/6 max-h-full	"
-                        src={`/assets/olive_branch_${randomImageIndex}.png`}
+                        src={`/assets/olive_branch_1.png`}
                         alt="olive branch image"
                     />
                 </a>
             </nav>
-        
         </div>
-        <main
-            class="max-w flex flex-row self-center prose dark:prose-invert sm:prose-sm md:prose-lg lg:prose-xl"
-        >
-            Welcome Home
-        </main>
+        <div class="w-full flex flex-col self-center">
+            <h3 class="mb-3 font-medium text-[#374151] dark:text-[#d1d5db]">
+                Hello there
+            </h3>
+            <p
+                class="mb-6 flex flex-col text-[#374151] dark:text-[#d1d5db] leading-relaxed"
+            >
+                <span>
+                    I'm a Full-Stack Web developper from the south of France 🫒
+                </span>
+                <span>
+                    And a <a
+                        class="text-primary hover:text-secondary hover:underline font-medium"
+                        href="https://42.fr/en/homepage/">42</a
+                    > student at 42Paris
+                </span>
+            </p>
+
+            <div class="grid gap-8 grid-cols-1 md:grid-cols-2 md:grid-flow-col">
+                <BaseSection>
+                    <div class="w-full h-full">
+                        <h4
+                            class="mb-3 font-medium text-[#374151] dark:text-[#d1d5db]"
+                        >
+                            Core Stack:
+                        </h4>
+                        <ul
+                            class="list-disc list-inside text-[#374151] dark:text-[#d1d5db] leading-relaxed"
+                        >
+                            <li>
+                                <BaseLink
+                                    href="https://www.typescriptlang.org/"
+                                >
+                                    TypeScript</BaseLink
+                                >
+                            </li>
+                            <li>
+                                <BaseLink href="https://nodejs.org/en/">
+                                    Node.js</BaseLink
+                                >
+                            </li>
+                            <li>
+                                <BaseLink href="https://xstate.js.org/docs/">
+                                    XState</BaseLink
+                                >
+                            </li>
+                            <li>
+                                <BaseLink href="https://fr.reactjs.org/">
+                                    React</BaseLink
+                                >
+                            </li>
+                            <li>
+                                <BaseLink href="https://adonisjs.com/">
+                                    AdonisJS</BaseLink
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </BaseSection>
+
+                <BaseSection>
+                    <div class="w-full h-full">
+                        <h4
+                            class="mb-3 font-medium text-[#374151] dark:text-[#d1d5db]"
+                        >
+                            Hyped by!:
+                        </h4>
+                        <ul
+                            class="list-disc list-inside text-[#374151] dark:text-[#d1d5db] leading-relaxed"
+                        >
+                            <li>
+                                <BaseLink href="https://reactnative.dev/">
+                                    React Native</BaseLink
+                                >
+                            </li>
+                            <li>
+                                <BaseLink
+                                    href="https://vuejs.org/guide/extras/composition-api-faq.html"
+                                >
+                                    Vue3 composition API</BaseLink
+                                >
+                            </li>
+                            <li>
+                                <BaseLink href="https://temporal.io/">
+                                    Temporal</BaseLink
+                                >
+                            </li>
+                            <li>
+                                <BaseLink href="https://stately.ai/viz">
+                                    Stately</BaseLink
+                                >
+                            </li>
+                            <li>
+                                <BaseLink
+                                    href="https://xstate.js.org/docs/packages/xstate-test/"
+                                >
+                                    @xstate/test</BaseLink
+                                >
+                            </li>
+                            <li>
+                                <BaseLink href="https://playwright.dev/">
+                                    Playwright</BaseLink
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </BaseSection>
+            </div>
+        </div>
     </BaseBody>
 </html>
