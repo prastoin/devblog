@@ -6,8 +6,9 @@ import '../../styles/global.css'
 
 import WritingPostPreview from '../../components/writing/WritingPostPreview.astro';
 import { PostFrontmatter } from '../../types/PostsType';
+import BasePageHeading from '../../components/kit/BasePageHeading.astro';
 
-const title = 'Paul Rastoin | writing';
+const title = 'Paul Rastoin | Writing';
 const description = "Writing articles about things I'm interested in";
 const permalink = 'https://example.com/';
 
@@ -30,7 +31,7 @@ const allPosts = (await Astro.glob<PostFrontmatter>('./posts/*.md')).sort(
         <div
             class="flex flex-col justify-evenly"
         >
-            <h1 class="text-4xl mb-6 mt-2 font-bold text-dark dark:text-white">Articles</h1>
+            <BasePageHeading>Writing</BasePageHeading>
             <div aria-label="Blog post list">
                 {allPosts.map(({ frontmatter: postInformation, url}, index) => <WritingPostPreview writingPostPreviewIndex={index} postInformation={{
                     ...postInformation,

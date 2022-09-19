@@ -4,6 +4,7 @@ import BaseBody from '../../components/kit/BaseBody.astro';
 import BaseHead from '../../components/kit/BaseHead.astro';
 import '../../styles/global.css'
 import { NoteFrontmatter } from '../../types/NotesType';
+import BasePageHeading from '../../components/kit/BasePageHeading.astro';
 
 const title = 'Paul Rastoin | Today I learned';
 const description = 'Everything I learn everyday';
@@ -26,8 +27,7 @@ const allNotes = (await fetchAllNotes()).sort(
     </head>
 
     <BaseBody>
-        
-        <h1 class="text-4xl mb-6 mt-2 font-bold text-dark dark:text-white">Today I learned</h1>
+        <BasePageHeading>Today I learned</BasePageHeading>
         <section aria-label="Blog post list">
             {allNotes.map((post, index) => <NotePost noteIndex={index} postFrontmatter={post.frontmatter} compiledContent={post.compiledContent()}/>)}
         </section>
