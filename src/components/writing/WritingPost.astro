@@ -1,4 +1,6 @@
 ---
+import BaseElementHeading from '../kit/BaseElementHeading.astro';
+import BaseProseSection from '../kit/BaseProseSection.astro';
 import BaseSection from '../kit/BaseSection.astro';
 export interface Props {
     title: string;
@@ -10,10 +12,15 @@ const { title, publishDate } = Astro.props;
 
 <BaseSection>
     <article>
-        <header class="prose dark:prose-invert">
-            <h3 class="text-red-800">{title}</h3>
-            <span>{publishDate}</span>
+        <header class="mb-4 font-bold text-primary">
+            <BaseElementHeading>
+                {title}
+            </BaseElementHeading>
+            <span class="italic">{publishDate}</span>
         </header>
-        <slot />
+
+        <BaseProseSection>
+            <slot />
+        </BaseProseSection>
     </article>
 </BaseSection>

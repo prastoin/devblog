@@ -13,12 +13,8 @@ const { title, description, publishDate, permalink } = Astro.props.content;
     </head>
 
     <BaseBody>
-        <main
-            class="w-full mx-auto prose dark:prose-invert sm:prose-md md:prose-lg lg:prose-xl"
-        >
-            <WritingPost {title} {publishDate}>
-                <slot />
-            </WritingPost>
-        </main>
+        <WritingPost {title} {publishDate}>
+            <slot />
+        </WritingPost>
     </BaseBody>
 </html>

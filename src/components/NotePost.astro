@@ -1,23 +1,33 @@
 ---
 
 import { NoteFrontmatter } from "../types/NotesType";
+import BaseElementHeading from "./kit/BaseElementHeading.astro";
+import BaseHr from "./kit/BaseHr.astro";
+import BaseProseSection from "./kit/BaseProseSection.astro";
 import BaseSection from "./kit/BaseSection.astro"
 export interface Props {
 	postFrontmatter: NoteFrontmatter
     compiledContent: string
+    noteIndex: number
 }
 
-const { compiledContent, postFrontmatter: { title, publishDate } } = Astro.props;
+const { noteIndex, compiledContent, postFrontmatter: { title, publishDate } } = Astro.props;
+const showHrElement = noteIndex !== 0
 ---
 <>
-    <hr />
+    {showHrElement && <BaseHr />}
     <BaseSection>
         <article>
-            <header class="prose dark:prose-invert">
-                <h3 class="text-red-800">{title}</h3>
-                <span>{publishDate}</span>
+            <header class="mb-4 font-bold text-primary">
+                <BaseElementHeading>
+                    {title}
+                </BaseElementHeading>
+                <span class="italic">{publishDate}</span>
             </header>
-            <Fragment set:html={compiledContent} />
+    
+            <BaseProseSection>
+                <Fragment set:html={compiledContent} />
+            </BaseProseSection>
         </article>
     </BaseSection>
 </>

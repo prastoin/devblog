@@ -1,23 +1,16 @@
 ---
 import ColorThemeSwitch from '../ColorThemeSwitch';
+import BaseLink from './BaseLink.astro';
 ---
 
-<header class="flex flex-col prose dark:prose-invert max-w-none w-full">
+<header class="flex flex-col max-w-none w-full">
     <nav
         class="relative mx-auto flex w-full max-w-4xl items-center justify-between py-4 text-gray-900 sm:pb-6"
     >
-        <div class="flex space-x-5">
-            <a href="/">
-                <span>Home</span>
-            </a>
-
-            <a href="/notes">
-                <span>Notes</span>
-            </a>
-
-            <a href="/writing">
-                <span>Writing</span>
-            </a>
+        <div class="flex space-x-5 text-base text-base lg:text-lg ">
+            <BaseLink href="/">Home</BaseLink>
+            <BaseLink href="/notes">Notes</BaseLink>
+            <BaseLink href="/writing">Writing</BaseLink>
         </div>
 
         <div>
