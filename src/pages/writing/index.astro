@@ -27,19 +27,24 @@ const allPosts = (await Astro.glob<PostFrontmatter>('./posts/*.md')).sort(
     </head>
 
     <BaseBody>
-        <main
-            class="w-full flex flex-col self-center prose dark:prose-invert sm:prose-sm md:prose-lg lg:prose-xl"
+        <div
+            class="flex flex-col justify-evenly"
         >
-            <section class="intro">
-                <h1 class="latest">Articles</h1>
-                <p>{description}</p>
+            <section>
+                <h1 class="text-4xl mb-6 mt-2 font-bold text-dark dark:text-white">Articles</h1>
+                <p
+                class="mb-6 flex flex-col text-[#374151] dark:text-[#d1d5db] leading-relaxed">
+                    <span>
+                        Writing articles about things I'm interested in
+                    </span>
+                </p>
             </section>
             <section aria-label="Blog post list">
-                {allPosts.map(({ frontmatter: postInformation, url}) => <WritingPostPreview postInformation={{
+                {allPosts.map(({ frontmatter: postInformation, url}, index) => <WritingPostPreview writingPostPreviewIndex={index} postInformation={{
                     ...postInformation,
                     url
                 }} />)}
             </section>
-        </main>
+        </div>
     </BaseBody>
 </html>
