@@ -5,6 +5,7 @@ import BaseBody from '../components/kit/BaseBody.astro';
 import '../styles/global.css';
 import BaseSection from '../components/kit/BaseSection.astro';
 import BaseLink from '../components/kit/BaseLink.astro';
+import BaseParagraph from '../components/kit/BaseParagraph.astro';
 
 // You can import components from any supported Framework here!
 
@@ -26,45 +27,33 @@ const permalink = 'https://example.com/';
     </head>
 
     <BaseBody>
-        <div class="flex flex-col self-center">
-            <nav class="flex flex-row w-full items-center my-3">
-                <a
-                    href="/"
-                    class="relative flex flex-col items-center w-full hover:no-underline"
-                >
-                    <h2
-                        class="text-5xl my-2 font-bold text-dark dark:text-white"
-                    >
-                        Paul
-                    </h2>
-                    <h2 class="text-secondary text-5xl my-2 font-bold">
-                        Rastoin
-                    </h2>
-                    <img
-                        class="absolute -z-50 top-50 left-50 translate-y-1/6 max-h-full	"
-                        src={`/assets/olive_branch_1.png`}
-                        alt="olive branch image"
-                    />
-                </a>
-            </nav>
-        </div>
+        <nav class="flex flex-col self-center my-3">
+            <a href="/" class="relative flex flex-col items-center mx-auto">
+                <h1 class="text-5xl my-2 font-bold text-dark dark:text-white">
+                    Paul
+                </h1>
+                <h1 class="text-secondary text-5xl my-2 font-bold">Rastoin</h1>
+                <img
+                    class="absolute -z-50 max-h-full"
+                    src={`/assets/olive_branch_1.png`}
+                    alt="olive branch image"
+                />
+            </a>
+        </nav>
         <div class="w-full flex flex-col self-center">
             <h3 class="mb-3 font-medium text-[#374151] dark:text-[#d1d5db]">
                 Hello there
             </h3>
-            <p
-                class="mb-6 flex flex-col text-[#374151] dark:text-[#d1d5db] leading-relaxed"
-            >
+            <BaseParagraph>
                 <span>
                     I'm a Full-Stack Web developper from the south of France 🫒
                 </span>
                 <span>
-                    And a <a
-                        class="text-primary hover:text-secondary hover:underline font-medium"
-                        href="https://42.fr/en/homepage/">42</a
+                    And a <BaseLink href="https://42.fr/en/homepage/"
+                        >42</BaseLink
                     > student at 42Paris
                 </span>
-            </p>
+            </BaseParagraph>
 
             <div class="grid gap-8 grid-cols-1 md:grid-cols-2 md:grid-flow-col">
                 <BaseSection>

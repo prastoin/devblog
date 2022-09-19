@@ -2,6 +2,7 @@
 
 import { NoteFrontmatter } from "../types/NotesType";
 import BaseHr from "./kit/BaseHr.astro";
+import BaseProseSection from "./kit/BaseProseSection.astro";
 import BaseSection from "./kit/BaseSection.astro"
 export interface Props {
 	postFrontmatter: NoteFrontmatter
@@ -15,13 +16,15 @@ const showHrElement = noteIndex !== 0
 <>
     {showHrElement && <BaseHr />}
     <BaseSection>
-        <header class="mb-4 font-bold text-primary">
-            <h3 class="mb-3 text-2xl md:text-3xl underline">{title}</h3>
-            <span class="italic">{publishDate}</span>
-        </header>
-
-        <article class="prose dark:prose-invert prose-sm md:prose-base lg:prose-lg">
-            <Fragment set:html={compiledContent} />
+        <article>
+            <header class="mb-4 font-bold text-primary">
+                <h3 class="mb-3 text-2xl md:text-3xl underline">{title}</h3>
+                <span class="italic">{publishDate}</span>
+            </header>
+    
+            <BaseProseSection>
+                <Fragment set:html={compiledContent} />
+            </BaseProseSection>
         </article>
     </BaseSection>
 </>

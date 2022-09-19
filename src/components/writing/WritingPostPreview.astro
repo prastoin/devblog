@@ -2,6 +2,7 @@
 import { PostPreviewInformation } from '../../types/PostsType';
 import BaseHr from '../kit/BaseHr.astro';
 import BaseLink from '../kit/BaseLink.astro';
+import BaseParagraph from '../kit/BaseParagraph.astro';
 import BaseSection from '../kit/BaseSection.astro';
 export interface Props {
     writingPostPreviewIndex: number;
@@ -12,7 +13,7 @@ const { writingPostPreviewIndex, postInformation: {description, name, publishDat
 const showBaseHr = writingPostPreviewIndex !== 0
 ---
 
-<div>
+<Fragment>
     {showBaseHr && <BaseHr />}
     <BaseSection>
 
@@ -23,9 +24,10 @@ const showBaseHr = writingPostPreviewIndex !== 0
             <span class="italic">{publishDate}</span>
         </header>
 
-        <p class="mb-6 flex flex-col text-[#374151] dark:text-[#d1d5db] leading-relaxed">
+        <BaseParagraph>
             {description}
-        </p>
+        </BaseParagraph>
+        
         <BaseLink href={url}>Read more</BaseLink>
     </BaseSection>
-</div>
+</Fragment>
