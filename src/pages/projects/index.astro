@@ -1,0 +1,36 @@
+---
+import BaseBody from '../../components/kit/BaseBody.astro';
+import BaseHead from '../../components/kit/BaseHead.astro';
+import '../../styles/global.css'
+import BasePageHeading from '../../components/kit/BasePageHeading.astro';
+import { ProjectFrontmatter } from '../../types/ProjectsType';
+import ProjectPost from '../../components/ProjectPost.astro';
+
+const title = 'Paul Rastoin | Projects';
+const description = "All projects I've been working on";
+const permalink = 'https://example.com'; //TODO update ?
+
+// Data Fetching: List all Markdown posts in the repo.
+async function fetchAllProjects() {
+    return await Astro.glob<ProjectFrontmatter>('../../components/projects/*.md')
+}
+
+const allProjects = (await fetchAllProjects()).sort(
+    (a, b) =>
+        new Date(b.frontmatter.publishDate).valueOf() - new Date(a.frontmatter.publishDate).valueOf(),
+);
+console.log(allProjects[0].frontmatter)
+---
+
+<html lang="en">
+    <head>
+        <BaseHead title={title} description={description} permalink={permalink} />
+    </head>
+
+    <BaseBody>
+        <BasePageHeading>Projects</BasePageHeading>
+        <section aria-label="Projects card list" class="grid gap-8 grid-cols-1 md:grid-cols-2 auto-rows-max">
+            {allProjects.map(project => <ProjectPost projectFronmatter={project.frontmatter} compiledContent={project.compiledContent()} /> )}
+        </section>
+    </BaseBody>
+</html>

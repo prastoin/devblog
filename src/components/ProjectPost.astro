@@ -1,0 +1,59 @@
+---
+import { ProjectFrontmatter } from "../types/ProjectsType";
+import { Icon } from "astro-icon";
+import { Picture } from '@astrojs/image/components';
+import BaseElementHeading from "./kit/BaseElementHeading.astro";
+import BaseProseSection from "./kit/BaseProseSection.astro";
+import BaseSection from "./kit/BaseSection.astro"
+export interface Props {
+	projectFronmatter: ProjectFrontmatter
+    compiledContent: string
+}
+const {compiledContent, projectFronmatter: {title, imageName, publishDate, githubRepoUrl, is42Project, tags, peopleCounter, productionUrl}} = Astro.props
+---
+<>
+    <BaseSection>
+        <article class="w-full flex flex-col">
+    
+            <header class="mb-4 font-bold text-primary flex flex-col justitfy-between w-full">
+                <div class="w-full">
+                    <BaseElementHeading>
+                        {title}
+                    </BaseElementHeading>
+                    <span class="italic">{publishDate}</span>
+                </div>
+
+                <a class="mb-3 mx-auto" href={productionUrl || githubRepoUrl}>
+                    <Picture src={import(`../assets/${imageName}.jpg`)} widths={[200, 300, 400, 500]} sizes="(max-width: 800px) 100vw, 800px" alt={`${title} project image presentation`} />
+                </a>
+                
+                <div class="w-full flex flex-row w-full justify-between">
+                    
+                    <div>
+                        <div class="flex">
+                            {is42Project && <Icon class="w-10" name="simple-icons:42"/>}
+                            {peopleCounter !== undefined && <span class="pl-3 flex items-center">{peopleCounter}<Icon class="w-6" name="bi:person-fill"/></span>}
+                        </div>
+                    </div>                    
+                    
+
+                    <div class="flex flex-row justify-end">
+                        <a href={githubRepoUrl}>
+                            <Icon class="w-10" name="akar-icons:github-fill" />
+                        </a>
+                        <a href={productionUrl}>
+                            <Icon class="w-10" name="akar-icons:link-out" />
+                        </a>
+                    </div>
+                </div>
+
+                {tags && <p class="mt-3">{tags.map(tag => <span class="mr-1 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-1 dark:bg-gray-700 dark:border-gray-600 dark:text-white">{tag}</span>)}</p>}
+
+            </header>
+    
+            <BaseProseSection>
+                <Fragment set:html={compiledContent} />
+            </BaseProseSection>
+        </article>
+    </BaseSection>
+</>

@@ -3,8 +3,15 @@ import react from '@astrojs/react';
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
 
+import image from "@astrojs/image";
+
 // https://astro.build/config
 export default defineConfig({
+  vite: {
+    ssr: {
+      external: ["svgo"],
+    },
+  },
   // Enable Custom Markdown options, plugins, etc.
   markdown: {
     syntaxHighlight: 'shiki',
@@ -21,7 +28,9 @@ export default defineConfig({
   // site: 'http://example.com',           // Your public domain, e.g.: https://my-site.dev/. Used to generate sitemaps and canonical URLs.
   integrations: [react(), tailwind({
     // Example: Provide a custom path to a Tailwind config file
-    config: { path: 'tailwind.config.js', applyBaseStyles: false},
-    
-  })]
+    config: {
+      path: 'tailwind.config.js',
+      applyBaseStyles: false
+    }
+  }), image()]
 });
