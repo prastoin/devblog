@@ -23,7 +23,7 @@ const {compiledContent, projectFronmatter: {title, imageName, publishDate, githu
                     <span class="italic">{publishDate}</span>
                 </div>
 
-                <a class="mb-3" href={productionUrl || githubRepoUrl}>
+                <a class="mb-3 mx-auto" href={productionUrl || githubRepoUrl}>
                     <Picture src={import(`../assets/${imageName}.jpg`)} widths={[200, 300, 400, 500]} sizes="(max-width: 800px) 100vw, 800px" alt={`${title} project image presentation`} />
                 </a>
                 
@@ -32,7 +32,7 @@ const {compiledContent, projectFronmatter: {title, imageName, publishDate, githu
                     <div>
                         <div class="flex">
                             {is42Project && <Icon class="w-10" name="simple-icons:42"/>}
-                            {peopleCounter !== undefined && <span class="pl-3 flex items-center">2 <Icon class="w-6" name="bi:person-fill"/></span>}
+                            {peopleCounter !== undefined && <span class="pl-3 flex items-center">{peopleCounter}<Icon class="w-6" name="bi:person-fill"/></span>}
                         </div>
                     </div>                    
                     
