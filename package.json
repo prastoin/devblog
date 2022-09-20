@@ -21,6 +21,7 @@
     "@astrojs/renderer-react": "^0.4.1",
     "@astrojs/tailwind": "^1.0.1",
     "@xstate/react": "^2.0.0",
+    "astro-icon": "^0.7.3",
     "xstate": "^4.29.0"
   }
 }

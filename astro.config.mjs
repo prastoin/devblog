@@ -7,6 +7,11 @@ import image from "@astrojs/image";
 
 // https://astro.build/config
 export default defineConfig({
+  vite: {
+    ssr: {
+      external: ["svgo"],
+    },
+  },
   // Enable Custom Markdown options, plugins, etc.
   markdown: {
     syntaxHighlight: 'shiki',
