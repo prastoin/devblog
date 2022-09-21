@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@tailwind screen;
 
 code {
     background-color: #c7c5d3;
@@ -10,10 +11,51 @@ code {
     background-color: #17161d;
 }
 
+/* Burger Custom CSS modifications
+Mobile first the burger menu is displayed
+It used the checkbox trick to display or hide content see: https://css-tricks.com/the-checkbox-hack/
+For the moment it will do the job
+
+By checking the BaseHeader.astro componenet you will see that it regroups within a fragment
+the BurgerMenuBaseHeader.astro component and his own content.
+The fragement is used to put the `input div main` elements at the same lvl to be able to apply the `~` css selector:
+With `main` being the element we wanna hide and the `div` the new header we wanna display.
+The body resulting in:
+<body>
+
+    <input id="burgerMenuButton" />
+    <div id="expandableBurgerMenu">
+        ...
+    </div>
+
+    <header>
+        ...
+    </header>
+
+    <main>
+        <slot/>
+    </main>
+</body>
+*/
+
 #burgerMenuButton:checked ~ #expandableBurgerMenu {
     display: block;
 }
 
 #burgerMenuButton:checked ~ main {
     display: none;
+}
+
+/*
+ This media query is to avoid to keep the expandableBurgerMenu displayed while the screen dimensions has changed 
+ */
+
+@media screen(md) {
+    #burgerMenuButton:checked ~ #expandableBurgerMenu {
+        display: none;
+    }
+    
+    #burgerMenuButton:checked ~ main {
+        display: block;
+    }
 }
