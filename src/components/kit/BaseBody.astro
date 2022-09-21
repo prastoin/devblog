@@ -1,15 +1,30 @@
 ---
 import BaseHeader from './BaseHeader.astro';
+import BaseLink from './BaseLink.astro';
 ---
 
-<body class="bg-white dark:bg-slate-900 pb-2 md:pb-0 text-base lg:text-lg">
+<body class="bg-white dark:bg-slate-900 text-base lg:text-lg">
     <div
         class="flex flex-col min-h-screen px-4 sm:px-6 md:px-10 lg:px-16 max-w-7xl mx-auto"
     >
+        <input class="hidden" type="checkbox" id="burgerMenuButton" />
+
         <BaseHeader />
 
         <main class="max-w-full mx-auto">
             <slot />
         </main>
+
+        <div
+            id="expandableBurgerMenu"
+            class="hidden fixed inset-0 px-4 bg-white dark:bg-slate-900 z-20 mt-20"
+        >
+            <div class="flex flex-col items-start text-lg">
+                <BaseLink href="/">Home</BaseLink>
+                <BaseLink href="/projects">Projects</BaseLink>
+                <BaseLink href="/notes">Notes</BaseLink>
+                <BaseLink href="/writing">Writing</BaseLink>
+            </div>
+        </div>
     </div>
 </body>

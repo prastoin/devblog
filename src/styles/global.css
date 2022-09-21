@@ -9,3 +9,11 @@ code {
 :where(.dark) code {
     background-color: #17161d;
 }
+
+#burgerMenuButton:checked ~ #expandableBurgerMenu {
+    display: block;
+}
+
+#burgerMenuButton:checked ~ main {
+    display: none;
+}
