@@ -1,0 +1,22 @@
+---
+import BaseLink from './BaseLink.astro';
+// This component needs to be a sibling of the content you wanna cover
+// It also needs to be built in the DOM before the label targeting the input #burgerMenuButton
+// For further information please have a look to "global.css" file
+---
+
+<Fragment>
+    <input class="hidden" type="checkbox" id="burgerMenuButton" />
+
+    <div
+        id="expandableBurgerMenu"
+        class="hidden fixed inset-0 px-4 bg-white dark:bg-slate-900 z-20 mt-20"
+    >
+        <div class="flex flex-col items-start text-lg">
+            <BaseLink href="/">Home</BaseLink>
+            <BaseLink href="/projects">Projects</BaseLink>
+            <BaseLink href="/notes">Notes</BaseLink>
+            <BaseLink href="/writing">Writing</BaseLink>
+        </div>
+    </div>
+</Fragment>
