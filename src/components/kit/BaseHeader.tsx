@@ -41,7 +41,7 @@ const BaseHeader: React.FC = () => {
     }
 
     return (
-        <header className="flex flex-col max-w-none w-full px-4 sm:px-6 md:px-10 lg:px-16 max-w-7xl mx-auto">
+        <header className="flex flex-col max-w-none w-full max-w-7xl mx-auto">
             <nav className="mx-auto w-full max-w-4xl py-4 text-gray-900 sm:pb-6">
                 <div className="flex mx-auto w-full items-center justify-between">
                     {/* medium and large screen inline header*/}
