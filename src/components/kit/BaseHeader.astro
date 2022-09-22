@@ -1,45 +1,21 @@
 ---
 import ColorThemeSwitch from '../ColorThemeSwitch';
 import BaseLink from './BaseLink.astro';
-import BurgerMenuBaseHeader from './BurgerMenuBaseHeader.astro';
 ---
 
-<Fragment>
-    <BurgerMenuBaseHeader />
+<header class="flex flex-col max-w-none w-full">
+    <nav
+        class="relative mx-auto flex w-full max-w-4xl items-center justify-between py-4 text-gray-900 sm:pb-6"
+    >
+        <div class="flex space-x-5 text-lg">
+            <BaseLink href="/">Home</BaseLink>
+            <BaseLink href="/projects">Projects</BaseLink>
+            <BaseLink href="/notes">Notes</BaseLink>
+            <BaseLink href="/writing">Writing</BaseLink>
+        </div>
 
-    <header class="flex flex-col max-w-none w-full">
-        <nav>
-            <section
-                class="hidden md:flex relative mx-auto w-full max-w-4xl items-center justify-between py-4 text-gray-900 sm:pb-6"
-            >
-                <div class="flex space-x-5 text-lg">
-                    <BaseLink href="/">Home</BaseLink>
-                    <BaseLink href="/projects">Projects</BaseLink>
-                    <BaseLink href="/notes">Notes</BaseLink>
-                    <BaseLink href="/writing">Writing</BaseLink>
-                </div>
-    
-                <div>
-                    <ColorThemeSwitch client:idle />
-                </div>
-            </section>
-    
-            <section
-                class="flex md:hidden w-full max-w-4xl items-center justify-between py-4 text-gray-900 sm:pb-6"
-            >
-                <!-- By clicking on the label below the BurgerMenuBaseHeader will modify the Body main css-->
-                <label id="burgerMenuButton" for="burgerMenuButton">
-                    <div class="space-y-2">
-                        <span class="block w-8 h-1 bg-gray-600"></span>
-                        <span class="block w-8 h-1 bg-gray-600"></span>
-                        <span class="block w-8 h-1 bg-gray-600"></span>
-                    </div>
-                </label>
-    
-                <div>
-                    <ColorThemeSwitch client:idle />
-                </div>
-            </section>
-        </nav>
-    </header>
-</Fragment>
+        <div>
+            <ColorThemeSwitch client:idle />
+        </div>
+    </nav>
+</header>
