@@ -84,11 +84,13 @@ const BaseHeader: React.FC = () => {
                 </div>
 
                 {/* push content down small screen header content */}
-                {burgerMenuIsExpanded && (
-                    <div className="md:hidden flex w-full h-full flex flex-col text-lg">
-                        <HeaderLinks />
-                    </div>
-                )}
+                <div
+                    className={`md:hidden flex w-full h-full flex flex-col text-lg overflow-hidden ${
+                        burgerMenuIsExpanded === true ? 'h-fit-content' : 'h-0'
+                    }`}
+                >
+                    <HeaderLinks />
+                </div>
             </nav>
         </header>
     );
