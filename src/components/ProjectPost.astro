@@ -1,10 +1,10 @@
 ---
 import { ProjectFrontmatter } from "../types/ProjectsType";
-import { Icon } from "astro-icon";
 import { Picture } from '@astrojs/image/components';
 import BaseElementHeading from "./kit/BaseElementHeading.astro";
 import BaseProseSection from "./kit/BaseProseSection.astro";
 import BaseSection from "./kit/BaseSection.astro"
+import BaseIcon from "./kit/BaseIcon.astro";
 export interface Props {
 	projectFronmatter: ProjectFrontmatter
     compiledContent: string
@@ -15,39 +15,43 @@ const {compiledContent, projectFronmatter: {title, imageName, publishDate, githu
     <BaseSection>
         <article class="w-full flex flex-col">
     
-            <header class="mb-4 font-bold text-primary flex flex-col justitfy-between w-full">
-                <div class="w-full">
+            <header class="mb-6 font-bold flex flex-col justitfy-between w-full">
+                <div class="w-full text-primary mb-4">
                     <BaseElementHeading>
                         {title}
                     </BaseElementHeading>
                     <span class="italic">{publishDate}</span>
                 </div>
 
-                <a class="mb-3 mx-auto" href={productionUrl || githubRepoUrl}>
+                <a class="mb-4 mx-auto" href={productionUrl || githubRepoUrl}>
                     <Picture src={import(`../assets/${imageName}.jpg`)} widths={[200, 300, 400, 500]} sizes="(max-width: 800px) 100vw, 800px" alt={`${title} project image presentation`} />
                 </a>
                 
-                <div class="w-full flex flex-row w-full justify-between">
+                <div class="mb-4 w-full flex flex-row w-full justify-between flex-wrap">
                     
-                    <div>
-                        <div class="flex">
-                            {is42Project && <Icon class="w-10" name="simple-icons:42"/>}
-                            {peopleCounter !== undefined && <span class="pl-3 flex items-center">{peopleCounter}<Icon class="w-6" name="bi:person-fill"/></span>}
-                        </div>
+                    <div class="flex items-center">
+                            {is42Project && <div class="pr-3"><BaseIcon name="simple-icons:42"/></div>}
+                            {peopleCounter !== undefined && <span class="flex items-center dark:text-white">{peopleCounter}<BaseIcon size={"sm"} name="bi:person-fill"/></span>}
                     </div>                    
                     
 
-                    <div class="flex flex-row justify-end">
+                    <div class="flex items-center">
                         <a href={githubRepoUrl}>
-                            <Icon class="w-10" name="akar-icons:github-fill" />
+                            <BaseIcon name="akar-icons:github-fill" />
                         </a>
-                        <a href={productionUrl}>
-                            <Icon class="w-10" name="akar-icons:link-out" />
+                        <a class="pl-3" href={productionUrl}>
+                            <BaseIcon name="akar-icons:link-out" />
                         </a>
                     </div>
                 </div>
 
-                {tags && <p class="mt-3">{tags.map(tag => <span class="mr-1 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-1 dark:bg-gray-700 dark:border-gray-600 dark:text-white">{tag}</span>)}</p>}
+                {tags && <p class="flex items-center flex-wrap">
+                    {tags.map(tag => 
+                        <span class="mt-1 mr-2.5 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            {tag}
+                        </span>)
+                    }
+                </p>}
 
             </header>
     
