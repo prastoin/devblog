@@ -1,0 +1,12 @@
+---
+import { Icon } from "astro-icon";
+
+export interface Props {
+    name: string
+    size?: 'sm'
+}
+
+const { name, size } = Astro.props
+---
+
+<Icon class={`${size === "sm" ? "w-7 lg:w-8" : "w-8 lg:w-10"} text-dark dark:text-white`} name={name} />
