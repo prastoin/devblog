@@ -37,7 +37,7 @@ module.exports = {
             'code::before': false,
             'code::after': false,
             'a:hover': {
-              color: '#a1be9d !important',
+              color: '#a1be9d',
               textDecoration: 'underline',
             },
             a: {
