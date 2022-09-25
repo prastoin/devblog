@@ -1,8 +1,8 @@
-import astroRemark from '@astrojs/markdown-remark';
 import react from '@astrojs/react';
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
 
+import mdx from '@astrojs/mdx';
 import image from "@astrojs/image";
 
 // https://astro.build/config
@@ -32,5 +32,5 @@ export default defineConfig({
       path: 'tailwind.config.js',
       applyBaseStyles: false
     }
-  }), image()]
+  }), image(), mdx()]
 });
