@@ -5,6 +5,7 @@ publishDate: 30 mar 2022
 name: prastoin
 description: Guarding HTTP routes with Adonis/Auth is really common. But sometimes we wanna need to apply authentication on socket connection nor events listener too. In this article we see a way to do so with both Adonis/Auth and Socket-io.
 ---
+import BaseAnchor from '../../../components/kit/BaseAnchor.tsx';
 
 ## Table of contents
 
@@ -35,7 +36,8 @@ Overall, on the server-side inside a socket-io middleware we want to have access
 You can find a tested working repo below:  
 [Working example adonis-socket-io-authentication →](https://github.com/prastoin/adonis-socket-io-authentication)
 
-## Introduction
+## <BaseAnchor client:idle label="Introduction"/>
+
 
 Often in applications will be used both authentication and websocket.
 Sometimes you will need to guard specific HTTP routes and not others. It can be the same for socket events listener.
@@ -45,7 +47,7 @@ As far as socket event/listener are concerned this can be quite unusual.
 Some official documentation about adonis & socket-io can be found [here](https://docs.adonisjs.com/cookbooks/socketio-with-adonisjs). But for the moment unless I'm mistaken, nothing about adonis/auth and socket-io.
 In this article I'll describe an implementation of adonis authenticated/guarded socket-io listeners using socket-io middlewares.
 
-## Quick Adonis/auth overview
+## <BaseAnchor client:idle label="Quick Adonis/auth overview"/>
 
 Adonis provides a plug and play [authentication package](https://docs.adonisjs.com/guides/auth/introduction)
 It provides three ways to authenticate your user:  
@@ -85,8 +87,6 @@ Route.get('dashboard', async ({ auth, response }) => {
     // authenticated operations...
 }
 ```
-
-## Socket-io and Authentication
 
 Socket-io provides middlewares via `io.use` where you can prevent listeners to be reached.
 A socket-io server & adonis example can be found below.
