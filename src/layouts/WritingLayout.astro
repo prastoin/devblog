@@ -3,17 +3,27 @@ import BaseHead from '../components/kit/BaseHead.astro';
 import BaseBody from '../components/kit/BaseBody.astro';
 import '../styles/global.css';
 import WritingPost from '../components/writing/WritingPost.astro';
+import type { MarkdownLayoutProps } from 'astro';
 
-const { title, description, publishDate, permalink } = Astro.props.content;
+type Props = MarkdownLayoutProps<{
+    // Define frontmatter props here
+    title: string;
+    publishDate: string;
+    name: string;
+    description: string
+}>;
+
+const {publishDate, title, description, url } = Astro.props.frontmatter;
+const permalink = "";
 ---
 
 <html lang="en">
     <head>
-        <BaseHead {title} {description} {permalink} />
+        <BaseHead title={title} description={description} permalink={permalink} />
     </head>
 
     <BaseBody>
-        <WritingPost {title} {publishDate}>
+        <WritingPost title={title} publishDate={publishDate}>
             <slot />
         </WritingPost>
     </BaseBody>
