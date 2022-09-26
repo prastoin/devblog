@@ -6,7 +6,9 @@ name: prastoin
 description: Idiomatically render dynamic react component depending on the device platform OS. Using expo Platform select method.
 ---
 
-## Table of contents
+import BaseAnchor from '../../../components/kit/BaseAnchor.tsx';
+
+## <BaseAnchor label="Table of contents"/>
 
 -   [Table of contents](#table-of-contents)
 -   [Introduction](#introduction)
@@ -17,7 +19,7 @@ description: Idiomatically render dynamic react component depending on the devic
 -   [Ending](#ending)
 -   [Working example](#working-example)
 
-## Introduction
+## <BaseAnchor label="Introduction"/>
 
 [Expo](https://expo.dev/) is a great tool. Allowing anyone to create a react-native mobile and web app. But comes to a point where a lib you need is not supported by default on every OS you want to build on.
 Here is the list of OS where an expo app can be run:
@@ -38,7 +40,7 @@ export type PlatformOSType =
 A solution would be to render specific react-native component using `if` or ternaries operator. It's not recommended as it brings a double lecture to the code and is not idiomatic to expo.
 Expo provides a `Platform` module, which contains a [select](https://docs.expo.dev/versions/latest/react-native/platform/#select) method that allow you to return anything depending on the platform OS.
 
-### Platform dynamic style declaration example:
+### <BaseAnchor label="Platform dynamic style declaration example:"/>
 
 ```ts
 import { Platform, StyleSheet } from 'react-native';
@@ -62,13 +64,13 @@ const styles = StyleSheet.create({
 });
 ```
 
-## The map example
+## <BaseAnchor label="The map example"/>
 
 Here we want to display a map on both `mobile` and `web`, using expo [MapView](https://docs.expo.dev/versions/latest/sdk/map-view/) on mobile and [react-native-maps](https://github.com/react-native-maps/react-native-maps) on web.
 As we could see on the above example `Platform.select` have infinite use cases.
 For our map issue we wanna dynamically render react component, but also sharing the same typed props between each of them, let's say the default map coords.
 
-### Dynamic component rendering example:
+### <BaseAnchor label="Dynamic component rendering example:"/>
 
 ```tsx
 const Component = Platform.select({
@@ -79,7 +81,7 @@ const Component = Platform.select({
 <Component />;
 ```
 
-## Platform OS specific component
+## <BaseAnchor label="Platform OS specific component"/>
 
 Our component have to be sharing same typed props.
 Then we can establish the following types:
@@ -202,13 +204,13 @@ export default function App() {
 }
 ```
 
-## Ending
+## <BaseAnchor label="Ending"/>
 
 During discovering expo we could easily think that ejecting would be a required end at some point.
 But using expo is really smooth, it provides a lot of tools to answer specific needs idiomatically.
 Combining advanced `react-native` and `platform.select` usage, such as `ExoticComponent` to type safely forward `refs` can lead to powerful and readable architecture.
 
-## Working example
+## <BaseAnchor label="Working example"/>
 
 You can find a working example repository below
 [expo-platform-select-example →](https://github.com/prastoin/expo-platform-select-example)

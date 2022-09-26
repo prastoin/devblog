@@ -8,7 +8,7 @@ export interface BaseAnchorProps {
 }
 
 const BaseAnchor: React.FC<BaseAnchorProps> = ({ label }) => {
-    const encodedId = label.toLowerCase().replace('/', '').split(' ').join('-');
+    const encodedId = label.toLowerCase().replace(/[^a-zA-Z0-9-\s]/g,'').split(' ').join('-');
 
     return (
         <a
@@ -17,9 +17,9 @@ const BaseAnchor: React.FC<BaseAnchorProps> = ({ label }) => {
             href={`#${encodedId}`}
         >
             <span className="inline">{label}</span>
-            <span className="ml-2 inline-flex">
+            <span className="ml-2 inline-flex items-baseline">
                 <svg
-                    className="w-4 h-4 lg:w-6 lg:h-6 underline md:invisible group-hover:visible opacity-80"
+                    className="w-4 h-4 lg:w-5 lg:h-5 underline md:invisible group-hover:visible opacity-80"
                     xmlns="http://www.w3.org/2000/svg"
                     width="1em"
                     height="1em"
