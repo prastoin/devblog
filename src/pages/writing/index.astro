@@ -13,11 +13,10 @@ const description = "Writing articles about things I'm interested in";
 const permalink = 'https://example.com/';
 
 // Data Fetching: List all Markdown posts in the repo.
-const allPosts = (await Astro.glob<PostFrontmatter>('./posts/*.md')).sort(
+const allPosts = (await Astro.glob<PostFrontmatter>('./posts/*.mdx')).sort(
     (a, b) =>
         new Date(b.frontmatter.publishDate).valueOf() - new Date(a.frontmatter.publishDate).valueOf(),
 );
-
 // Full Astro Component Syntax:
 // https://docs.astro.build/core-concepts/astro-components/
 ---

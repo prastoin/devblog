@@ -1,0 +1,27 @@
+---
+import Icon from 'astro-icon';
+import BaseIcon from './BaseIcon.astro';
+
+export interface BaseAnchorProps {
+    label: string;
+}
+
+// Replacing any special chars except whitspaces by '' then replacing whitespaces alone or in row by '-'
+const { label } = Astro.props;
+const encodedId = label
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-zA-Z0-9-\s]/g, '')
+    .replace(/\s+/g, '-');
+---
+
+<a
+    class="cursor-pointer group font-bold inline text-black dark:text-white hover:text-black dark:hover:text-white hover:no-underline"
+    id={encodedId}
+    href={`#${encodedId}`}
+>
+    <span class="inline">{label}</span>
+    <span class="inline-flex items-baseline md:invisible md:group-hover:visible opacity-80">
+        <BaseIcon name="codicon:link" size={"s"} />
+    </span>
+</a>

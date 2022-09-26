@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@astrojs/image": "^0.7.0",
+    "@astrojs/mdx": "^0.11.1",
     "@astrojs/react": "^1.1.2",
     "@astrojs/renderer-react": "^0.4.1",
     "@astrojs/tailwind": "^1.0.1",
