@@ -1,8 +1,10 @@
 {
-    "*.tsx": [
-      "eslint"
-    ],
-    "*.astro": [
-      "eslint"
-    ]  
+  "*.tsx": [
+    "eslint",
+    "prettier"
+  ],
+  "*.astro": [
+    "eslint",
+    "prettier"
+  ]
 }
