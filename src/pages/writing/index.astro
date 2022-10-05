@@ -2,7 +2,7 @@
 // Component Imports
 import BaseHead from '../../components/kit/BaseHead.astro';
 import BaseBody from '../../components/kit/BaseBody.astro';
-import '../../styles/global.css'
+import '../../styles/global.css';
 
 import WritingPostPreview from '../../components/writing/WritingPostPreview.astro';
 import { PostFrontmatter } from '../../types/PostsType';
@@ -15,7 +15,8 @@ const permalink = 'https://example.com/';
 // Data Fetching: List all Markdown posts in the repo.
 const allPosts = (await Astro.glob<PostFrontmatter>('./posts/*.mdx')).sort(
     (a, b) =>
-        new Date(b.frontmatter.publishDate).valueOf() - new Date(a.frontmatter.publishDate).valueOf(),
+        new Date(b.frontmatter.publishDate).valueOf() -
+        new Date(a.frontmatter.publishDate).valueOf(),
 );
 // Full Astro Component Syntax:
 // https://docs.astro.build/core-concepts/astro-components/
@@ -23,20 +24,32 @@ const allPosts = (await Astro.glob<PostFrontmatter>('./posts/*.mdx')).sort(
 
 <html lang="en">
     <head>
-        <BaseHead title={title} description={description} permalink={permalink} />
+        <BaseHead
+            title={title}
+            description={description}
+            permalink={permalink}
+        />
     </head>
 
     <BaseBody>
-        <div
-            class="flex flex-col justify-evenly"
-        >
+        <div class="flex flex-col justify-evenly">
             <BasePageHeading>Writing</BasePageHeading>
             <div aria-label="Blog post list">
-                {allPosts.map(({ frontmatter: postInformation, url}, index) => <WritingPostPreview writingPostPreviewIndex={index} postInformation={{
-                    ...postInformation,
-                    url
-                }} />)}
+                {
+                    allPosts.map(
+                        ({ frontmatter: postInformation, url }, index) => (
+                            <WritingPostPreview
+                                writingPostPreviewIndex={index}
+                                postInformation={{
+                                    ...postInformation,
+                                    url,
+                                }}
+                            />
+                        ),
+                    )
+                }
             </div>
         </div>
     </BaseBody>
+
 </html>

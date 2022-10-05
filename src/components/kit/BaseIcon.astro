@@ -1,33 +1,33 @@
 ---
-import { Icon } from "astro-icon";
+import { Icon } from 'astro-icon';
 
-type IconSize = 's' | 'm' | 'xl'
+type IconSize = 's' | 'm' | 'xl';
 
 export interface Props {
-    name: string
-    size?: IconSize
+    name: string;
+    size?: IconSize;
 }
 
-function getIconWidth(iconSize: IconSize = "xl") {
-    const smallStyle = "w-4 lg:w-5"
-    const mediumStyle = "w-7 lg:w-8"
-    const extraLargeStyle = "w-8 lg:w-10"
+function getIconWidth(iconSize: IconSize = 'xl') {
+    const smallStyle = 'w-4 lg:w-5';
+    const mediumStyle = 'w-7 lg:w-8';
+    const extraLargeStyle = 'w-8 lg:w-10';
 
-    switch(iconSize){
+    switch (iconSize) {
         case 's':
-            return smallStyle
+            return smallStyle;
         case 'm':
-            return mediumStyle
+            return mediumStyle;
         case 'xl':
-            return extraLargeStyle
+            return extraLargeStyle;
         default:
-            console.error(`Encountered unknown iconSize value ${iconSize}`)
-            return extraLargeStyle
+            console.error(`Encountered unknown iconSize value ${iconSize}`);
+            return extraLargeStyle;
     }
 }
 
-const { name, size } = Astro.props
-const iconWidth = getIconWidth(size)
+const { name, size } = Astro.props;
+const iconWidth = getIconWidth(size);
 ---
 
 <Icon class={`${iconWidth} text-dark dark:text-white`} name={name} />
