@@ -5,7 +5,8 @@
     "root": true,
     "parser": "@typescript-eslint/parser",
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "markdown"
     ],
     "extends": [
         "eslint:recommended",
@@ -34,6 +35,14 @@
                 // override/add rules settings here, such as:
                 // "astro/no-set-html-directive": "error"
             }
+        },
+        {
+            // 2. Enable the Markdown processor for all .md files.
+            "files": [
+                "**/*.md",
+                "**/*.mdx"
+            ],
+            "processor": "markdown/markdown"
         }
     ]
 }

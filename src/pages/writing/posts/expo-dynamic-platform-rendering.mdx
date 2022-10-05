@@ -166,8 +166,8 @@ import { Platform } from 'react-native';
 import { MapFunctionComponent } from './contract';
 
 const MapComponent: MapFunctionComponent = Platform.select({
-    native: () => require('./native').default,
-    default: () => require('./web').default,
+    native: () => await import('./native').default,
+    default: () => await import('./web').default,
 })();
 
 export default MapComponent;
