@@ -241,7 +241,6 @@ const ColorThemeSwitch: React.FC = () => {
                 <option value="default">Default</option>
                 <option value="light" >Light</option>
                 <option value="dark">Dark</option>
-
             </select>
         </>
     );

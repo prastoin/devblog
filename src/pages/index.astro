@@ -6,6 +6,7 @@ import '../styles/global.css';
 import BaseSection from '../components/kit/BaseSection.astro';
 import BaseLink from '../components/kit/BaseLink.astro';
 import BaseParagraph from '../components/kit/BaseParagraph.astro';
+import BaseIcon from '../components/kit/BaseIcon.astro';
 
 // You can import components from any supported Framework here!
 
@@ -39,6 +40,15 @@ const permalink = 'https://example.com/';
                     alt="olive branch image"
                 />
             </a>
+
+            <div class="mx-auto flex my-3">
+                <a class="px-6" href="https://github.com/prastoin">
+                    <BaseIcon size="xl"name="akar-icons:github-fill" />
+                </a>
+                <a class="px-6" href="https://www.linkedin.com/in/paul-r-848782113/">
+                    <BaseIcon size="xl" name="akar-icons:linkedin-fill" />
+                </a>
+            </div>
         </nav>
         <div class="w-full flex flex-col self-center">
             <h3 class="mb-3 font-medium text-[#374151] dark:text-[#d1d5db]">
