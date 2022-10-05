@@ -10,7 +10,7 @@ export interface Props {
     postInformation: PostPreviewInformation;
 }
 
-const { writingPostPreviewIndex, postInformation: {description, name, publishDate, title, url} } = Astro.props;
+const { writingPostPreviewIndex, postInformation: {description, publishDate, title, url} } = Astro.props;
 const showBaseHr = writingPostPreviewIndex !== 0
 ---
 

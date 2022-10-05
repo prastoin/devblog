@@ -1,6 +1,5 @@
 import { useMachine } from '@xstate/react';
-import { assign, createMachine, DoneInvokeEvent } from 'xstate';
-import { after } from 'xstate/lib/actions';
+import { assign, createMachine } from 'xstate';
 
 type ColorTheme = "dark" | "light" | "default";
 
@@ -143,7 +142,7 @@ const toggleColorThemeMachine =
                     window.matchMedia('(prefers-color-scheme: dark)').matches,
             },
             services: {
-                "Retrieve color theme from localStorage": async (_context, _event) => {
+                "Retrieve color theme from localStorage": async () => {
                     if (typeof window === 'undefined')
                         throw new Error('page not built');
 
