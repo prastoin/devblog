@@ -8,7 +8,6 @@ tags: [cheerio, JavaScript, security]
 is42Project: true
 ---
 
-
 The Darkly is 42 Web security pen test project
 The objective was to find 14 breaches, each of them giving a flag.
 For each breach, we wrote how we found it, how the breach can be exploited and how the breach can be avoided.

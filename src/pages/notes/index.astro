@@ -2,7 +2,7 @@
 import NotePost from '../../components/NotePost.astro';
 import BaseBody from '../../components/kit/BaseBody.astro';
 import BaseHead from '../../components/kit/BaseHead.astro';
-import '../../styles/global.css'
+import '../../styles/global.css';
 import { NoteFrontmatter } from '../../types/NotesType';
 import BasePageHeading from '../../components/kit/BasePageHeading.astro';
 
@@ -12,24 +12,39 @@ const permalink = 'https://example.com'; //TODO update ?
 
 // Data Fetching: List all Markdown posts in the repo.
 async function fetchAllNotes() {
-    return await Astro.glob<NoteFrontmatter>('../../components/notes/*.md')
+    return await Astro.glob<NoteFrontmatter>('../../components/notes/*.md');
 }
 
 const allNotes = (await fetchAllNotes()).sort(
     (a, b) =>
-        new Date(b.frontmatter.publishDate).valueOf() - new Date(a.frontmatter.publishDate).valueOf(),
+        new Date(b.frontmatter.publishDate).valueOf() -
+        new Date(a.frontmatter.publishDate).valueOf(),
 );
 ---
 
 <html lang="en">
     <head>
-        <BaseHead title={title} description={description} permalink={permalink} />
+        <BaseHead
+            title={title}
+            description={description}
+            permalink={permalink}
+        />
     </head>
 
     <BaseBody>
         <BasePageHeading>Today I learned</BasePageHeading>
         <section aria-label="Blog post list">
-            {allNotes.map((post, index) => <NotePost noteIndex={index} postFrontmatter={post.frontmatter} compiledContent={post.compiledContent()}/>)}
+            {
+                allNotes.map((post, index) => (
+                    <NotePost
+                        noteIndex={index}
+                        postFrontmatter={post.frontmatter}
+                        compiledContent={post.compiledContent()}
+                    />
+                ))
+            }
         </section>
     </BaseBody>
+
+
 </html>

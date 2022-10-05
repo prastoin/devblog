@@ -1,0 +1,8 @@
+{
+    "*.tsx": [
+        "eslint"
+    ],
+    "*.astro": [
+        "eslint"
+    ]
+}

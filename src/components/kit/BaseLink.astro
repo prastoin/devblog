@@ -1,11 +1,14 @@
 ---
 export interface Props {
-    href: string
+    href: string;
 }
 
-const {href} = Astro.props
+const { href } = Astro.props;
 ---
 
-<a href={href} class="text-primary hover:text-secondary hover:underline font-medium">
-    <slot/>
+<a
+    href={href}
+    class="text-primary hover:text-secondary hover:underline font-medium"
+>
+    <slot />
 </a>

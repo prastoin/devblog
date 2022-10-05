@@ -24,7 +24,11 @@ const permalink = 'https://example.com/';
 
 <html lang="en">
     <head>
-        <BaseHead title={title} description={description} permalink={permalink} />
+        <BaseHead
+            title={title}
+            description={description}
+            permalink={permalink}
+        />
     </head>
 
     <BaseBody>
@@ -43,9 +47,12 @@ const permalink = 'https://example.com/';
 
             <div class="mx-auto flex my-3">
                 <a class="px-6" href="https://github.com/prastoin">
-                    <BaseIcon size="xl"name="akar-icons:github-fill" />
+                    <BaseIcon size="xl" name="akar-icons:github-fill" />
                 </a>
-                <a class="px-6" href="https://www.linkedin.com/in/paul-rastoin/">
+                <a
+                    class="px-6"
+                    href="https://www.linkedin.com/in/paul-rastoin/"
+                >
                     <BaseIcon size="xl" name="akar-icons:linkedin-fill" />
                 </a>
             </div>

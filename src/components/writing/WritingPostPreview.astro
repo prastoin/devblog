@@ -10,8 +10,11 @@ export interface Props {
     postInformation: PostPreviewInformation;
 }
 
-const { writingPostPreviewIndex, postInformation: {description, name, publishDate, title, url} } = Astro.props;
-const showBaseHr = writingPostPreviewIndex !== 0
+const {
+    writingPostPreviewIndex,
+    postInformation: { description, publishDate, title, url },
+} = Astro.props;
+const showBaseHr = writingPostPreviewIndex !== 0;
 ---
 
 <Fragment>
@@ -22,7 +25,7 @@ const showBaseHr = writingPostPreviewIndex !== 0
                 <BaseLink href={url}>
                     <span class="font-bold">
                         {title}
-                    </span>    
+                    </span>
                 </BaseLink>
             </BaseElementHeading>
             <span class="italic">{publishDate}</span>
@@ -31,7 +34,7 @@ const showBaseHr = writingPostPreviewIndex !== 0
         <BaseParagraph>
             {description}
         </BaseParagraph>
-        
+
         <BaseLink href={url}>Read more</BaseLink>
     </BaseSection>
 </Fragment>

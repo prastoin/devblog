@@ -10,16 +10,20 @@ type Props = MarkdownLayoutProps<{
     title: string;
     publishDate: string;
     name: string;
-    description: string
+    description: string;
 }>;
 
-const {publishDate, title, description, url } = Astro.props.frontmatter;
-const permalink = "";
+const { publishDate, title, description } = Astro.props.frontmatter;
+const permalink = '';
 ---
 
 <html lang="en">
     <head>
-        <BaseHead title={title} description={description} permalink={permalink} />
+        <BaseHead
+            title={title}
+            description={description}
+            permalink={permalink}
+        />
     </head>
 
     <BaseBody>

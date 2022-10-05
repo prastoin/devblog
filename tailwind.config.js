@@ -1,68 +1,66 @@
 module.exports = {
-  mode: 'jit',
-  darkMode: 'class',
-  content: [
-    './public/**/*.html',
-    './src/**/*.{astro,js,jsx,svelte,ts,tsx,vue}',
-  ],
-  plugins: [
-    require('@tailwindcss/typography'),
-  ],
-  //@swyx tailwind default extension https://play.tailwindcss.com/h7l9RbJTuu?file=config#
-  theme: {
-    extend: {
-      colors: {
-        "primary": "#63945D",
-        "secondary": "#a1be9d",
-        "dark": "#111827",
-        "textLight": "#374151",
-        "textDark": "#d1d5db"
-      },
-      typography: {
-        DEFAULT: {
-          css: {
-            blockquote: {
-              borderLeft: '3px solid red',
-              fontSize: 'inherit',
-              fontStyle: 'inherit',
-              fontWeight: 'medium',
+    mode: 'jit',
+    darkMode: 'class',
+    content: [
+        './public/**/*.html',
+        './src/**/*.{astro,js,jsx,svelte,ts,tsx,vue}',
+    ],
+    plugins: [require('@tailwindcss/typography')],
+    //@swyx tailwind default extension https://play.tailwindcss.com/h7l9RbJTuu?file=config#
+    theme: {
+        extend: {
+            colors: {
+                primary: '#63945D',
+                secondary: '#a1be9d',
+                dark: '#111827',
+                textLight: '#374151',
+                textDark: '#d1d5db',
             },
-            'blockquote p:first-of-type::before': {
-              content: '',
-            },
-            'blockquote p:last-of-type::after': {
-              content: '',
-            },
+            typography: {
+                DEFAULT: {
+                    css: {
+                        blockquote: {
+                            borderLeft: '3px solid red',
+                            fontSize: 'inherit',
+                            fontStyle: 'inherit',
+                            fontWeight: 'medium',
+                        },
+                        'blockquote p:first-of-type::before': {
+                            content: '',
+                        },
+                        'blockquote p:last-of-type::after': {
+                            content: '',
+                        },
 
-            'code::before': false,
-            'code::after': false,
-            'a:hover': {
-              color: '#a1be9d',
-              textDecoration: 'underline',
+                        'code::before': false,
+                        'code::after': false,
+                        'a:hover': {
+                            color: '#a1be9d',
+                            textDecoration: 'underline',
+                        },
+                        a: {
+                            color: '#63945D',
+                            textDecoration: 'none',
+                        },
+                        'a code': {
+                            color: 'unset',
+                        },
+                        'li, ul, ol': {
+                            margin: 0,
+                        },
+                        'li > img': {
+                            margin: 0,
+                            display: 'inline',
+                        },
+                        'ol > li::marker': {
+                            color: 'var(--tw-prose-body)',
+                        },
+                        'ul > li::marker': {
+                            color: 'var(--tw-prose-body)',
+                        },
+                    },
+                },
             },
-            a: {
-              color: '#63945D',
-              textDecoration: 'none',
-            },
-            "a code": {
-              color: 'unset'
-            },
-            "li, ul, ol": {
-              margin: 0
-            },
-            "li > img": {
-              margin: 0,
-              display: 'inline'
-            },
-            'ol > li::marker': {
-              color: 'var(--tw-prose-body)',
-            },
-            'ul > li::marker': {
-              color: 'var(--tw-prose-body)',
-            },
-          },
         },
-      },
     },
-  },
 };
