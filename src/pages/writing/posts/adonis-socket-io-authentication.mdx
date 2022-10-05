@@ -58,12 +58,12 @@ In this article we will be implementing both Web guard and API Tokens authentica
 For HTTP protocol adonis allows you to check for authentication using authentication guards and routes middlewares:
 
 ```ts
-import Route from '@ioc:Adonis/Core/Route'
+import Route from '@ioc:Adonis/Core/Route';
 
 //Api Tokens and Web Auth guarded get route using auth guards and route middleware
 Route.get('dashboard', async ({ auth, response }) => {
     // authenticated operations...
-}.middleware('auth:api,web')
+}).middleware('auth:api,web');
 ```
 
 Note: Depending on your configuration @adonis/auth will define default auth guards.
@@ -72,20 +72,19 @@ Of course you can create custom guards
 But there's also an other way to look for your user authentication, using the auth `AuthContract` that allows you to use whenever you want any authentication guards. Note that to be able to retrieve a `AuthContract` instance you need to have access to a `HttpContextContract`, we will come back to this point later.
 
 ```ts
-import Route from '@ioc:Adonis/Core/Route'
+import Route from '@ioc:Adonis/Core/Route';
 
 //Api Tokens and  guarded get route using AuthContract
 Route.get('dashboard', async ({ auth, response }) => {
     const user = await auth.use('api').authenticate();
     // authenticated operations...
-
-}
+});
 
 //Web Auth and guarded get route using AuthContract
 Route.get('dashboard', async ({ auth, response }) => {
     const user = await auth.use('web').authenticate();
     // authenticated operations...
-}
+});
 ```
 
 Socket-io provides middlewares via `io.use` where you can prevent listeners to be reached.
@@ -176,7 +175,9 @@ io.use((socket, next) => {
 
     // AuthContract
     const auth = AuthManager.getAuthForRequest(ctx);
-}).on('connection', (socket) => {});
+}).on('connection', (socket) => {
+    // Connection established
+});
 ```
 
 Now that we have everything we need there are still few things to set up specific to each authentication mode before being able to perform an authentication check successfully,
