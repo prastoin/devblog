@@ -50,35 +50,35 @@ const BaseHeader: React.FC = () => {
                     </div>
 
                     {/* small screen burger menu header*/}
-                    <section
-                        className="flex md:hidden"
+                    <button
+                        className="flex flex-col md:hidden justify-center gap-1 self-stretch"
                         onClick={handleBurgerMenuButtonOnClick}
                     >
                         <span
                             aria-hidden="true"
-                            className={`block absolute h-0.5 w-6 bg-gray-600 transform transition duration-500 ease-in-out ${
+                            className={`h-0.5 w-6 bg-gray-600 transform transition duration-500 ease-in-out ${
                                 burgerMenuIsExpanded === true
-                                    ? 'rotate-45'
-                                    : '-translate-y-1.5'
+                                    ? 'rotate-45 absolute'
+                                    : ''
                             }`}
                         />
                         <span
                             aria-hidden="true"
-                            className={`block absolute  h-0.5 w-6 bg-gray-600 transform transition duration-500 ease-in-out ${
+                            className={`h-0.5 w-6 bg-gray-600 transform transition duration-500 ease-in-out ${
                                 burgerMenuIsExpanded === true ? 'opacity-0' : ''
                             }`}
                         />
                         <span
                             aria-hidden="true"
-                            className={`block absolute h-0.5 w-6 bg-gray-600 transform  transition duration-500 ease-in-out ${
+                            className={`h-0.5 w-6 bg-gray-600 transform  transition duration-500 ease-in-out ${
                                 burgerMenuIsExpanded === true
-                                    ? '-rotate-45'
-                                    : 'translate-y-1.5'
+                                    ? '-rotate-45 absolute'
+                                    : ''
                             }`}
                         />
-                    </section>
+                    </button>
 
-                    <div>
+                    <div className="items-center">
                         <ColorThemeSwitch />
                     </div>
                 </div>
