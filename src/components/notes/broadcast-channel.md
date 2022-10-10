@@ -1,0 +1,34 @@
+---
+title: Broadcast Channel
+publishDate: 10 oct 2022
+name: prastoin
+---
+
+While working on the musicroom we've had to synchronize every app's pages on user authentication updates.
+To do so we've been working with the [Broadcast Channels](https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel). Later I've struggled to remember the exact name of the API we've been using that's why I'm writing it down here.
+
+The `Broadcast Channel API` is a great tool to communicate between several windows/iframes/tabs from the same origin by posting and listening to messages.
+In this way on the user log in nor log out from a tab, you could reload every app's pages to avoid unsynced views.
+
+```ts
+// Listening to broadcast channel messages
+broadcastChannel.onmessage = (event) => {
+    switch (event.data) {
+        case 'RELOAD_BROWSER_TABS': {
+            // On message reception logic
+            break;
+        }
+        default: {
+            console.error('encountered unknown broadcast channel message');
+        }
+    }
+};
+
+// Sending broadcast channel message
+broadcastChannel.postMessage('RELOAD_BROWSER_TABS');
+
+// Disconnecting the channel
+broadcastChannel.close();
+```
+
+For further information have a look to [Broadcast_Channel_API](https://developer.mozilla.org/en-US/docs/Web/API/Broadcast_Channel_API) 

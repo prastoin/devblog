@@ -20,7 +20,7 @@ console.log(rawResponse.status);
 // => can be anything ( 500, 404, 200...)
 ```
 
-Or you can provide your own http status range, in the example below readxios will throw an error on http status code 500
+Or you can provide your own http status range, in the example below redaxios will throw an error on http status code 500
 
 ```ts
 import redaxios from 'redaxios';
