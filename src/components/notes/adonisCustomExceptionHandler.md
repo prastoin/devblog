@@ -28,7 +28,7 @@ Route.get('dashboard', async ({ auth, response }) => {
 });
 ```
 
-Adonis provides an idiomatic way to raise custom exceptions manually.<br/> Using adonis [custom execeptions](https://docs.adonisjs.com/guides/exception-handling#custom-exceptions), it's possible to throw custom exception to the global exception listener at any time.<br/>
+Adonis provides an idiomatic way to raise custom exceptions manually.<br/> Using adonis [custom exceptions](https://docs.adonisjs.com/guides/exception-handling#custom-exceptions), it's possible to throw custom exception to the global exception listener at any time.<br/>
 You can use adonis CLI to init your custom exception as follows
 
 ```bash

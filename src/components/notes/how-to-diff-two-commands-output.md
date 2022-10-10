@@ -17,8 +17,8 @@ In this way, to be diffing two curl responses we can use:
 diff <(curl url) <(curl url)
 ```
 
-Note that curl's `--silent` flag can be usefull here, see [documentation](https://curl.se/docs/manpage.html#:~:text=progress%2Dmeter.-,%2Ds%2C%20%2D%2Dsilent,-Silent%20or%20quiet)
+Note that curl's `--silent` flag can be useful here, see [documentation](https://curl.se/docs/manpage.html#:~:text=progress%2Dmeter.-,%2Ds%2C%20%2D%2Dsilent,-Silent%20or%20quiet)
 
-```txt
+```
 -s, --silent Silent or quiet mode. Don't show progress meter or error messages. Makes Curl mute. It will still output the data you ask for, potentially even to the terminal/stdout unless you redirect it.
 ```

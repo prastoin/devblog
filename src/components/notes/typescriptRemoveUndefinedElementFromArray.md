@@ -6,7 +6,7 @@ name: prastoin
 
 I had to use some async method on an array to be generating a new one.
 As **array.filter** does not support Promises it leads to be using **array.map** and **Promise.all**.
-However using **array.map** means that your outputted array will be containing unwanted undefined occurences, that you could remove using a filter on the end.
+However using **array.map** means that your outputted array will be containing unwanted undefined occurrences, that you could remove using a filter on the end.
 But this wont be enough for typescript itself, even if indeed it would work on runtime.
 
 ```js
