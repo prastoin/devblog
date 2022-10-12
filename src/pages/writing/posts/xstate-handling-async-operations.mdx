@@ -1,0 +1,148 @@
+---
+layout: ../../../layouts/WritingLayout.astro
+title: Handling async operations, invoking promises with XState
+publishDate: 12 oct 2022
+name: prastoin
+description: Thanks to XState invoke and parallel states, we're able to TODO
+---
+
+import BaseAnchor from '../../../components/kit/BaseAnchor.astro';
+
+## <BaseAnchor label="Table of contents"/>
+
+-   [Table of contents](#table-of-contents)
+-   [Introduction](#introduction)
+
+## <BaseAnchor label="Introduction" />
+
+The very first need is two await from two async source to finish before going further.
+Lets say for the example, waiting for the response of 2 http requests before allowing the user to interact with the view.
+In our example we'll take both the `UserInformation` and `UserCart` requests.
+
+A State Machine defines `States` listening to `Events` allowing or not `Transitions` to other `States` it also contains `Context`.
+It exists several layer where we can run specific `Actions`, `Services` and `Conditions`, as for example when entering/leaving a `State` or receiving a specific `event` and more.
+XState is a library that allows us to write States machines in Javascript. It comes with a lot a framework related packages, such as React Vue Angular and more, to be able to interact and interpret the logic a machine can be carrying.
+
+The goal of our application is then to load all the user Data, before achieving to its final state.
+To do so we'll be using the [Invoking promises](https://xstate.js.org/docs/guides/communication.html#invoking-promises) XState's feature and XState [parallel states](https://xstate.js.org/docs/guides/parallel.html).
+
+## <BaseAnchor label="Invoking promises with XState"/>
+
+XState thanks to its `Invoke` API, allows us to invoke Callbacks/Machines/Observables/Promises.
+In our case we will be invoking promises, and more precisely services leagind to send an http request.
+Lets think about a machine that when being interpreted instantly send an HTTP request to a server in order to retrieve a user instance.
+That machine will need to have an initial state set to the state that invoked our fetching promise, lets say `Loading`.
+In that state thanks to `invoke` we will run our fetch instance, then within the same state we will ended either the failing and success use case.
+Using the `onDone` and `onError` properties, that respectively handle the promise resolution and promise rejection.
+In a success case we will transition to a `success` state, otherwise in a `failure` state.
+Lets be fancy ! Inside the `failure` state we will listen for a `RETRY` event, only available when we're in this state ! On its reception we will transition to the `loading` state.
+In this example I use the XState typegen to be able to strongly type any of my machine properties.
+
+Simple typed usage example:
+
+```ts
+import { assign, createMachine } from 'xstate';
+
+interface User {
+    userId: number;
+    userEmail: string;
+}
+
+const fetchUser = (userId: number): Promise<User> =>
+    fetch(`url/to/user/${userId}`).then((response) => response.json());
+
+interface FetchUserMachineContext {
+    userId: number;
+    userEmail?: string;
+}
+
+// Machine definition
+export const userMachine = createMachine(
+    {
+        id: 'user',
+        // The default state the machine will join
+        initial: 'loading',
+        schema: {
+            context: {} as FetchUserMachineContext,
+            services: {} as {
+                'Fetch User': {
+                    data: User;
+                };
+            },
+        },
+        // This is for typing purpose for more information have a look to
+        // https://xstate.js.org/docs/guides/typescript.html#typegen
+        tsTypes: {} as import('./myTestMachine.typegen').Typegen0,
+        context: {
+            userId: 42,
+            userEmail: undefined,
+        },
+        states: {
+            loading: {
+                // From the moment the machine is interpreted it will triggers the following invoke
+                // That leads to perform an HTTP request
+                invoke: {
+                    id: 'getUser',
+                    src: 'Fetch User',
+
+                    // On promise resolution
+                    onDone: {
+                        target: 'success',
+                        // If the response is ok then we will update the machine context from the retrieved data using an action
+                        actions: 'Assign fetched user to context',
+                    },
+
+                    // On promise Rejection
+                    onError: {
+                        target: 'failure',
+                    },
+                },
+            },
+
+            success: {
+                type: 'final',
+            },
+
+            failure: {
+                // In this state we're listening to a specific event RETRY
+                // Note that if the machine intercepts a RETRY event while being in loading state
+                // It won't be interpreted at all
+                on: {
+                    RETRY: { target: 'loading' },
+                },
+            },
+        },
+    },
+    {
+        actions: {
+            // Note thanks to the typegen we don't even have to type check the received event below !
+            'Assign fetched user to context': assign({
+                userEmail: (_context, event) => event.data.userEmail,
+            }),
+        },
+        services: {
+            'Fetch User': async (context) => await fetchUser(context.userId),
+        },
+    },
+);
+```
+
+Note that just like that, when the machine is not interpreted ! It's just an object.
+We will see later a way to interpret an equivalent machine later.
+
+## <BaseAnchor label="parallel states nodes"/>
+
+We've seen how to handle one async operation within a state machine. But our goal is to be handling at least two of them at the same time.
+In this way we will need our machine to be able to "be" in several states at once.
+This is when the `parallel` states nodes make an entrance.
+It exists several machine [states node types](https://xstate.js.org/docs/guides/statenodes.html#state-node-types):
+
+```
+- An atomic state node has no child states. (I.e., it is a leaf node.)
+- A compound state node contains one or more child states, and has an initial state, which is the key of one of those child states.
+- A parallel state node contains two or more child states, and has no initial state, since it represents being in all of its child states at the same time.
+- A final state node is a leaf node that represents an abstract "terminal" state.
+- A history state node is an abstract node that represents resolving to its parent node's most recent shallow or deep history state.
+```
+
+We can see that the parallel state node type is exactly what we are looking for.
