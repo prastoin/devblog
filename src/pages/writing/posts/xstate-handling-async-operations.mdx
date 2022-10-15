@@ -411,9 +411,282 @@ export const createLoadUserDataMachine = () => {
   );
 };
 ```
+
+## <BaseAnchor label="Machine integration within a component"/>
+
+Until now, we've been thinking about the core logic, our machine definition.
+Now we want to be able to communicate with it within a component, to do so we will be using `Vue3` with its composition API.
+Note that XState provides packages for:
+
+-   Vue
+-   React
+-   Svelte
+
+The idea is not to cover the whole xstate/vue package but to check what we have to user to be able to communicate with the machine from a Vue component.
+
+### Creating and interpreting the machine.
+
+First we need to instantiate our machine using the previously created `createLoadUserDataMachine` function, that itself uses the `createMachine` XState function.
+From there we will pass our state machine to the `useMachine` hook, note that we also pass the machine configuration required services.
+
+```vue
+<script setup lang="ts">
+import { useMachine } from '@xstate/vue';
+import { fetchUserCart, fetchUserInformation } from '@/services/UserService';
+import { createLoadUserDataMachine } from '@/machines/LoadUserDataMachine';
+
+// Creating the machine
+const loadUserInformationMachine = createLoadUserDataMachine();
+
+// Interpreting the machine
+const { send: sendToCounterMachine, state: loadUserDataMachineState } =
+    useMachine(loadUserInformationMachine, {
+        services: {
+            'Fetch user information': async () => await fetchUserInformation(),
+            'Fetch user cart': async () => await fetchUserCart(),
         },
-    },
-});
+    });
+</script>
 ```
-Note that again we've haven't seen how to interact with the machine from the outside, in our precise case how to send events to it.
-We're going to see this in the section just below ! where we use both `XState` parallel states and `Promises invocation`
+
+There we go from there we have access to a running instance of our machine.
+The `send` method allowing us to send events to the machine and the state being a Vue3 shallowRef of the machine state.
+Within a machine state we can find, the machine current state value, the machine context and more ! see documentation.
+
+### Communicating with the machine
+
+In our machine configuration we've described only two events.
+One for starting loading everything and the other on the last state reseting the machine context and state.
+
+```ts
+type LoadUserDataMachineEvents =
+    | {
+          type: 'User pressed load user data button';
+      }
+    | {
+          type: 'User pressed reset machine button';
+      };
+```
+
+Coming back to our previous Vue component code we can add two button onClick handlers to would be using the send method.
+
+```vue
+<script setup lang="ts">
+import { useMachine } from '@xstate/vue';
+import { fetchUserCart, fetchUserInformation } from '@/services/UserService';
+import { createLoadUserDataMachine } from '@/machines/LoadUserDataMachine';
+
+// Creating the machine
+const loadUserInformationMachine = createLoadUserDataMachine();
+
+// Interpreting the machine
+const { send: sendToCounterMachine, state: loadUserDataMachineState } =
+    useMachine(loadUserInformationMachine, {
+        services: {
+            'Fetch user information': async () => await fetchUserInformation(),
+            'Fetch user cart': async () => await fetchUserCart(),
+        },
+    });
+</script>
+```
+
+Note that in our machine we're not explicitly passing payload through events but in fact it's the case for the promises resolution that passes the request response body !
+
+```ts
+function sendUserPressedLoadUserDataToMachine() {
+    sendToCounterMachine({
+        type: 'User pressed load user data button',
+    });
+}
+
+function sendResetContextToMachine() {
+    sendToCounterMachine({
+        type: 'User pressed reset machine button',
+    });
+}
+```
+
+Also we will need to update our view depending on the machine current state.
+To avoid woblly assertion on the state machine current state we will be using XState `tags` !
+Lets say that using `state.hasTags("my-tag")` will return true if the current machine state scopes `my-tag`.
+
+```ts
+const showLoadUserDataButton = computed(
+    // The first .value is for accessing the ShallowRef current value
+    // The second is the machine current state
+    () => loadUserDataMachineState.value.value === 'Idle',
+);
+
+function getUserInformationStatus(): StatusLabel {
+    if (
+        loadUserDataMachineState.value.hasTag('Loading user information failed')
+    ) {
+        return 'failed';
+    }
+
+    if (loadUserDataMachineState.value.hasTag('Loading user information')) {
+        return 'loading';
+    }
+
+    return 'success';
+}
+const userInformationStatus = computed(() => getUserInformationStatus());
+
+function getUserCartStatus(): StatusLabel {
+    if (loadUserDataMachineState.value.hasTag('Loading user cart failed')) {
+        return 'failed';
+    }
+
+    if (loadUserDataMachineState.value.hasTag('Loading user cart')) {
+        return 'loading';
+    }
+
+    return 'success';
+}
+const userCartStatus = computed(() => getUserCartStatus());
+```
+
+The final component using every of the three above points !
+
+```vue
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useMachine } from '@xstate/vue';
+import BaseButton from './kit/BaseButton.vue';
+import { fetchUserCart, fetchUserInformation } from '@/services/UserService';
+import type { StatusLabel } from '@/type';
+import StatusSection from './kit/StatusSection.vue';
+import { createLoadUserDataMachine } from '@/machines/LoadUserDataMachine';
+
+const loadUserInformationMachine = createLoadUserDataMachine();
+
+const { send: sendToCounterMachine, state: loadUserDataMachineState } =
+    useMachine(loadUserInformationMachine, {
+        services: {
+            'Fetch user information': async () => await fetchUserInformation(),
+            'Fetch user cart': async () => await fetchUserCart(),
+        },
+    });
+
+function sendUserPressedLoadUserDataToMachine() {
+    sendToCounterMachine({
+        type: 'User pressed load user data button',
+    });
+}
+
+function sendResetContextToMachine() {
+    sendToCounterMachine({
+        type: 'User pressed reset machine button',
+    });
+}
+
+const showLoadUserDataButton = computed(
+    () => loadUserDataMachineState.value.value === 'Idle',
+);
+
+function getUserInformationStatus(): StatusLabel {
+    if (
+        loadUserDataMachineState.value.hasTag('Loading user information failed')
+    ) {
+        return 'failed';
+    }
+
+    if (loadUserDataMachineState.value.hasTag('Loading user information')) {
+        return 'loading';
+    }
+
+    return 'success';
+}
+const userInformationStatus = computed(() => getUserInformationStatus());
+
+function getUserCartStatus(): StatusLabel {
+    if (loadUserDataMachineState.value.hasTag('Loading user cart failed')) {
+        return 'failed';
+    }
+
+    if (loadUserDataMachineState.value.hasTag('Loading user cart')) {
+        return 'loading';
+    }
+
+    return 'success';
+}
+const userCartStatus = computed(() => getUserCartStatus());
+</script>
+
+<template>
+    <main class="flex flex-col justify-start items-center mt-6">
+        <div data-cy="machine-current-value">
+            {{ loadUserDataMachineState.value }}
+        </div>
+        <div class="flex flex-col">
+            <template v-if="showLoadUserDataButton">
+                <h4>Will be downloaded:</h4>
+                <ul class="list-disc">
+                    <li>User Information (id, name, email, etc.)</li>
+                    <li>User Cart (items, credit, etc.)</li>
+                </ul>
+                <BaseButton
+                    data-cy="load-user-data-button"
+                    @click="sendUserPressedLoadUserDataToMachine"
+                >
+                    Load user Data
+                </BaseButton>
+            </template>
+
+            <template v-else>
+                <!-- Loading -->
+                <div class="flex flex-col justify-center items-start m-auto">
+                    <StatusSection
+                        v-bind:status="userInformationStatus"
+                        label="User Information"
+                        test-id="user-information"
+                    />
+
+                    <StatusSection
+                        v-bind:status="userCartStatus"
+                        label="User Cart"
+                        test-id="user-cart"
+                    />
+
+                    <template
+                        v-if="
+                            userInformationStatus === 'failed' ||
+                            userCartStatus === 'failed'
+                        "
+                    >
+                        <BaseButton
+                            data-cy="retry-button"
+                            @click="sendUserPressedLoadUserDataToMachine"
+                        >
+                            Retry
+                        </BaseButton>
+                    </template>
+                </div>
+
+                <!-- Loaded -->
+                <template
+                    v-if="
+                        userInformationStatus === 'success' &&
+                        userCartStatus === 'success'
+                    "
+                >
+                    <span class="mb-2">Reached final state</span>
+                    <span class="mb-2">{{
+                        loadUserDataMachineState.context.userInformation
+                    }}</span>
+                    <span class="mb-2">{{
+                        loadUserDataMachineState.context.userCart
+                    }}</span>
+                    <BaseButton @click="sendResetContextToMachine">
+                        Reset the machine
+                    </BaseButton>
+                </template>
+            </template>
+        </div>
+    </main>
+</template>
+```
+
+## <BaseAnchor label="Ending"/>
+
+## <BaseAnchor label="Working Example">
