@@ -15,7 +15,7 @@ import BaseAnchor from '../../../components/kit/BaseAnchor.astro';
 
 ## <BaseAnchor label="Introduction" />
 
-The very first need is two await from two async source to finish before going further.
+The very first need is two await for two async source to finish before going further.
 Lets say for the example, waiting for the response of 2 http requests before allowing the user to interact with the view.
 In our example we'll take both the `UserInformation` and `UserCart` requests.
 
@@ -146,7 +146,7 @@ It exists several machine [states node types](https://xstate.js.org/docs/guides/
 ```
 
 From there we can imagine an example machine that would lead to start within 2 parallel states that both waits for a specific events to transition to their final state.
-Lets imagine a very first parent state that will have two states child, one being the parallel states handler and the other being the machine final state nor further logic.
+Lets say a very first parent state that will have two states child, one being the parallel states handler and the other being the machine final state nor further logic.
 Inside the parallel machine will be found two parralel states waiting for their specific ressources, here 1 and 2, to be fulfilled, when it's the case they will transition to their final states.
 A parallel parent state can listen to the final state transition of every of his parallel child states through the [onDone](https://xstate.js.org/docs/guides/final.html#parallel-states) property.
 
@@ -222,7 +222,195 @@ export const machine = createMachine({
 
         'All ressources has been fulfilled by the user': {
             // The machine reaches its global final state
-            type: "final"
+            type: 'final',
+        },
+    },
+});
+```
+
+Note that again, we've haven't seen how to interact with the machine from the outside, such as sending it events.
+We're going to see this in the section just below ! where we use both `XState` parallel states and `Promises invocation`.
+
+## <BaseAnchor label="Both together"/>
+
+Just as a reminder in the introduction section we've listed that our need was to await for two async source to finish before going further, taking as an example a `UserCart` and `UserInformation` loading from server endpoints.
+Our machine will then need to:
+
+In it's initial first state `Idle`, listen for an event to transition to a `loading` parallel state.
+In this `loading` parallel state will be defined two parallel states that will both invoke a specific service, both being `UserCart` or `UserInformation` fetching functions.
+The `loading` state on it's `onDone` property, when all its children are in final states, will transition to a `loaded` state.
+As we can see our machine states are quite long sentences. This is not mandatory but I really like this ability to give sense to the code by it's definition.
+Whatever is your business logic or your need, you can totally describe what state is expecting and used for.
+Also note that thanks to the typegen the autocompletion is even more allowing it.
+
+In the following example nothing new !
+The idea is the same as the other above example codes. We put in parallel states that invoke promises.
+On every promises validation we transtition thanks to the parent parallel state node `onDone` property to a final state.
+Note that the "Fetch user cart" and "Fetch user information" services are not defined within the machine configuration, when interpreting the machine we will have to provide them to the configuration.
+Their definition doesn't relate to the machine itself, it's recommended to think about a machine as a pure entity without specific dependencies.
+In this way we could integrate this machine anywhere.
+
+```ts
+import type { UserCart, UserInformation } from "@/type";
+import { assign, createMachine } from "xstate";
+
+type LoadUserDataMachineEvents =
+  | {
+      type: "User pressed load user data button";
+    }
+  | {
+      type: "User pressed reset machine button";
+    };
+
+type LoadUserDataMachineContext = {
+  userInformation?: UserInformation;
+  userCart?: UserCart;
+};
+
+export const createLoadUserDataMachine = () => {
+  return createMachine(
+    {
+      id: "loadUserDataMachine",
+      tsTypes: {} as import("./LoadUserDataMachine.typegen").Typegen0,
+      schema: {
+        services: {} as {
+          "Fetch user information": {
+            // The data that gets returned from the service
+            data: UserInformation;
+          };
+          "Fetch user cart": {
+            data: UserCart;
+          };
+        },
+        events: {} as LoadUserDataMachineEvents,
+        context: {} as LoadUserDataMachineContext,
+      },
+      context: {
+        userInformation: undefined,
+        userCart: undefined,
+      },
+      initial: "Idle",
+      states: {
+        Idle: {
+          on: {
+            "User pressed load user data button": {
+              target: "Load user data",
+            },
+          },
+        },
+
+        "Load user data": {
+          type: "parallel",
+          onDone: {
+            target: "Loaded user data",
+          },
+
+          states: {
+            "Loading user information": {
+              initial: "Fetching user information from server",
+
+              states: {
+                "Fetching user information from server": {
+                  tags: "Loading user information",
+
+                  invoke: {
+                    src: "Fetch user information",
+
+                    onDone: {
+                      target: "Loaded user information",
+                      actions: "Assign loaded user information to context",
+                    },
+
+                    onError: {
+                      target: "Loading user information failed",
+                    },
+                  },
+                },
+
+                "Loading user information failed": {
+                  tags: "Loading user information failed",
+                  on: {
+                    "User pressed load user data button": {
+                      target: "Fetching user information from server",
+                    },
+                  },
+                },
+
+                "Loaded user information": {
+                  type: "final",
+                },
+              },
+            },
+
+            "Load user cart": {
+              initial: "Fetching user cart from server",
+              states: {
+                "Fetching user cart from server": {
+                  tags: "Loading user cart",
+
+                  invoke: {
+                    src: "Fetch user cart",
+
+                    onDone: {
+                      target: "Loaded user cart",
+                      actions: "Assign loaded user cart to context",
+                    },
+
+                    onError: {
+                      target: "Loading user cart failed",
+                    },
+                  },
+                },
+
+                "Loading user cart failed": {
+                  tags: "Loading user cart failed",
+                  on: {
+                    "User pressed load user data button": {
+                      target: "Fetching user cart from server",
+                    },
+                  },
+                },
+
+                "Loaded user cart": {
+                  type: "final",
+                },
+              },
+            },
+          },
+        },
+
+        "Loaded user data": {
+          on: {
+            "User pressed reset machine button": {
+              target: "#loadUserDataMachine.Idle",
+              actions: "Reset machine context",
+            },
+          },
+        },
+      },
+    },
+    {
+      actions: {
+        "Assign loaded user information to context": assign({
+          userInformation: (_context, event) => {
+            return event.data;
+          },
+        }),
+        "Assign loaded user cart to context": assign({
+          userCart: (_context, event) => {
+            return event.data;
+          },
+        }),
+
+        "Reset machine context": assign({
+          userCart: (_context, _event) => undefined,
+          userInformation: (_context, _event) => undefined,
+        }),
+      },
+    }
+  );
+};
+```
         },
     },
 });
