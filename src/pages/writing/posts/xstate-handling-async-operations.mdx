@@ -1,9 +1,9 @@
 ---
 layout: ../../../layouts/WritingLayout.astro
-title: Handling async operations, invoking promises with XState
+title: Handling several parallel async operations with XState
 publishDate: 12 oct 2022
 name: prastoin
-description: Thanks to XState invoke and parallel states, we're able to TODO
+description: Thanks to XState promises invocation and parallel states, we're able to configure a machine that centralize all the logic outside the view, in an human readable and exportable way.
 ---
 
 import BaseAnchor from '../../../components/kit/BaseAnchor.astro';
@@ -12,6 +12,14 @@ import BaseAnchor from '../../../components/kit/BaseAnchor.astro';
 
 -   [Table of contents](#table-of-contents)
 -   [Introduction](#introduction)
+-   [Invoking promises with XState](#invoking-promises-with-xstate)
+-   [Parallel states nodes](#parallel-states-nodes)
+-   [Combining both](#combining-both)
+-   [Machine integration within a Vue component](#machine-integration-within-a-vue-component)
+    -   [Creating and interpreting the machine](#creating-and-interpreting-the-machine)
+    -   [Communicating with the machine](#communicating-with-the-machine)
+-   [Ending](#ending)
+-   [Working example](#working-example)
 
 ## <BaseAnchor label="Introduction" />
 
@@ -130,7 +138,7 @@ export const userMachine = createMachine(
 Note that just like that, when the machine is not interpreted ! It's just an object.
 We will see later a way to interpret an equivalent machine later.
 
-## <BaseAnchor label="parallel states nodes"/>
+## <BaseAnchor label="Parallel states nodes"/>
 
 We've seen how to handle one async operation within a state machine. But our goal is to be handling at least two of them at the same time.
 In this way we will need our machine to be able to "be" in several states at once.
@@ -173,9 +181,11 @@ export const machine = createMachine({
     states: {
         'Pending until user fulfilled all required ressources': {
             type: 'parallel',
-            // The onDone property we'll be triggered when every child states reach to their final state
+            // The onDone property we'll be triggered when every child states
+            // reach their final state
             onDone: 'All ressources has been fulfilled by the user',
-            // We do not declare any initial state there as the machine is in every child states at once
+            // We do not declare any initial state there as the machine
+            // is in every child states at once
 
             states: {
                 'Ressource 1 handler': {
@@ -231,7 +241,7 @@ export const machine = createMachine({
 Note that again, we've haven't seen how to interact with the machine from the outside, such as sending it events.
 We're going to see this in the section just below ! where we use both `XState` parallel states and `Promises invocation`.
 
-## <BaseAnchor label="Both together"/>
+## <BaseAnchor label="Combining both"/>
 
 Just as a reminder in the introduction section we've listed that our need was to await for two async source to finish before going further, taking as an example a `UserCart` and `UserInformation` loading from server endpoints.
 Our machine will then need to:
@@ -414,7 +424,7 @@ export const createLoadUserDataMachine = () => {
 };
 ```
 
-## <BaseAnchor label="Machine integration within a component"/>
+## <BaseAnchor label="Machine integration within a Vue component"/>
 
 Until now, we've been thinking about the core logic, our machine definition.
 Now we want to be able to communicate with it within a component, to do so we will be using `Vue3` with its composition API.
@@ -426,7 +436,7 @@ Note that XState provides packages for:
 
 The idea is not to cover the whole xstate/vue package but to check what we have to user to be able to communicate with the machine from a Vue component.
 
-### Creating and interpreting the machine.
+### <BaseAnchor label="Creating and interpreting the machine"/>
 
 First we need to instantiate our machine using the previously created `createLoadUserDataMachine` function, that itself uses the `createMachine` XState function.
 From there we will pass our state machine to the `useMachine` hook, note that we also pass the machine configuration required services.
@@ -455,7 +465,7 @@ There we go from there we have access to a running instance of our machine.
 The `send` method allowing us to send events to the machine and the state being a Vue3 shallowRef of the machine state.
 Within a machine state we can find, the machine current state value, the machine context and more ! see documentation.
 
-### Communicating with the machine
+### <BaseAnchor label="Communicating with the machine"/>
 
 In our machine configuration we've described only two events.
 One for starting loading everything and the other on the last state reseting the machine context and state.
@@ -691,4 +701,14 @@ const userCartStatus = computed(() => getUserCartStatus());
 
 ## <BaseAnchor label="Ending"/>
 
-## <BaseAnchor label="Working Example">
+We've seen how to combine both promises invocations and parallel states.
+Even if we've been working around HTTP request anything could take its place from the moment it's async.
+Thanks to XState we're able to build human readable configuration but also an exportable isolated logic outside the view.
+It only determines what to display to the user depending on the exposed machine state.
+Having the logic centralized inside machines allows anyone that knows XState to understand and iterate over the machine abstracting the overall used framework.
+
+## <BaseAnchor label="Working Example" />
+
+You can find a tested working reproduction of the `UserCart` and `UserInformation` using vue3 and cypress e2e testing & @xstate/test:
+
+[XState handling async operations reproduction →](https://github.com/prastoin/xstate-handling-async-fetching-operations)
