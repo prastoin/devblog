@@ -29,6 +29,7 @@ In our example we'll take both the `UserInformation` and `UserCart` requests.
 
 A State Machine defines `States` listening to `Events` allowing or not `Transitions` to other `States` it also contains a `Context`.
 It exists several layers where we can run specific `Actions`, `Services` and `Conditions`, as for example when entering/leaving a `State` or receiving a specific `event` and more.
+
 XState is a library that allows us to write States machines in Javascript. It comes with a lot a framework related packages, such as React Vue Angular and more, to be able to interact and interpret the logic a machine can be carrying from any view.
 
 The goal of our application is then to load all the user Data, before achieving to its final state.
@@ -38,12 +39,14 @@ To do so we'll be using the [Invoking promises](https://xstate.js.org/docs/guide
 
 XState thanks to its `Invoke` API, allows us to invoke Callbacks/Machines/Observables/Promises.
 In our case we will be invoking promises, and more precisely services leagind to send an http request.
+
 Lets think about a machine that when being interpreted instantly send an HTTP request to a server in order to retrieve a user instance.
 That machine will need to have an initial state set to the state that invoked our fetching promise, lets say `Loading`.
 In that state thanks to `invoke` we will run our fetch instance, then within the same state we will ended either the failing and success use case.
 Using the `onDone` and `onError` properties, that respectively handle the promise resolution and promise rejection.
 In a success case we will transition to a `success` state, otherwise in a `failure` state.
 Lets be fancy ! Inside the `failure` state we will listen for a `RETRY` event, only available when we're in this state ! On its reception we will transition to the `loading` state.
+
 In this example I use the XState typegen to be able to strongly type any of my machine properties.
 
 Simple typed usage example:
@@ -256,7 +259,8 @@ Also note that thanks to the typegen the autocompletion is even more allowing it
 In the following example nothing new !
 The idea is the same as the other above example codes. We put in parallel states that invoke promises.
 On every promises validation we transtition thanks to the parent parallel state node `onDone` property to a final state.
-Note that the "Fetch user cart" and "Fetch user information" services are not defined within the machine configuration, when interpreting the machine we will have to provide them to the configuration.
+
+Note that the `"Fetch user cart"` and `"Fetch user information"` services are not defined within the machine configuration, when interpreting the machine we will have to provide them to the configuration.
 Their definition doesn't relate to the machine itself, it's recommended to think about a machine as a pure entity without specific dependencies.
 In this way we could integrate this machine anywhere.
 
@@ -430,9 +434,9 @@ Until now, we've been thinking about the core logic, our machine definition.
 Now we want to be able to communicate with it within a component, to do so we will be using `Vue3` with its composition API.
 Note that XState provides packages for:
 
--   Vue
--   React
--   Svelte
+-   [Vue](https://xstate.js.org/docs/recipes/vue.html)
+-   [React](https://xstate.js.org/docs/recipes/react.html)
+-   [Svelte](https://xstate.js.org/docs/packages/xstate-svelte/)
 
 The idea is not to cover the whole xstate/vue package but to check what we have to user to be able to communicate with the machine from a Vue component.
 
@@ -703,6 +707,7 @@ const userCartStatus = computed(() => getUserCartStatus());
 
 We've seen how to combine both promises invocations and parallel states.
 Even if we've been working around HTTP request anything could take its place from the moment it's async.
+
 Thanks to XState we're able to build human readable configuration but also an exportable isolated logic outside the view.
 It only determines what to display to the user depending on the exposed machine state.
 Having the logic centralized inside machines allows anyone that knows XState to understand and iterate over the machine abstracting the overall used framework.
