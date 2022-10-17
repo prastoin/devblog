@@ -10,21 +10,21 @@ In this case a **403 forbidden**.
 Adonis thanks to it's [global exceptions handler](https://docs.adonisjs.com/guides/exception-handling#handling-exceptions-globally) will manage exceptions for you.
 
 ```ts
-Route.get('dashboard', async ({ auth, response }) => {
-    //If someCode comes to throw an error,
-    //then adonis global exception listener will handle it
-    await auth.Authenfication();
+Route.get("dashboard", async ({ auth, response }) => {
+  //If someCode comes to throw an error,
+  //then adonis global exception listener will handle it
+  await auth.Authenfication();
 
-    // business logic
+  // business logic
 });
 
 //Instead of usually
-Route.get('dashboard', async ({ auth, response }) => {
-    if (!auth.isLoggedIn) {
-        return response.status(401).send('Unauthenticated');
-    }
+Route.get("dashboard", async ({ auth, response }) => {
+  if (!auth.isLoggedIn) {
+    return response.status(401).send("Unauthenticated");
+  }
 
-    // business logic
+  // business logic
 });
 ```
 
@@ -40,29 +40,29 @@ Then add static context to the created custom exception if necessary.
 
 ```ts
 //app/Exceptions/ForbiddenException.ts
-import { Exception } from '@adonisjs/core/build/standalone';
+import { Exception } from "@adonisjs/core/build/standalone";
 
 export default class ForbiddenException extends Exception {
-    constructor() {
-        const message = 'Access forbidden';
-        const status = 403;
-        const errorCode = 'E_FORBIDDEN';
+  constructor() {
+    const message = "Access forbidden";
+    const status = 403;
+    const errorCode = "E_FORBIDDEN";
 
-        super(message, status, errorCode);
-    }
+    super(message, status, errorCode);
+  }
 }
 ```
 
 Finally use it inside any route handler
 
 ```ts
-import ForbiddenException from 'App/Exceptions/ForbiddenException';
+import ForbiddenException from "App/Exceptions/ForbiddenException";
 
-Route.get('dashboard', async ({ auth, response }) => {
-    if (someCondition) {
-        throw new ForbiddenException();
-    }
+Route.get("dashboard", async ({ auth, response }) => {
+  if (someCondition) {
+    throw new ForbiddenException();
+  }
 
-    // business logic
+  // business logic
 });
 ```

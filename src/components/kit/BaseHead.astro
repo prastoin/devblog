@@ -1,8 +1,8 @@
 ---
 export interface Props {
-    title: string;
-    description: string;
-    permalink: string;
+  title: string;
+  description: string;
+  permalink: string;
 }
 const { title, description, permalink } = Astro.props;
 ---
@@ -32,17 +32,17 @@ const { title, description, permalink } = Astro.props;
 <meta property="twitter:image" content="https://astro.build/social.jpg?v=1" />
 
 <script>
-    // It's best to inline this in `head` to avoid FOUC (flash of unstyled content) when changing pages or themes
-    const colorThemeLocalStorageValue = localStorage.getItem('color-theme');
-    if (colorThemeLocalStorageValue === 'dark') {
-        document.documentElement.classList.add('dark');
-    } else if (colorThemeLocalStorageValue === 'light') {
-        document.documentElement.classList.remove('dark');
+  // It's best to inline this in `head` to avoid FOUC (flash of unstyled content) when changing pages or themes
+  const colorThemeLocalStorageValue = localStorage.getItem("color-theme");
+  if (colorThemeLocalStorageValue === "dark") {
+    document.documentElement.classList.add("dark");
+  } else if (colorThemeLocalStorageValue === "light") {
+    document.documentElement.classList.remove("dark");
+  } else {
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      document.documentElement.classList.add("dark");
     } else {
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
+      document.documentElement.classList.remove("dark");
     }
+  }
 </script>

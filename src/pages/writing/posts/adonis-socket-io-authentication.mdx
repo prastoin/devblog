@@ -6,33 +6,33 @@ name: prastoin
 description: Guarding HTTP routes with Adonis/Auth is really common. But sometimes we wanna need to apply authentication on socket connection nor events listener too. In this article we see a way to do so with both Adonis/Auth and Socket-io.
 ---
 
-import BaseAnchor from '../../../components/kit/BaseAnchor.astro';
+import BaseAnchor from "../../../components/kit/BaseAnchor.astro";
 
 ## <BaseAnchor label="Table of contents"/>
 
--   [Table of contents](#table-of-contents)
--   [TL;DR](#tldr)
--   [Introduction](#introduction)
--   [Quick Adonis/auth overview](#quick-adonisauth-overview)
--   [Socket-io and Authentication](#socket-io-and-authentication)
--   [Using Adonis/auth and Socket-io together](#using-adonisauth-and-socket-io-together)
--   [Api Tokens example](#api-tokens-example)
--   [Web Auth example](#web-auth-example)
--   [Ending](#ending)
--   [Working example](#working-example)
+- [Table of contents](#table-of-contents)
+- [TL;DR](#tldr)
+- [Introduction](#introduction)
+- [Quick Adonis/auth overview](#quick-adonisauth-overview)
+- [Socket-io and Authentication](#socket-io-and-authentication)
+- [Using Adonis/auth and Socket-io together](#using-adonisauth-and-socket-io-together)
+- [Api Tokens example](#api-tokens-example)
+- [Web Auth example](#web-auth-example)
+- [Ending](#ending)
+- [Working example](#working-example)
 
 ## <BaseAnchor label="TL;DR"/>
 
 Depending on the adonis/auth authentication you want to use ( `Web Auth`, `Api Tokens`, `Basic Auth` ) the implementation will differ.
 Overall, on the server-side inside a socket-io middleware we want to have access to a `AuthContract` instance to be able to test the provided authentication information. `AuthContract` itself depends on a `HttpContextContract` instance that you can create using the `HttpContext.create` method passing the socket-io init connection HTTP request. Then by using `AuthManager.getAuthForRequest` and passing the created context we will be able to create a `AuthContract` instance.
 
--   Web Auth:
-    Client-side we have to instanciate the socket-io-client using the `withCredentials` option to true to forward the client cookies
-    Server-side we will have to init the adonis/session using `ctx.session.initiate()` method and to set the **credentials** to `true` inside the socket-io server config
+- Web Auth:
+  Client-side we have to instanciate the socket-io-client using the `withCredentials` option to true to forward the client cookies
+  Server-side we will have to init the adonis/session using `ctx.session.initiate()` method and to set the **credentials** to `true` inside the socket-io server config
 
--   Api Token:
-    Client-side we will have to pass the token inside the `socket-io-client` `socket.auth` accessible at anytime via the `socket.auth` props
-    Server-side we will have to manually define the `request.headers.authorization` prop to allow adonis/auth to retrieve the token.
+- Api Token:
+  Client-side we will have to pass the token inside the `socket-io-client` `socket.auth` accessible at anytime via the `socket.auth` props
+  Server-side we will have to manually define the `request.headers.authorization` prop to allow adonis/auth to retrieve the token.
 
 You can find a tested working repo below:  
 [Working example adonis-socket-io-authentication →](https://github.com/prastoin/adonis-socket-io-authentication)
@@ -58,12 +58,12 @@ In this article we will be implementing both Web guard and API Tokens authentica
 For HTTP protocol adonis allows you to check for authentication using authentication guards and routes middlewares:
 
 ```ts
-import Route from '@ioc:Adonis/Core/Route';
+import Route from "@ioc:Adonis/Core/Route";
 
 //Api Tokens and Web Auth guarded get route using auth guards and route middleware
-Route.get('dashboard', async ({ auth, response }) => {
-    // authenticated operations...
-}).middleware('auth:api,web');
+Route.get("dashboard", async ({ auth, response }) => {
+  // authenticated operations...
+}).middleware("auth:api,web");
 ```
 
 Note: Depending on your configuration @adonis/auth will define default auth guards.
@@ -72,18 +72,18 @@ Of course you can create custom guards
 But there's also an other way to look for your user authentication, using the auth `AuthContract` that allows you to use whenever you want any authentication guards. Note that to be able to retrieve a `AuthContract` instance you need to have access to a `HttpContextContract`, we will come back to this point later.
 
 ```ts
-import Route from '@ioc:Adonis/Core/Route';
+import Route from "@ioc:Adonis/Core/Route";
 
 //Api Tokens and  guarded get route using AuthContract
-Route.get('dashboard', async ({ auth, response }) => {
-    const user = await auth.use('api').authenticate();
-    // authenticated operations...
+Route.get("dashboard", async ({ auth, response }) => {
+  const user = await auth.use("api").authenticate();
+  // authenticated operations...
 });
 
 //Web Auth and guarded get route using AuthContract
-Route.get('dashboard', async ({ auth, response }) => {
-    const user = await auth.use('web').authenticate();
-    // authenticated operations...
+Route.get("dashboard", async ({ auth, response }) => {
+  const user = await auth.use("web").authenticate();
+  // authenticated operations...
 });
 ```
 
@@ -95,54 +95,54 @@ If you wanna use initial socket request cookies you then need to respectively se
 Socket-io-client config options can take an [auth](https://socket.io/fr/docs/v3/client-initialization/#auth) props, where you can store the `Api Tokens` token nor `Basic Auth` credentials and then access them inside `socket.handshake.auth` in the server side.
 
 ```ts
-import AdonisServer from '@ioc:Adonis/Core/Server';
-import { Server } from 'socket.io';
+import AdonisServer from "@ioc:Adonis/Core/Server";
+import { Server } from "socket.io";
 
 const io = new Server(AdonisServer.instance, {
-    cors: {
-        origin: true,
-        credentials: true,
-    },
+  cors: {
+    origin: true,
+    credentials: true,
+  },
 });
 
 //Here whole socket connection will be rejected
 io.use((socket, next) => {
-    //You can access socket initial HTTP request here
-    console.log(socket.request);
+  //You can access socket initial HTTP request here
+  console.log(socket.request);
 
-    //Auth is accessible here
-    console.log(socket.handshake.auth);
+  //Auth is accessible here
+  console.log(socket.handshake.auth);
 
-    next(new Error('middleware error'));
-}).on('connection', (socket) => {
-    // not triggered as above middleware throws an error
+  next(new Error("middleware error"));
+}).on("connection", (socket) => {
+  // not triggered as above middleware throws an error
 });
 ```
 
 As described above Socket-io-client also needs that we define [withCredentials](https://socket.io/fr/docs/v3/client-initialization/#withcredentials) prop to true to be able to forward every `Web auth` encrypted cookies in the initial HTTP socket initialization request to the server.
 
 ```ts
-import { io } from 'socket.io-client';
+import { io } from "socket.io-client";
 
 io(SERVER_ENDPOINT, {
-    query,
-    //For Web Auth
-    withCredentials: true,
-    //For Api Tokens nor Basic Auth
-    auth: {
-        credentials: {},
-        token: `Bearer ${token}`,
-    },
+  query,
+  //For Web Auth
+  withCredentials: true,
+  //For Api Tokens nor Basic Auth
+  auth: {
+    credentials: {},
+    token: `Bearer ${token}`,
+  },
 });
 ```
 
 Note: You can access `socket.Auth` everywhere in your client, for example after authentication operation.
 
 ```ts
-import { socket } from 'socket.io-client';
+import { socket } from "socket.io-client";
 
 socket.auth = {
-    Authorization: `Bearer ${token}`,
+  Authorization: `Bearer ${token}`,
 };
 ```
 
@@ -157,26 +157,26 @@ Adonis provides a tool that allow you to instantiate a `HttpContextContract` fro
 Then we will use the `AuthManager.getAuthForRequest` method passing the instanced `HttpContextContract` to retrieve the `AuthContract` instance.
 
 ```ts
-import AdonisServer from '@ioc:Adonis/Core/Server';
-import { Server } from 'socket.io';
-import HttpContext from '@ioc:Adonis/Core/HttpContext';
-import AuthManager from '@ioc:Adonis/Addons/Auth';
+import AdonisServer from "@ioc:Adonis/Core/Server";
+import { Server } from "socket.io";
+import HttpContext from "@ioc:Adonis/Core/HttpContext";
+import AuthManager from "@ioc:Adonis/Addons/Auth";
 
 const io = new Server(AdonisServer.instance, {
-    cors: {
-        origin: true,
-        credentials: true,
-    },
+  cors: {
+    origin: true,
+    credentials: true,
+  },
 });
 
 io.use((socket, next) => {
-    //HttpContextContract
-    const ctx = HttpContext.create('/', {}, socket.request);
+  //HttpContextContract
+  const ctx = HttpContext.create("/", {}, socket.request);
 
-    // AuthContract
-    const auth = AuthManager.getAuthForRequest(ctx);
-}).on('connection', (socket) => {
-    // Connection established
+  // AuthContract
+  const auth = AuthManager.getAuthForRequest(ctx);
+}).on("connection", (socket) => {
+  // Connection established
 });
 ```
 
@@ -190,65 +190,60 @@ The problem is, adonis/auth doesn't know about it all, it will check the request
 Note: You can use socket-io handshake to forward authenticated user to following events listener
 
 ```ts
-import AdonisServer from '@ioc:Adonis/Core/Server';
-import { Server } from 'socket.io';
-import HttpContext from '@ioc:Adonis/Core/HttpContext';
-import AuthManager from '@ioc:Adonis/Addons/Auth';
-import User from 'App/Models/User';
+import AdonisServer from "@ioc:Adonis/Core/Server";
+import { Server } from "socket.io";
+import HttpContext from "@ioc:Adonis/Core/HttpContext";
+import AuthManager from "@ioc:Adonis/Addons/Auth";
+import User from "App/Models/User";
 
 const io = new Server(AdonisServer.instance, {
-    cors: {
-        origin: true,
-        credentials: true,
-    },
+  cors: {
+    origin: true,
+    credentials: true,
+  },
 });
 
 io.use((socket, next) => {
-    const apiAuthToken: undefined | string =
-        socket.handshake.auth.Authorization;
+  const apiAuthToken: undefined | string = socket.handshake.auth.Authorization;
 
-    if (apiAuthToken === undefined || apiAuthToken === null) {
-        next(new Error('no api auth token provided'));
-        return;
+  if (apiAuthToken === undefined || apiAuthToken === null) {
+    next(new Error("no api auth token provided"));
+    return;
+  }
+  //We set the request header authorization, be careful about the Bearer prefix
+  socket.request.headers.authorization = apiAuthToken;
+
+  // HttpContextContract
+  const ctx = HttpContext.create("/", {}, socket.request);
+  //AuthContract
+  const auth = AuthManager.getAuthForRequest(ctx);
+
+  try {
+    const isAuthenticated = await auth.use("api").check();
+
+    if (isAuthenticated) {
+      socket.handshake["user"] = auth.user;
+      next();
+    } else {
+      next(new Error("User must be authenticated to perform socket protocol"));
     }
-    //We set the request header authorization, be careful about the Bearer prefix
-    socket.request.headers.authorization = apiAuthToken;
-
-    // HttpContextContract
-    const ctx = HttpContext.create('/', {}, socket.request);
-    //AuthContract
-    const auth = AuthManager.getAuthForRequest(ctx);
-
-    try {
-        const isAuthenticated = await auth.use('api').check();
-
-        if (isAuthenticated) {
-            socket.handshake['user'] = auth.user;
-            next();
-        } else {
-            next(
-                new Error(
-                    'User must be authenticated to perform socket protocol',
-                ),
-            );
-        }
-    } catch (e) {
-        console.log('Error api tokens auth socket failed');
-        next(new Error('User must be authenticated to init socket connection'));
+  } catch (e) {
+    console.log("Error api tokens auth socket failed");
+    next(new Error("User must be authenticated to init socket connection"));
+  }
+}).on("connection", (socket) => {
+  try {
+    const user = socket.handshake["user"];
+    //Notifying typescript, should never occurs
+    if (!user instanceof User) {
+      throw new Error("Didnot receive User model instance");
     }
-}).on('connection', (socket) => {
-    try {
-        const user = socket.handshake['user'];
-        //Notifying typescript, should never occurs
-        if (!user instanceof User) {
-            throw new Error('Didnot receive User model instance');
-        }
 
-        console.log(user.name);
-        //User is authenticated
-    } catch (e) {
-        console.error(e);
-    }
+    console.log(user.name);
+    //User is authenticated
+  } catch (e) {
+    console.error(e);
+  }
 });
 ```
 
@@ -260,57 +255,53 @@ The authentication cookies are retrieved automatically by adonis as they're stor
 The Web Auth authentication mode depends on the adonis/session package. Then we need to initiate it manually inside the socket-io middleware and that's it !
 
 ```ts
-import AdonisServer from '@ioc:Adonis/Core/Server';
-import { Server } from 'socket.io';
-import HttpContext from '@ioc:Adonis/Core/HttpContext';
-import AuthManager from '@ioc:Adonis/Addons/Auth';
-import User from 'App/Models/User';
+import AdonisServer from "@ioc:Adonis/Core/Server";
+import { Server } from "socket.io";
+import HttpContext from "@ioc:Adonis/Core/HttpContext";
+import AuthManager from "@ioc:Adonis/Addons/Auth";
+import User from "App/Models/User";
 
 const io = new Server(AdonisServer.instance, {
-    cors: {
-        origin: true,
-        credentials: true,
-    },
+  cors: {
+    origin: true,
+    credentials: true,
+  },
 });
 
 io.use((socket, next) => {
-    // HttpContextContract
-    const ctx = HttpContext.create('/', {}, socket.request);
-    //AuthContract
-    const auth = AuthManager.getAuthForRequest(ctx);
+  // HttpContextContract
+  const ctx = HttpContext.create("/", {}, socket.request);
+  //AuthContract
+  const auth = AuthManager.getAuthForRequest(ctx);
 
-    try {
-        const readyOnly = true;
-        await ctx.session.initiate(readyOnly);
-        const isAuthenticated = await auth.use('web').check();
+  try {
+    const readyOnly = true;
+    await ctx.session.initiate(readyOnly);
+    const isAuthenticated = await auth.use("web").check();
 
-        if (isAuthenticated) {
-            socket.handshake['user'] = auth.user;
-            next();
-        } else {
-            next(
-                new Error(
-                    'User must be authenticated to perform socket protocol',
-                ),
-            );
-        }
-    } catch (e) {
-        console.log('Adonis session init failed');
-        next(new Error('Adonis session init failed'));
+    if (isAuthenticated) {
+      socket.handshake["user"] = auth.user;
+      next();
+    } else {
+      next(new Error("User must be authenticated to perform socket protocol"));
     }
-}).on('connection', (socket) => {
-    try {
-        const user = socket.handshake['user'];
-        //Notifying typescript should never occurs
-        if (!user instanceof User) {
-            throw new Error('Didnot receive User model instance');
-        }
-
-        console.log(user.name);
-        //User is authenticated
-    } catch (e) {
-        console.error(e);
+  } catch (e) {
+    console.log("Adonis session init failed");
+    next(new Error("Adonis session init failed"));
+  }
+}).on("connection", (socket) => {
+  try {
+    const user = socket.handshake["user"];
+    //Notifying typescript should never occurs
+    if (!user instanceof User) {
+      throw new Error("Didnot receive User model instance");
     }
+
+    console.log(user.name);
+    //User is authenticated
+  } catch (e) {
+    console.error(e);
+  }
 });
 ```
 

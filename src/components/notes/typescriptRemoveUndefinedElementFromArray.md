@@ -11,11 +11,11 @@ But this wont be enough for typescript itself, even if indeed it would work on r
 
 ```js
 const rawResults = await Promise.all(
-    array.map(async (_, index) => {
-        if (await someAsyncFunction(index)) {
-            return index;
-        }
-    }),
+  array.map(async (_, index) => {
+    if (await someAsyncFunction(index)) {
+      return index;
+    }
+  })
 );
 // const rawResults: (number | undefined)[]
 
@@ -29,16 +29,16 @@ Using [type predicates](https://www.typescriptlang.org/docs/handbook/2/narrowing
 
 ```ts
 const rawResults = await Promise.all(
-    array.map(async (_, index) => {
-        if (await someAsyncFunction(index)) {
-            return index;
-        }
-    }),
+  array.map(async (_, index) => {
+    if (await someAsyncFunction(index)) {
+      return index;
+    }
+  })
 );
 // const rawResults: (number | undefined)[]
 
 const parsedResults = rawResults.filter(
-    (el: number | undefined): el is number => el !== undefined,
+  (el: number | undefined): el is number => el !== undefined
 );
 // const parsedResults: number[]
 ```

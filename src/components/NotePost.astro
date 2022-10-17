@@ -1,38 +1,38 @@
 ---
-import { NoteFrontmatter } from '../types/NotesType';
-import BaseAnchor from './kit/BaseAnchor.astro';
-import BaseElementHeading from './kit/BaseElementHeading.astro';
-import BaseHr from './kit/BaseHr.astro';
-import BaseProseSection from './kit/BaseProseSection.astro';
-import BaseSection from './kit/BaseSection.astro';
+import { NoteFrontmatter } from "../types/NotesType";
+import BaseAnchor from "./kit/BaseAnchor.astro";
+import BaseElementHeading from "./kit/BaseElementHeading.astro";
+import BaseHr from "./kit/BaseHr.astro";
+import BaseProseSection from "./kit/BaseProseSection.astro";
+import BaseSection from "./kit/BaseSection.astro";
 export interface Props {
-    postFrontmatter: NoteFrontmatter;
-    compiledContent: string;
-    noteIndex: number;
+  postFrontmatter: NoteFrontmatter;
+  compiledContent: string;
+  noteIndex: number;
 }
 
 const {
-    noteIndex,
-    compiledContent,
-    postFrontmatter: { title, publishDate },
+  noteIndex,
+  compiledContent,
+  postFrontmatter: { title, publishDate },
 } = Astro.props;
 const showHrElement = noteIndex !== 0;
 ---
 
 <>
-    {showHrElement && <BaseHr />}
-    <BaseSection>
-        <article>
-            <header class="mb-4 font-bold text-primary">
-                <BaseElementHeading>
-                    <BaseAnchor label={title} />
-                </BaseElementHeading>
-                <span class="italic">{publishDate}</span>
-            </header>
+  {showHrElement && <BaseHr />}
+  <BaseSection>
+    <article>
+      <header class="mb-4 font-bold text-primary">
+        <BaseElementHeading>
+          <BaseAnchor label={title} />
+        </BaseElementHeading>
+        <span class="italic">{publishDate}</span>
+      </header>
 
-            <BaseProseSection>
-                <Fragment set:html={compiledContent} />
-            </BaseProseSection>
-        </article>
-    </BaseSection>
+      <BaseProseSection>
+        <Fragment set:html={compiledContent} />
+      </BaseProseSection>
+    </article>
+  </BaseSection>
 </>

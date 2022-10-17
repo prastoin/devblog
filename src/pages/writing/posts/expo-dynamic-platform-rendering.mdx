@@ -6,18 +6,18 @@ name: prastoin
 description: Idiomatically render dynamic react component depending on the device platform OS. Using expo Platform select method.
 ---
 
-import BaseAnchor from '../../../components/kit/BaseAnchor.astro';
+import BaseAnchor from "../../../components/kit/BaseAnchor.astro";
 
 ## <BaseAnchor label="Table of contents"/>
 
--   [Table of contents](#table-of-contents)
--   [Introduction](#introduction)
-    -   [Platform dynamic style declaration example:](#platform-dynamic-style-declaration-example)
--   [The map example](#the-map-example)
-    -   [Dynamic component rendering example:](#dynamic-component-rendering-example)
--   [Platform OS specific component](#platform-os-specific-component)
--   [Ending](#ending)
--   [Working example](#working-example)
+- [Table of contents](#table-of-contents)
+- [Introduction](#introduction)
+  - [Platform dynamic style declaration example:](#platform-dynamic-style-declaration-example)
+- [The map example](#the-map-example)
+  - [Dynamic component rendering example:](#dynamic-component-rendering-example)
+- [Platform OS specific component](#platform-os-specific-component)
+- [Ending](#ending)
+- [Working example](#working-example)
 
 ## <BaseAnchor label="Introduction"/>
 
@@ -29,12 +29,12 @@ Here is the list of OS where an expo app can be run:
  * @see https://reactnative.dev/docs/platform-specific-code#content
  */
 export type PlatformOSType =
-    | 'ios'
-    | 'android'
-    | 'macos'
-    | 'windows'
-    | 'web'
-    | 'native';
+  | "ios"
+  | "android"
+  | "macos"
+  | "windows"
+  | "web"
+  | "native";
 ```
 
 A solution would be to render specific react-native component using `if` or ternaries operator. It's not recommended as it brings a double lecture to the code and is not idiomatic to expo.
@@ -43,24 +43,24 @@ Expo provides a `Platform` module, which contains a [select](https://docs.expo.d
 ### <BaseAnchor label="Platform dynamic style declaration example:"/>
 
 ```ts
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        ...Platform.select({
-            android: {
-                backgroundColor: 'green',
-            },
-            ios: {
-                backgroundColor: 'red',
-            },
-            default: {
-                // other platforms, web for example
-                backgroundColor: 'blue',
-            },
-        }),
-    },
+  container: {
+    flex: 1,
+    ...Platform.select({
+      android: {
+        backgroundColor: "green",
+      },
+      ios: {
+        backgroundColor: "red",
+      },
+      default: {
+        // other platforms, web for example
+        backgroundColor: "blue",
+      },
+    }),
+  },
 });
 ```
 
@@ -74,8 +74,8 @@ For our map issue we wanna dynamically render react component, but also sharing 
 
 ```tsx
 const Component = Platform.select({
-    ios: () => require('ComponentIOS'),
-    android: () => require('ComponentAndroid'),
+  ios: () => require("ComponentIOS"),
+  android: () => require("ComponentAndroid"),
 })();
 
 <Component />;
@@ -90,12 +90,12 @@ Then we can establish the following types:
 // contract.ts
 
 export interface LatlngCoords {
-    lat: number;
-    lng: number;
+  lat: number;
+  lng: number;
 }
 
 export interface MapComponentProps {
-    defaultMapCenterCoords: LatlngCoords;
+  defaultMapCenterCoords: LatlngCoords;
 }
 
 export type MapFunctionComponent = React.FC<MapComponentProps>;
@@ -108,20 +108,20 @@ PS: note that div are then available in a web context.
 ```tsx
 // web.tsx
 
-import GoogleMapReact from 'google-map-react';
-import React from 'react';
-import { MapFunctionComponent } from './contract';
+import GoogleMapReact from "google-map-react";
+import React from "react";
+import { MapFunctionComponent } from "./contract";
 
 const WebMaps: MapFunctionComponent = ({ defaultMapCenterCoords }, _) => {
-    return (
-        <div style={{ height: '100vh', width: '100%' }}>
-            <GoogleMapReact
-                bootstrapURLKeys={{ key: '' }}
-                defaultCenter={defaultMapCenterCoords}
-                defaultZoom={9}
-            ></GoogleMapReact>
-        </div>
-    );
+  return (
+    <div style={{ height: "100vh", width: "100%" }}>
+      <GoogleMapReact
+        bootstrapURLKeys={{ key: "" }}
+        defaultCenter={defaultMapCenterCoords}
+        defaultZoom={9}
+      ></GoogleMapReact>
+    </div>
+  );
 };
 
 export default WebMaps;
@@ -132,26 +132,26 @@ And we want to display this component on native:
 ```tsx
 // native.tsx
 
-import React from 'react';
-import MapView from 'react-native-maps';
-import { MapFunctionComponent } from './contract';
+import React from "react";
+import MapView from "react-native-maps";
+import { MapFunctionComponent } from "./contract";
 
 const NativeMaps: MapFunctionComponent = ({ defaultMapCenterCoords }) => {
-    return (
-        <MapView
-            initialRegion={{
-                latitude: defaultMapCenterCoords.lat,
-                longitude: defaultMapCenterCoords.lng,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-            }}
-            style={{
-                width: '100%',
-                height: '100%',
-            }}
-            provider={'google'}
-        />
-    );
+  return (
+    <MapView
+      initialRegion={{
+        latitude: defaultMapCenterCoords.lat,
+        longitude: defaultMapCenterCoords.lng,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }}
+      style={{
+        width: "100%",
+        height: "100%",
+      }}
+      provider={"google"}
+    />
+  );
 };
 
 export default NativeMaps;
@@ -162,17 +162,17 @@ Now that we have both what we want to render on web and native, the last thing t
 ```tsx
 // index.tsx
 
-import { Platform } from 'react-native';
-import { MapFunctionComponent } from './contract';
+import { Platform } from "react-native";
+import { MapFunctionComponent } from "./contract";
 
 const MapComponent: MapFunctionComponent = Platform.select({
-    native: () => await import('./native').default,
-    default: () => await import('./web').default,
+  native: () => await import("./native").default,
+  default: () => await import("./web").default,
 })();
 
 export default MapComponent;
 
-export * from './contract';
+export * from "./contract";
 ```
 
 Finally, use the `mapComponent` wherever you want.
@@ -180,27 +180,27 @@ Finally, use the `mapComponent` wherever you want.
 ```tsx
 // App.tsx
 
-import * as React from 'react';
-import { SafeAreaView } from 'react-native';
-import MapComponent from './MapComponent';
+import * as React from "react";
+import { SafeAreaView } from "react-native";
+import MapComponent from "./MapComponent";
 
 export default function App() {
-    const defaultMapCenterCoords = {
-        lat: 48.866667,
-        lng: 2.333333,
-    };
-    return (
-        <SafeAreaView
-            style={{
-                flex: 1,
-                backgroundColor: '#fff',
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}
-        >
-            <MapComponent defaultMapCenterCoords={defaultMapCenterCoords} />
-        </SafeAreaView>
-    );
+  const defaultMapCenterCoords = {
+    lat: 48.866667,
+    lng: 2.333333,
+  };
+  return (
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: "#fff",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <MapComponent defaultMapCenterCoords={defaultMapCenterCoords} />
+    </SafeAreaView>
+  );
 }
 ```
 

@@ -1,34 +1,30 @@
 ---
-import BaseHead from '../components/kit/BaseHead.astro';
-import BaseBody from '../components/kit/BaseBody.astro';
-import '../styles/global.css';
-import WritingPost from '../components/writing/WritingPost.astro';
-import type { MarkdownLayoutProps } from 'astro';
+import BaseHead from "../components/kit/BaseHead.astro";
+import BaseBody from "../components/kit/BaseBody.astro";
+import "../styles/global.css";
+import WritingPost from "../components/writing/WritingPost.astro";
+import type { MarkdownLayoutProps } from "astro";
 
 type Props = MarkdownLayoutProps<{
-    // Define frontmatter props here
-    title: string;
-    publishDate: string;
-    name: string;
-    description: string;
+  // Define frontmatter props here
+  title: string;
+  publishDate: string;
+  name: string;
+  description: string;
 }>;
 
 const { publishDate, title, description } = Astro.props.frontmatter;
-const permalink = '';
+const permalink = "";
 ---
 
 <html lang="en">
-    <head>
-        <BaseHead
-            title={title}
-            description={description}
-            permalink={permalink}
-        />
-    </head>
+  <head>
+    <BaseHead title={title} description={description} permalink={permalink} />
+  </head>
 
-    <BaseBody>
-        <WritingPost title={title} publishDate={publishDate}>
-            <slot />
-        </WritingPost>
-    </BaseBody>
+  <BaseBody>
+    <WritingPost title={title} publishDate={publishDate}>
+      <slot />
+    </WritingPost>
+  </BaseBody>
 </html>

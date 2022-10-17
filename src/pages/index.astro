@@ -1,12 +1,12 @@
 ---
 // Component Imports
-import BaseHead from '../components/kit/BaseHead.astro';
-import BaseBody from '../components/kit/BaseBody.astro';
-import '../styles/global.css';
-import BaseSection from '../components/kit/BaseSection.astro';
-import BaseLink from '../components/kit/BaseLink.astro';
-import BaseParagraph from '../components/kit/BaseParagraph.astro';
-import BaseIcon from '../components/kit/BaseIcon.astro';
+import BaseHead from "../components/kit/BaseHead.astro";
+import BaseBody from "../components/kit/BaseBody.astro";
+import "../styles/global.css";
+import BaseSection from "../components/kit/BaseSection.astro";
+import BaseLink from "../components/kit/BaseLink.astro";
+import BaseParagraph from "../components/kit/BaseParagraph.astro";
+import BaseIcon from "../components/kit/BaseIcon.astro";
 
 // You can import components from any supported Framework here!
 
@@ -14,154 +14,122 @@ import BaseIcon from '../components/kit/BaseIcon.astro';
 // You can write any JavaScript/TypeScript that you'd like here.
 // It will run during the build, but never in the browser.
 // All variables are available to use in the HTML template below.
-const title = 'Paul Rastoin | home';
-const description = 'Welcome to my devblog home !';
-const permalink = 'https://example.com/';
+const title = "Paul Rastoin | home";
+const description = "Welcome to my devblog home !";
+const permalink = "https://example.com/";
 
 // Full Astro Component Syntax:
 // https://docs.astro.build/core-concepts/astro-components/
 ---
 
 <html lang="en">
-    <head>
-        <BaseHead
-            title={title}
-            description={description}
-            permalink={permalink}
+  <head>
+    <BaseHead title={title} description={description} permalink={permalink} />
+  </head>
+
+  <BaseBody>
+    <nav class="flex flex-col self-center my-3">
+      <a href="/" class="relative flex flex-col items-center mx-auto">
+        <h1 class="text-5xl my-2 font-bold text-dark dark:text-white">Paul</h1>
+        <h1 class="text-secondary text-5xl my-2 font-bold">Rastoin</h1>
+        <img
+          class="absolute -z-50 max-h-full"
+          src={`/assets/olive_branch_1.png`}
+          alt="olive branch image"
         />
-    </head>
+      </a>
 
-    <BaseBody>
-        <nav class="flex flex-col self-center my-3">
-            <a href="/" class="relative flex flex-col items-center mx-auto">
-                <h1 class="text-5xl my-2 font-bold text-dark dark:text-white">
-                    Paul
-                </h1>
-                <h1 class="text-secondary text-5xl my-2 font-bold">Rastoin</h1>
-                <img
-                    class="absolute -z-50 max-h-full"
-                    src={`/assets/olive_branch_1.png`}
-                    alt="olive branch image"
-                />
-            </a>
+      <div class="mx-auto flex my-3">
+        <a class="px-6" href="https://github.com/prastoin">
+          <BaseIcon size="xl" name="akar-icons:github-fill" />
+        </a>
+        <a class="px-6" href="https://www.linkedin.com/in/paul-rastoin/">
+          <BaseIcon size="xl" name="akar-icons:linkedin-fill" />
+        </a>
+      </div>
+    </nav>
+    <div class="w-full flex flex-col self-center">
+      <h3 class="mb-3 font-medium text-[#374151] dark:text-[#d1d5db]">
+        Hello there
+      </h3>
+      <BaseParagraph>
+        <span> I'm a Full-Stack Web developper from the south of France.</span>
+        <span>
+          And a <BaseLink href="https://42.fr/en/homepage/">42</BaseLink> student
+          at 42Paris.
+        </span>
+      </BaseParagraph>
 
-            <div class="mx-auto flex my-3">
-                <a class="px-6" href="https://github.com/prastoin">
-                    <BaseIcon size="xl" name="akar-icons:github-fill" />
-                </a>
-                <a
-                    class="px-6"
-                    href="https://www.linkedin.com/in/paul-rastoin/"
+      <div class="grid gap-8 grid-cols-1 md:grid-cols-2">
+        <BaseSection>
+          <div class="w-full h-full">
+            <h4 class="mb-3 font-medium text-[#374151] dark:text-[#d1d5db]">
+              Core Stack:
+            </h4>
+            <ul
+              class="list-disc list-inside text-[#374151] dark:text-[#d1d5db] leading-relaxed"
+            >
+              <li>
+                <BaseLink href="https://www.typescriptlang.org/">
+                  TypeScript</BaseLink
                 >
-                    <BaseIcon size="xl" name="akar-icons:linkedin-fill" />
-                </a>
-            </div>
-        </nav>
-        <div class="w-full flex flex-col self-center">
-            <h3 class="mb-3 font-medium text-[#374151] dark:text-[#d1d5db]">
-                Hello there
-            </h3>
-            <BaseParagraph>
-                <span>
-                    I'm a Full-Stack Web developper from the south of France.
-                </span>
-                <span>
-                    And a <BaseLink href="https://42.fr/en/homepage/"
-                        >42</BaseLink
-                    > student at 42Paris.
-                </span>
-            </BaseParagraph>
+              </li>
+              <li>
+                <BaseLink href="https://nodejs.org/en/">Node.js</BaseLink>
+              </li>
+              <li>
+                <BaseLink href="https://xstate.js.org/docs/">XState</BaseLink>
+              </li>
+              <li>
+                <BaseLink href="https://fr.reactjs.org/">React</BaseLink>
+              </li>
+              <li>
+                <BaseLink href="https://adonisjs.com/">AdonisJS</BaseLink>
+              </li>
+            </ul>
+          </div>
+        </BaseSection>
 
-            <div class="grid gap-8 grid-cols-1 md:grid-cols-2">
-                <BaseSection>
-                    <div class="w-full h-full">
-                        <h4
-                            class="mb-3 font-medium text-[#374151] dark:text-[#d1d5db]"
-                        >
-                            Core Stack:
-                        </h4>
-                        <ul
-                            class="list-disc list-inside text-[#374151] dark:text-[#d1d5db] leading-relaxed"
-                        >
-                            <li>
-                                <BaseLink
-                                    href="https://www.typescriptlang.org/"
-                                >
-                                    TypeScript</BaseLink
-                                >
-                            </li>
-                            <li>
-                                <BaseLink href="https://nodejs.org/en/">
-                                    Node.js</BaseLink
-                                >
-                            </li>
-                            <li>
-                                <BaseLink href="https://xstate.js.org/docs/">
-                                    XState</BaseLink
-                                >
-                            </li>
-                            <li>
-                                <BaseLink href="https://fr.reactjs.org/">
-                                    React</BaseLink
-                                >
-                            </li>
-                            <li>
-                                <BaseLink href="https://adonisjs.com/">
-                                    AdonisJS</BaseLink
-                                >
-                            </li>
-                        </ul>
-                    </div>
-                </BaseSection>
-
-                <BaseSection>
-                    <div class="w-full h-full">
-                        <h4
-                            class="mb-3 font-medium text-[#374151] dark:text-[#d1d5db]"
-                        >
-                            Hyped by!:
-                        </h4>
-                        <ul
-                            class="list-disc list-inside text-[#374151] dark:text-[#d1d5db] leading-relaxed"
-                        >
-                            <li>
-                                <BaseLink href="https://reactnative.dev/">
-                                    React Native</BaseLink
-                                >
-                            </li>
-                            <li>
-                                <BaseLink
-                                    href="https://vuejs.org/guide/extras/composition-api-faq.html"
-                                >
-                                    Vue3 composition API</BaseLink
-                                >
-                            </li>
-                            <li>
-                                <BaseLink href="https://temporal.io/">
-                                    Temporal</BaseLink
-                                >
-                            </li>
-                            <li>
-                                <BaseLink href="https://stately.ai/viz">
-                                    Stately</BaseLink
-                                >
-                            </li>
-                            <li>
-                                <BaseLink
-                                    href="https://xstate.js.org/docs/packages/xstate-test/"
-                                >
-                                    @xstate/test</BaseLink
-                                >
-                            </li>
-                            <li>
-                                <BaseLink href="https://playwright.dev/">
-                                    Playwright</BaseLink
-                                >
-                            </li>
-                        </ul>
-                    </div>
-                </BaseSection>
-            </div>
-        </div>
-    </BaseBody>
+        <BaseSection>
+          <div class="w-full h-full">
+            <h4 class="mb-3 font-medium text-[#374151] dark:text-[#d1d5db]">
+              Hyped by!:
+            </h4>
+            <ul
+              class="list-disc list-inside text-[#374151] dark:text-[#d1d5db] leading-relaxed"
+            >
+              <li>
+                <BaseLink href="https://reactnative.dev/">
+                  React Native</BaseLink
+                >
+              </li>
+              <li>
+                <BaseLink
+                  href="https://vuejs.org/guide/extras/composition-api-faq.html"
+                >
+                  Vue3 composition API</BaseLink
+                >
+              </li>
+              <li>
+                <BaseLink href="https://temporal.io/">Temporal</BaseLink>
+              </li>
+              <li>
+                <BaseLink href="https://stately.ai/viz">Stately</BaseLink>
+              </li>
+              <li>
+                <BaseLink
+                  href="https://xstate.js.org/docs/packages/xstate-test/"
+                >
+                  @xstate/test</BaseLink
+                >
+              </li>
+              <li>
+                <BaseLink href="https://playwright.dev/">Playwright</BaseLink>
+              </li>
+            </ul>
+          </div>
+        </BaseSection>
+      </div>
+    </div>
+  </BaseBody>
 </html>
