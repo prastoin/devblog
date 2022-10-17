@@ -3,7 +3,7 @@ layout: ../../../layouts/WritingLayout.astro
 title: Handling several parallel async operations with XState
 publishDate: 12 oct 2022
 name: prastoin
-description: Thanks to XState promises invocation and parallel states, we're able to configure a machine that centralize all the logic outside the view, in an human readable and exportable way.
+description: Thanks to XState promises invocation and parallel states, we're able to configure a machine that centralizes all the logic outside the view, in an human readable and exportable way.
 ---
 
 import BaseAnchor from '../../../components/kit/BaseAnchor.astro';
@@ -23,25 +23,28 @@ import BaseAnchor from '../../../components/kit/BaseAnchor.astro';
 
 ## <BaseAnchor label="Introduction" />
 
-The very first need is two await for two async source to finish before going further.
+Our very first need here, is to await for two async sources to finish before letting the user going further.
 Lets say for the example, waiting for the response of 2 http requests before allowing the user to interact with the view.
 In our example we'll take both the `UserInformation` and `UserCart` requests.
 
-A State Machine defines `States` listening to `Events` allowing or not `Transitions` to other `States` it also contains a `Context`.
+In the [SCXML](https://www.w3.org/TR/scxml/) specification, the very first elements that defines a State Machine are `States` listening to `Events` allowing or not `Transitions` to other `States`.
 It exists several layers where we can run specific `Actions`, `Services` and `Conditions`, as for example when entering/leaving a `State` or receiving a specific `event` and more.
+A State machine carries a `Context` that can be updated on `Actions` as for example storing new fetched information or whatever.
 
-XState is a library that allows us to write States machines in Javascript. It comes with a lot a framework related packages, such as React Vue Angular and more, to be able to interact and interpret the logic a machine can be carrying from any view.
+[XState](https://xstate.js.org/docs/) is a library that allows us to write state machines in Javascript.
+It comes with a lot a framework related packages, such as React Vue Angular and more, to be able to interact and interpret the logic a machine can be carrying from any view.
 
-The goal of our application is then to load all the user Data, before achieving to its final state.
-To do so we'll be using the [Invoking promises](https://xstate.js.org/docs/guides/communication.html#invoking-promises) XState's feature and XState [parallel states](https://xstate.js.org/docs/guides/parallel.html).
+Coming back to our need, the goal of our machine is to load all lets say a user data, before achieving to its final state.
+To do so we'll be using the [promises invocation](https://xstate.js.org/docs/guides/communication.html#invoking-promises) and [parallel states](https://xstate.js.org/docs/guides/parallel.html).
+Before achieving to our final machine answering to our need, we're going to see both of above points one by one.
 
 ## <BaseAnchor label="Invoking promises with XState"/>
 
 XState thanks to its `Invoke` API, allows us to invoke Callbacks/Machines/Observables/Promises.
-In our case we will be invoking promises, and more precisely services leagind to send an http request.
+In our case we will be invoking promises, and more precisely services leading to send an http request.
 
 Lets think about a machine that when being interpreted instantly send an HTTP request to a server in order to retrieve a user instance.
-That machine will need to have an initial state set to the state that invoked our fetching promise, lets say `Loading`.
+That machine will need to have an initial state that invoke our fetching promise, lets call that state `Loading`.
 In that state thanks to `invoke` we will run our fetch instance, then within the same state we will ended either the failing and success use case.
 Using the `onDone` and `onError` properties, that respectively handle the promise resolution and promise rejection.
 In a success case we will transition to a `success` state, otherwise in a `failure` state.
