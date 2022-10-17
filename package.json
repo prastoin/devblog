@@ -7,8 +7,9 @@
         "start": "astro dev",
         "build": "astro build",
         "preview": "astro preview",
-        "lint": "eslint src/**/*.{astro,tsx}",
-        "lint:markdown": "eslint src/**/*.{md,mdx}"
+        "lint": "eslint src/**/*.{astro,tsx,ts}",
+        "lint:markdown": "eslint src/**/*.{md,mdx}",
+        "pretty": "prettier --write ./src/**/*.{md,mdx,astro,ts,tsx}"
     },
     "devDependencies": {
         "@commitlint/config-conventional": "^17.1.0",
