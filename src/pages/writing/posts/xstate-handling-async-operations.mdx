@@ -6,20 +6,20 @@ name: prastoin
 description: Thanks to XState promises invocation and parallel states, we're able to configure a machine that centralizes all the logic outside the view, in an human readable and exportable way.
 ---
 
-import BaseAnchor from '../../../components/kit/BaseAnchor.astro';
+import BaseAnchor from "../../../components/kit/BaseAnchor.astro";
 
 ## <BaseAnchor label="Table of contents"/>
 
--   [Table of contents](#table-of-contents)
--   [Introduction](#introduction)
--   [Invoking promises with XState](#invoking-promises-with-xstate)
--   [Parallel states nodes](#parallel-states-nodes)
--   [Combining both](#combining-both)
--   [Machine integration within a Vue component](#machine-integration-within-a-vue-component)
-    -   [Creating and interpreting the machine](#creating-and-interpreting-the-machine)
-    -   [Communicating with the machine](#communicating-with-the-machine)
--   [Ending](#ending)
--   [Working example](#working-example)
+- [Table of contents](#table-of-contents)
+- [Introduction](#introduction)
+- [Invoking promises with XState](#invoking-promises-with-xstate)
+- [Parallel states nodes](#parallel-states-nodes)
+- [Combining both](#combining-both)
+- [Machine integration within a Vue component](#machine-integration-within-a-vue-component)
+  - [Creating and interpreting the machine](#creating-and-interpreting-the-machine)
+  - [Communicating with the machine](#communicating-with-the-machine)
+- [Ending](#ending)
+- [Working example](#working-example)
 
 ## <BaseAnchor label="Introduction" />
 
@@ -55,89 +55,89 @@ In this example I use the XState typegen to be able to strongly type any of my m
 Simple typed usage example:
 
 ```ts
-import { assign, createMachine } from 'xstate';
+import { assign, createMachine } from "xstate";
 
 interface User {
-    userId: number;
-    userEmail: string;
+  userId: number;
+  userEmail: string;
 }
 
 const fetchUser = (userId: number): Promise<User> =>
-    fetch(`url/to/user/${userId}`).then((response) => response.json());
+  fetch(`url/to/user/${userId}`).then((response) => response.json());
 
 interface FetchUserMachineContext {
-    userId: number;
-    userEmail?: string;
+  userId: number;
+  userEmail?: string;
 }
 
 // Machine definition
 export const userMachine = createMachine(
-    {
-        id: 'user',
-        // The default state the machine will join
-        initial: 'loading',
-        schema: {
-            context: {} as FetchUserMachineContext,
-            services: {} as {
-                'Fetch User': {
-                    data: User;
-                };
-            },
-        },
-        // This is for typing purpose for more information have a look to
-        // https://xstate.js.org/docs/guides/typescript.html#typegen
-        tsTypes: {} as import('./myTestMachine.typegen').Typegen0,
-        context: {
-            userId: 42,
-            userEmail: undefined,
-        },
-        states: {
-            loading: {
-                // From the moment the machine is interpreted it will triggers the following invoke
-                // That leads to perform an HTTP request
-                invoke: {
-                    id: 'getUser',
-                    src: 'Fetch User',
-
-                    // On promise resolution
-                    onDone: {
-                        target: 'success',
-                        // If the response is ok then we will update the machine context from the retrieved data using an action
-                        actions: 'Assign fetched user to context',
-                    },
-
-                    // On promise Rejection
-                    onError: {
-                        target: 'failure',
-                    },
-                },
-            },
-
-            success: {
-                type: 'final',
-            },
-
-            failure: {
-                // In this state we're listening to a specific event RETRY
-                // Note that if the machine intercepts a RETRY event while being in loading state
-                // It won't be interpreted at all
-                on: {
-                    RETRY: { target: 'loading' },
-                },
-            },
-        },
+  {
+    id: "user",
+    // The default state the machine will join
+    initial: "loading",
+    schema: {
+      context: {} as FetchUserMachineContext,
+      services: {} as {
+        "Fetch User": {
+          data: User;
+        };
+      },
     },
-    {
-        actions: {
-            // Note thanks to the typegen we don't even have to type check the received event below !
-            'Assign fetched user to context': assign({
-                userEmail: (_context, event) => event.data.userEmail,
-            }),
-        },
-        services: {
-            'Fetch User': async (context) => await fetchUser(context.userId),
-        },
+    // This is for typing purpose for more information have a look to
+    // https://xstate.js.org/docs/guides/typescript.html#typegen
+    tsTypes: {} as import("./myTestMachine.typegen").Typegen0,
+    context: {
+      userId: 42,
+      userEmail: undefined,
     },
+    states: {
+      loading: {
+        // From the moment the machine is interpreted it will triggers the following invoke
+        // That leads to perform an HTTP request
+        invoke: {
+          id: "getUser",
+          src: "Fetch User",
+
+          // On promise resolution
+          onDone: {
+            target: "success",
+            // If the response is ok then we will update the machine context from the retrieved data using an action
+            actions: "Assign fetched user to context",
+          },
+
+          // On promise Rejection
+          onError: {
+            target: "failure",
+          },
+        },
+      },
+
+      success: {
+        type: "final",
+      },
+
+      failure: {
+        // In this state we're listening to a specific event RETRY
+        // Note that if the machine intercepts a RETRY event while being in loading state
+        // It won't be interpreted at all
+        on: {
+          RETRY: { target: "loading" },
+        },
+      },
+    },
+  },
+  {
+    actions: {
+      // Note thanks to the typegen we don't even have to type check the received event below !
+      "Assign fetched user to context": assign({
+        userEmail: (_context, event) => event.data.userEmail,
+      }),
+    },
+    services: {
+      "Fetch User": async (context) => await fetchUser(context.userId),
+    },
+  }
 );
 ```
 
@@ -165,82 +165,82 @@ Inside the parallel machine will be found two parralel states waiting for their 
 A parallel parent state can listen to the final state transition of every of his parallel child states through the [onDone](https://xstate.js.org/docs/guides/final.html#parallel-states) property.
 
 ```ts
-import { createMachine } from 'xstate';
+import { createMachine } from "xstate";
 
 type ParallelMachineExampleEvents =
-    | {
-          type: 'User fulfilled ressource 1';
-      }
-    | {
-          type: 'User fullfilled ressource 2';
-      };
+  | {
+      type: "User fulfilled ressource 1";
+    }
+  | {
+      type: "User fullfilled ressource 2";
+    };
 
 export const machine = createMachine({
-    id: 'parallel machine example',
-    schema: {
-        events: {} as ParallelMachineExampleEvents,
-    },
-    // This is for typing purpose for more information have a look to
-    // https://xstate.js.org/docs/guides/typescript.html#typegen
-    tsTypes: {} as import('./myTestMachine.typegen').Typegen0,
-    initial: 'Pending until user fulfilled all required ressources',
-    states: {
-        'Pending until user fulfilled all required ressources': {
-            type: 'parallel',
-            // The onDone property we'll be triggered when every child states
-            // reach their final state
-            onDone: 'All ressources has been fulfilled by the user',
-            // We do not declare any initial state there as the machine
-            // is in every child states at once
+  id: "parallel machine example",
+  schema: {
+    events: {} as ParallelMachineExampleEvents,
+  },
+  // This is for typing purpose for more information have a look to
+  // https://xstate.js.org/docs/guides/typescript.html#typegen
+  tsTypes: {} as import("./myTestMachine.typegen").Typegen0,
+  initial: "Pending until user fulfilled all required ressources",
+  states: {
+    "Pending until user fulfilled all required ressources": {
+      type: "parallel",
+      // The onDone property we'll be triggered when every child states
+      // reach their final state
+      onDone: "All ressources has been fulfilled by the user",
+      // We do not declare any initial state there as the machine
+      // is in every child states at once
 
-            states: {
-                'Ressource 1 handler': {
-                    type: 'compound',
-                    initial: 'Waiting for user input',
+      states: {
+        "Ressource 1 handler": {
+          type: "compound",
+          initial: "Waiting for user input",
 
-                    states: {
-                        'Waiting for user input': {
-                            on: {
-                                'User fulfilled ressource 1': {
-                                    target: 'Success',
-                                },
-                            },
-                        },
-
-                        // Ressource 1 handler final state is Success
-                        Success: {
-                            type: 'final',
-                        },
-                    },
+          states: {
+            "Waiting for user input": {
+              on: {
+                "User fulfilled ressource 1": {
+                  target: "Success",
                 },
-
-                'Ressource 2 handler': {
-                    type: 'compound',
-                    initial: 'Waiting for user input',
-
-                    states: {
-                        'Waiting for user input': {
-                            on: {
-                                'User fullfilled ressource 2': {
-                                    target: 'Success',
-                                },
-                            },
-                        },
-
-                        // Ressource 2 handler final state is also Success
-                        Success: {
-                            type: 'final',
-                        },
-                    },
-                },
+              },
             },
+
+            // Ressource 1 handler final state is Success
+            Success: {
+              type: "final",
+            },
+          },
         },
 
-        'All ressources has been fulfilled by the user': {
-            // The machine reaches its global final state
-            type: 'final',
+        "Ressource 2 handler": {
+          type: "compound",
+          initial: "Waiting for user input",
+
+          states: {
+            "Waiting for user input": {
+              on: {
+                "User fullfilled ressource 2": {
+                  target: "Success",
+                },
+              },
+            },
+
+            // Ressource 2 handler final state is also Success
+            Success: {
+              type: "final",
+            },
+          },
         },
+      },
     },
+
+    "All ressources has been fulfilled by the user": {
+      // The machine reaches its global final state
+      type: "final",
+    },
+  },
 });
 ```
 
@@ -268,166 +268,164 @@ Their definition doesn't relate to the machine itself, it's recommended to think
 In this way we could integrate this machine anywhere.
 
 ```ts
-import type { UserCart, UserInformation } from '@/type';
-import { assign, createMachine } from 'xstate';
+import type { UserCart, UserInformation } from "@/type";
+import { assign, createMachine } from "xstate";
 
 type LoadUserDataMachineEvents =
-    | {
-          type: 'User pressed load user data button';
-      }
-    | {
-          type: 'User pressed reset machine button';
-      };
+  | {
+      type: "User pressed load user data button";
+    }
+  | {
+      type: "User pressed reset machine button";
+    };
 
 type LoadUserDataMachineContext = {
-    userInformation?: UserInformation;
-    userCart?: UserCart;
+  userInformation?: UserInformation;
+  userCart?: UserCart;
 };
 
 export const createLoadUserDataMachine = () => {
-    return createMachine(
-        {
-            id: 'loadUserDataMachine',
-            tsTypes: {} as import('./LoadUserDataMachine.typegen').Typegen0,
-            schema: {
-                services: {} as {
-                    'Fetch user information': {
-                        // The data that gets returned from the service
-                        data: UserInformation;
-                    };
-                    'Fetch user cart': {
-                        data: UserCart;
-                    };
-                },
-                events: {} as LoadUserDataMachineEvents,
-                context: {} as LoadUserDataMachineContext,
+  return createMachine(
+    {
+      id: "loadUserDataMachine",
+      tsTypes: {} as import("./LoadUserDataMachine.typegen").Typegen0,
+      schema: {
+        services: {} as {
+          "Fetch user information": {
+            // The data that gets returned from the service
+            data: UserInformation;
+          };
+          "Fetch user cart": {
+            data: UserCart;
+          };
+        },
+        events: {} as LoadUserDataMachineEvents,
+        context: {} as LoadUserDataMachineContext,
+      },
+      context: {
+        userInformation: undefined,
+        userCart: undefined,
+      },
+      initial: "Idle",
+      states: {
+        Idle: {
+          on: {
+            "User pressed load user data button": {
+              target: "Load user data",
             },
-            context: {
-                userInformation: undefined,
-                userCart: undefined,
-            },
-            initial: 'Idle',
-            states: {
-                Idle: {
-                    on: {
-                        'User pressed load user data button': {
-                            target: 'Load user data',
-                        },
-                    },
-                },
+          },
+        },
 
-                'Load user data': {
-                    type: 'parallel',
+        "Load user data": {
+          type: "parallel",
+          onDone: {
+            target: "Loaded user data",
+          },
+
+          states: {
+            "Loading user information": {
+              initial: "Fetching user information from server",
+
+              states: {
+                "Fetching user information from server": {
+                  tags: "Loading user information",
+
+                  invoke: {
+                    src: "Fetch user information",
+
                     onDone: {
-                        target: 'Loaded user data',
+                      target: "Loaded user information",
+                      actions: "Assign loaded user information to context",
                     },
 
-                    states: {
-                        'Loading user information': {
-                            initial: 'Fetching user information from server',
-
-                            states: {
-                                'Fetching user information from server': {
-                                    tags: 'Loading user information',
-
-                                    invoke: {
-                                        src: 'Fetch user information',
-
-                                        onDone: {
-                                            target: 'Loaded user information',
-                                            actions:
-                                                'Assign loaded user information to context',
-                                        },
-
-                                        onError: {
-                                            target: 'Loading user information failed',
-                                        },
-                                    },
-                                },
-
-                                'Loading user information failed': {
-                                    tags: 'Loading user information failed',
-                                    on: {
-                                        'User pressed load user data button': {
-                                            target: 'Fetching user information from server',
-                                        },
-                                    },
-                                },
-
-                                'Loaded user information': {
-                                    type: 'final',
-                                },
-                            },
-                        },
-
-                        'Load user cart': {
-                            initial: 'Fetching user cart from server',
-                            states: {
-                                'Fetching user cart from server': {
-                                    tags: 'Loading user cart',
-
-                                    invoke: {
-                                        src: 'Fetch user cart',
-
-                                        onDone: {
-                                            target: 'Loaded user cart',
-                                            actions:
-                                                'Assign loaded user cart to context',
-                                        },
-
-                                        onError: {
-                                            target: 'Loading user cart failed',
-                                        },
-                                    },
-                                },
-
-                                'Loading user cart failed': {
-                                    tags: 'Loading user cart failed',
-                                    on: {
-                                        'User pressed load user data button': {
-                                            target: 'Fetching user cart from server',
-                                        },
-                                    },
-                                },
-
-                                'Loaded user cart': {
-                                    type: 'final',
-                                },
-                            },
-                        },
+                    onError: {
+                      target: "Loading user information failed",
                     },
+                  },
                 },
 
-                'Loaded user data': {
-                    on: {
-                        'User pressed reset machine button': {
-                            target: '#loadUserDataMachine.Idle',
-                            actions: 'Reset machine context',
-                        },
+                "Loading user information failed": {
+                  tags: "Loading user information failed",
+                  on: {
+                    "User pressed load user data button": {
+                      target: "Fetching user information from server",
                     },
+                  },
                 },
-            },
-        },
-        {
-            actions: {
-                'Assign loaded user information to context': assign({
-                    userInformation: (_context, event) => {
-                        return event.data;
-                    },
-                }),
-                'Assign loaded user cart to context': assign({
-                    userCart: (_context, event) => {
-                        return event.data;
-                    },
-                }),
 
-                'Reset machine context': assign({
-                    userCart: (_context, _event) => undefined,
-                    userInformation: (_context, _event) => undefined,
-                }),
+                "Loaded user information": {
+                  type: "final",
+                },
+              },
             },
+
+            "Load user cart": {
+              initial: "Fetching user cart from server",
+              states: {
+                "Fetching user cart from server": {
+                  tags: "Loading user cart",
+
+                  invoke: {
+                    src: "Fetch user cart",
+
+                    onDone: {
+                      target: "Loaded user cart",
+                      actions: "Assign loaded user cart to context",
+                    },
+
+                    onError: {
+                      target: "Loading user cart failed",
+                    },
+                  },
+                },
+
+                "Loading user cart failed": {
+                  tags: "Loading user cart failed",
+                  on: {
+                    "User pressed load user data button": {
+                      target: "Fetching user cart from server",
+                    },
+                  },
+                },
+
+                "Loaded user cart": {
+                  type: "final",
+                },
+              },
+            },
+          },
         },
-    );
+
+        "Loaded user data": {
+          on: {
+            "User pressed reset machine button": {
+              target: "#loadUserDataMachine.Idle",
+              actions: "Reset machine context",
+            },
+          },
+        },
+      },
+    },
+    {
+      actions: {
+        "Assign loaded user information to context": assign({
+          userInformation: (_context, event) => {
+            return event.data;
+          },
+        }),
+        "Assign loaded user cart to context": assign({
+          userCart: (_context, event) => {
+            return event.data;
+          },
+        }),
+
+        "Reset machine context": assign({
+          userCart: (_context, _event) => undefined,
+          userInformation: (_context, _event) => undefined,
+        }),
+      },
+    }
+  );
 };
 ```
 
@@ -437,9 +435,9 @@ Until now, we've been thinking about the core logic, our machine definition.
 Now we want to be able to communicate with it within a component, to do so we will be using `Vue3` with its composition API.
 Note that XState provides packages for:
 
--   [Vue](https://xstate.js.org/docs/recipes/vue.html)
--   [React](https://xstate.js.org/docs/recipes/react.html)
--   [Svelte](https://xstate.js.org/docs/packages/xstate-svelte/)
+- [Vue](https://xstate.js.org/docs/recipes/vue.html)
+- [React](https://xstate.js.org/docs/recipes/react.html)
+- [Svelte](https://xstate.js.org/docs/packages/xstate-svelte/)
 
 The idea is not to cover the whole xstate/vue package but to check what we have to user to be able to communicate with the machine from a Vue component.
 
@@ -450,21 +448,21 @@ From there we will pass our state machine to the `useMachine` hook, note that we
 
 ```vue
 <script setup lang="ts">
-import { useMachine } from '@xstate/vue';
-import { fetchUserCart, fetchUserInformation } from '@/services/UserService';
-import { createLoadUserDataMachine } from '@/machines/LoadUserDataMachine';
+import { useMachine } from "@xstate/vue";
+import { fetchUserCart, fetchUserInformation } from "@/services/UserService";
+import { createLoadUserDataMachine } from "@/machines/LoadUserDataMachine";
 
 // Creating the machine
 const loadUserInformationMachine = createLoadUserDataMachine();
 
 // Interpreting the machine
 const { send: sendToCounterMachine, state: loadUserDataMachineState } =
-    useMachine(loadUserInformationMachine, {
-        services: {
-            'Fetch user information': async () => await fetchUserInformation(),
-            'Fetch user cart': async () => await fetchUserCart(),
-        },
-    });
+  useMachine(loadUserInformationMachine, {
+    services: {
+      "Fetch user information": async () => await fetchUserInformation(),
+      "Fetch user cart": async () => await fetchUserCart(),
+    },
+  });
 </script>
 ```
 
@@ -479,33 +477,33 @@ One for starting loading everything and the other on the last state reseting the
 
 ```ts
 type LoadUserDataMachineEvents =
-    | {
-          type: 'User pressed load user data button';
-      }
-    | {
-          type: 'User pressed reset machine button';
-      };
+  | {
+      type: "User pressed load user data button";
+    }
+  | {
+      type: "User pressed reset machine button";
+    };
 ```
 
 Coming back to our previous Vue component code we can add two button onClick handlers to would be using the send method.
 
 ```vue
 <script setup lang="ts">
-import { useMachine } from '@xstate/vue';
-import { fetchUserCart, fetchUserInformation } from '@/services/UserService';
-import { createLoadUserDataMachine } from '@/machines/LoadUserDataMachine';
+import { useMachine } from "@xstate/vue";
+import { fetchUserCart, fetchUserInformation } from "@/services/UserService";
+import { createLoadUserDataMachine } from "@/machines/LoadUserDataMachine";
 
 // Creating the machine
 const loadUserInformationMachine = createLoadUserDataMachine();
 
 // Interpreting the machine
 const { send: sendToCounterMachine, state: loadUserDataMachineState } =
-    useMachine(loadUserInformationMachine, {
-        services: {
-            'Fetch user information': async () => await fetchUserInformation(),
-            'Fetch user cart': async () => await fetchUserCart(),
-        },
-    });
+  useMachine(loadUserInformationMachine, {
+    services: {
+      "Fetch user information": async () => await fetchUserInformation(),
+      "Fetch user cart": async () => await fetchUserCart(),
+    },
+  });
 </script>
 ```
 
@@ -513,15 +511,15 @@ Note that in our machine we're not explicitly passing payload through events but
 
 ```ts
 function sendUserPressedLoadUserDataToMachine() {
-    sendToCounterMachine({
-        type: 'User pressed load user data button',
-    });
+  sendToCounterMachine({
+    type: "User pressed load user data button",
+  });
 }
 
 function sendResetContextToMachine() {
-    sendToCounterMachine({
-        type: 'User pressed reset machine button',
-    });
+  sendToCounterMachine({
+    type: "User pressed reset machine button",
+  });
 }
 ```
 
@@ -531,36 +529,36 @@ Lets say that using `state.hasTags("my-tag")` will return true if the current ma
 
 ```ts
 const showLoadUserDataButton = computed(
-    // The first .value is for accessing the ShallowRef current value
-    // The second is the machine current state
-    () => loadUserDataMachineState.value.value === 'Idle',
+  // The first .value is for accessing the ShallowRef current value
+  // The second is the machine current state
+  () => loadUserDataMachineState.value.value === "Idle"
 );
 
 function getUserInformationStatus(): StatusLabel {
-    if (
-        loadUserDataMachineState.value.hasTag('Loading user information failed')
-    ) {
-        return 'failed';
-    }
+  if (
+    loadUserDataMachineState.value.hasTag("Loading user information failed")
+  ) {
+    return "failed";
+  }
 
-    if (loadUserDataMachineState.value.hasTag('Loading user information')) {
-        return 'loading';
-    }
+  if (loadUserDataMachineState.value.hasTag("Loading user information")) {
+    return "loading";
+  }
 
-    return 'success';
+  return "success";
 }
 const userInformationStatus = computed(() => getUserInformationStatus());
 
 function getUserCartStatus(): StatusLabel {
-    if (loadUserDataMachineState.value.hasTag('Loading user cart failed')) {
-        return 'failed';
-    }
+  if (loadUserDataMachineState.value.hasTag("Loading user cart failed")) {
+    return "failed";
+  }
 
-    if (loadUserDataMachineState.value.hasTag('Loading user cart')) {
-        return 'loading';
-    }
+  if (loadUserDataMachineState.value.hasTag("Loading user cart")) {
+    return "loading";
+  }
 
-    return 'success';
+  return "success";
 }
 const userCartStatus = computed(() => getUserCartStatus());
 ```
@@ -569,140 +567,138 @@ The final component using every of the three above points !
 
 ```vue
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useMachine } from '@xstate/vue';
-import BaseButton from './kit/BaseButton.vue';
-import { fetchUserCart, fetchUserInformation } from '@/services/UserService';
-import type { StatusLabel } from '@/type';
-import StatusSection from './kit/StatusSection.vue';
-import { createLoadUserDataMachine } from '@/machines/LoadUserDataMachine';
+import { computed } from "vue";
+import { useMachine } from "@xstate/vue";
+import BaseButton from "./kit/BaseButton.vue";
+import { fetchUserCart, fetchUserInformation } from "@/services/UserService";
+import type { StatusLabel } from "@/type";
+import StatusSection from "./kit/StatusSection.vue";
+import { createLoadUserDataMachine } from "@/machines/LoadUserDataMachine";
 
 const loadUserInformationMachine = createLoadUserDataMachine();
 
 const { send: sendToCounterMachine, state: loadUserDataMachineState } =
-    useMachine(loadUserInformationMachine, {
-        services: {
-            'Fetch user information': async () => await fetchUserInformation(),
-            'Fetch user cart': async () => await fetchUserCart(),
-        },
-    });
+  useMachine(loadUserInformationMachine, {
+    services: {
+      "Fetch user information": async () => await fetchUserInformation(),
+      "Fetch user cart": async () => await fetchUserCart(),
+    },
+  });
 
 function sendUserPressedLoadUserDataToMachine() {
-    sendToCounterMachine({
-        type: 'User pressed load user data button',
-    });
+  sendToCounterMachine({
+    type: "User pressed load user data button",
+  });
 }
 
 function sendResetContextToMachine() {
-    sendToCounterMachine({
-        type: 'User pressed reset machine button',
-    });
+  sendToCounterMachine({
+    type: "User pressed reset machine button",
+  });
 }
 
 const showLoadUserDataButton = computed(
-    () => loadUserDataMachineState.value.value === 'Idle',
+  () => loadUserDataMachineState.value.value === "Idle"
 );
 
 function getUserInformationStatus(): StatusLabel {
-    if (
-        loadUserDataMachineState.value.hasTag('Loading user information failed')
-    ) {
-        return 'failed';
-    }
+  if (
+    loadUserDataMachineState.value.hasTag("Loading user information failed")
+  ) {
+    return "failed";
+  }
 
-    if (loadUserDataMachineState.value.hasTag('Loading user information')) {
-        return 'loading';
-    }
+  if (loadUserDataMachineState.value.hasTag("Loading user information")) {
+    return "loading";
+  }
 
-    return 'success';
+  return "success";
 }
 const userInformationStatus = computed(() => getUserInformationStatus());
 
 function getUserCartStatus(): StatusLabel {
-    if (loadUserDataMachineState.value.hasTag('Loading user cart failed')) {
-        return 'failed';
-    }
+  if (loadUserDataMachineState.value.hasTag("Loading user cart failed")) {
+    return "failed";
+  }
 
-    if (loadUserDataMachineState.value.hasTag('Loading user cart')) {
-        return 'loading';
-    }
+  if (loadUserDataMachineState.value.hasTag("Loading user cart")) {
+    return "loading";
+  }
 
-    return 'success';
+  return "success";
 }
 const userCartStatus = computed(() => getUserCartStatus());
 </script>
 
 <template>
-    <main class="flex flex-col justify-start items-center mt-6">
-        <div data-cy="machine-current-value">
-            {{ loadUserDataMachineState.value }}
+  <main class="flex flex-col justify-start items-center mt-6">
+    <div data-cy="machine-current-value">
+      {{ loadUserDataMachineState.value }}
+    </div>
+    <div class="flex flex-col">
+      <template v-if="showLoadUserDataButton">
+        <h4>Will be downloaded:</h4>
+        <ul class="list-disc">
+          <li>User Information (id, name, email, etc.)</li>
+          <li>User Cart (items, credit, etc.)</li>
+        </ul>
+        <BaseButton
+          data-cy="load-user-data-button"
+          @click="sendUserPressedLoadUserDataToMachine"
+        >
+          Load user Data
+        </BaseButton>
+      </template>
+
+      <template v-else>
+        <!-- Loading -->
+        <div class="flex flex-col justify-center items-start m-auto">
+          <StatusSection
+            v-bind:status="userInformationStatus"
+            label="User Information"
+            test-id="user-information"
+          />
+
+          <StatusSection
+            v-bind:status="userCartStatus"
+            label="User Cart"
+            test-id="user-cart"
+          />
+
+          <template
+            v-if="
+              userInformationStatus === 'failed' || userCartStatus === 'failed'
+            "
+          >
+            <BaseButton
+              data-cy="retry-button"
+              @click="sendUserPressedLoadUserDataToMachine"
+            >
+              Retry
+            </BaseButton>
+          </template>
         </div>
-        <div class="flex flex-col">
-            <template v-if="showLoadUserDataButton">
-                <h4>Will be downloaded:</h4>
-                <ul class="list-disc">
-                    <li>User Information (id, name, email, etc.)</li>
-                    <li>User Cart (items, credit, etc.)</li>
-                </ul>
-                <BaseButton
-                    data-cy="load-user-data-button"
-                    @click="sendUserPressedLoadUserDataToMachine"
-                >
-                    Load user Data
-                </BaseButton>
-            </template>
 
-            <template v-else>
-                <!-- Loading -->
-                <div class="flex flex-col justify-center items-start m-auto">
-                    <StatusSection
-                        v-bind:status="userInformationStatus"
-                        label="User Information"
-                        test-id="user-information"
-                    />
-
-                    <StatusSection
-                        v-bind:status="userCartStatus"
-                        label="User Cart"
-                        test-id="user-cart"
-                    />
-
-                    <template
-                        v-if="
-                            userInformationStatus === 'failed' ||
-                            userCartStatus === 'failed'
-                        "
-                    >
-                        <BaseButton
-                            data-cy="retry-button"
-                            @click="sendUserPressedLoadUserDataToMachine"
-                        >
-                            Retry
-                        </BaseButton>
-                    </template>
-                </div>
-
-                <!-- Loaded -->
-                <template
-                    v-if="
-                        userInformationStatus === 'success' &&
-                        userCartStatus === 'success'
-                    "
-                >
-                    <span class="mb-2">Reached final state</span>
-                    <span class="mb-2">{{
-                        loadUserDataMachineState.context.userInformation
-                    }}</span>
-                    <span class="mb-2">{{
-                        loadUserDataMachineState.context.userCart
-                    }}</span>
-                    <BaseButton @click="sendResetContextToMachine">
-                        Reset the machine
-                    </BaseButton>
-                </template>
-            </template>
-        </div>
-    </main>
+        <!-- Loaded -->
+        <template
+          v-if="
+            userInformationStatus === 'success' && userCartStatus === 'success'
+          "
+        >
+          <span class="mb-2">Reached final state</span>
+          <span class="mb-2">{{
+            loadUserDataMachineState.context.userInformation
+          }}</span>
+          <span class="mb-2">{{
+            loadUserDataMachineState.context.userCart
+          }}</span>
+          <BaseButton @click="sendResetContextToMachine">
+            Reset the machine
+          </BaseButton>
+        </template>
+      </template>
+    </div>
+  </main>
 </template>
 ```
 
