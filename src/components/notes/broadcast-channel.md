@@ -13,22 +13,22 @@ In this way on the user log in nor log out from a tab, you could reload every ap
 ```ts
 // Listening to broadcast channel messages
 broadcastChannel.onmessage = (event) => {
-    switch (event.data) {
-        case 'RELOAD_BROWSER_TABS': {
-            // On message reception logic
-            break;
-        }
-        default: {
-            console.error('encountered unknown broadcast channel message');
-        }
+  switch (event.data) {
+    case "RELOAD_BROWSER_TABS": {
+      // On message reception logic
+      break;
     }
+    default: {
+      console.error("encountered unknown broadcast channel message");
+    }
+  }
 };
 
 // Sending broadcast channel message
-broadcastChannel.postMessage('RELOAD_BROWSER_TABS');
+broadcastChannel.postMessage("RELOAD_BROWSER_TABS");
 
 // Disconnecting the channel
 broadcastChannel.close();
 ```
 
-For further information have a look to [Broadcast_Channel_API](https://developer.mozilla.org/en-US/docs/Web/API/Broadcast_Channel_API) 
+For further information have a look to [Broadcast_Channel_API](https://developer.mozilla.org/en-US/docs/Web/API/Broadcast_Channel_API)

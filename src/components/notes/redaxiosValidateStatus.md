@@ -10,10 +10,10 @@ While implementing a form validation I needed more granularity to handle errors.
 You can either always return true inside validate status manually and handle every http response code
 
 ```ts
-import redaxios from 'redaxios';
+import redaxios from "redaxios";
 
-const rawResponse = await redaxios.get('/route', {
-    validateStatus: () => true,
+const rawResponse = await redaxios.get("/route", {
+  validateStatus: () => true,
 });
 
 console.log(rawResponse.status);
@@ -23,10 +23,10 @@ console.log(rawResponse.status);
 Or you can provide your own http status range, in the example below redaxios will throw an error on http status code 500
 
 ```ts
-import redaxios from 'redaxios';
+import redaxios from "redaxios";
 
-const rawResponse = await redaxios.get('/route', {
-    validateStatus: (status) => status >= 200 && status <= 499,
+const rawResponse = await redaxios.get("/route", {
+  validateStatus: (status) => status >= 200 && status <= 499,
 });
 
 console.log(rawResponse.status);
