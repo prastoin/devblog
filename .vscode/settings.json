@@ -10,5 +10,8 @@
         "typescriptreact", // Enable .tsx
         "markdown",
         "mdx",
+    ],
+    "cSpell.enableFiletypes": [
+        "mdx"
     ]
 }
