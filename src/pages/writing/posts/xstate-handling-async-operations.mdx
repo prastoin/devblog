@@ -40,19 +40,20 @@ Before achieving to our final machine answering to our need, we're going to see 
 
 ## <BaseAnchor label="Invoking promises with XState"/>
 
-XState thanks to its `Invoke` API, allows us to invoke Callbacks/Machines/Observables/Promises.
-In our case we will be invoking promises, and more precisely services leading to send an http request.
+XState thanks to its [Invoke](https://xstate.js.org/docs/guides/communication.html) API, allows us to invoke Callbacks/Machines/Observables/Promises.
+In our case we will be invoking promises, and more precisely http services.
 
-Lets think about a machine that when being interpreted instantly send an HTTP request to a server in order to retrieve a user instance.
-That machine will need to have an initial state that invoke our fetching promise, lets call that state `Loading`.
-In that state thanks to `invoke` we will run our fetch instance, then within the same state we will ended either the failing and success use case.
-Using the `onDone` and `onError` properties, that respectively handle the promise resolution and promise rejection.
-In a success case we will transition to a `success` state, otherwise in a `failure` state.
-Lets be fancy ! Inside the `failure` state we will listen for a `RETRY` event, only available when we're in this state ! On its reception we will transition to the `loading` state.
+Lets think about a machine that when interpreted instantly send an HTTP request to a server in order to retrieve a user instance.
+That machine needs to have an initial state that invoke our fetching promise, lets call that state `Loading user`.
 
-In this example I use the XState typegen to be able to strongly type any of my machine properties.
+In that state thanks to `invoke` we run the user fetch, then within the same state we listen to both failing and success use cases using the `onDone` and `onError` properties, that respectively handle the promise resolution and promise rejection.
 
-Simple typed usage example:
+In a success case we transition to a `Loaded user successfully` state and assign to the machine's context the fetched user using an action `Assign fetched user to context`, otherwise we transition to `Loading user failed` state.
+Lets be fancy ! Inside the `Loading user failed` state we listen to a `RETRY` event, only available when the machine is in this state ! On its reception we transition to the `Loading user` state.
+
+In this example I use the XState [typegen](https://xstate.js.org/docs/guides/typescript.html#typegen) to be able to strongly type any of my machine properties.
+
+Typed fetch user example:
 
 ```ts
 import { assign, createMachine } from "xstate";
@@ -73,9 +74,9 @@ interface FetchUserMachineContext {
 // Machine definition
 export const userMachine = createMachine(
   {
-    id: "user",
-    // The default state the machine will join
-    initial: "loading",
+    id: "userMachine",
+    // The default state the machine joins
+    initial: "Loading user",
     schema: {
       context: {} as FetchUserMachineContext,
       services: {} as {
@@ -86,14 +87,14 @@ export const userMachine = createMachine(
     },
     // This is for typing purpose for more information have a look to
     // https://xstate.js.org/docs/guides/typescript.html#typegen
-    tsTypes: {} as import("./myTestMachine.typegen").Typegen0,
+    tsTypes: {} as import("./FetchUserMachine.typegen").Typegen0,
     context: {
       userId: 42,
       userEmail: undefined,
     },
     states: {
-      loading: {
-        // From the moment the machine is interpreted it will triggers the following invoke
+      "Loading user": {
+        // From the moment the machine is interpreted it triggers the following invoke
         // That leads to perform an HTTP request
         invoke: {
           id: "getUser",
@@ -101,28 +102,28 @@ export const userMachine = createMachine(
 
           // On promise resolution
           onDone: {
-            target: "success",
-            // If the response is ok then we will update the machine context from the retrieved data using an action
+            target: "Loaded user successfully",
+            // If the response is ok then we update the machine context from the retrieved data using an action
             actions: "Assign fetched user to context",
           },
 
           // On promise Rejection
           onError: {
-            target: "failure",
+            target: "Loading user failed",
           },
         },
       },
 
-      success: {
+      "Loaded user successfully": {
         type: "final",
       },
 
-      failure: {
+      "Loading user failed": {
         // In this state we're listening to a specific event RETRY
         // Note that if the machine intercepts a RETRY event while being in loading state
         // It won't be interpreted at all
         on: {
-          RETRY: { target: "loading" },
+          RETRY: { target: "Loading user" },
         },
       },
     },
@@ -146,8 +147,10 @@ We will see later a way to interpret an equivalent machine later.
 
 ## <BaseAnchor label="Parallel states nodes"/>
 
-We've seen how to handle one async operation within a state machine. But our goal is to be handling at least two of them at the same time.
+We've seen how to handle one async operation within a state machine.
+But our goal is to handle at least two of them at the same time.
 In this way we will need our machine to be able to "be" in several states at once.
+
 This is when the `parallel` states nodes make an entrance.
 It exists several machine [states node types](https://xstate.js.org/docs/guides/statenodes.html#state-node-types):
 
@@ -159,10 +162,11 @@ It exists several machine [states node types](https://xstate.js.org/docs/guides/
 - A history state node is an abstract node that represents resolving to its parent node's most recent shallow or deep history state.
 ```
 
-From there we can imagine an example machine that would lead to start within 2 parallel states that both waits for a specific events to transition to their final state.
-Lets say a very first parent state that will have two states child, one being the parallel states handler and the other being the machine final state nor further logic.
-Inside the parallel machine will be found two parralel states waiting for their specific ressources, here 1 and 2, to be fulfilled, when it's the case they will transition to their final states.
-A parallel parent state can listen to the final state transition of every of his parallel child states through the [onDone](https://xstate.js.org/docs/guides/final.html#parallel-states) property.
+From there we can imagine a machine that starts within 2 parallel states that both waits for a specific events to transition to their final state.
+Lets say a root parent state that has two states child, one being the parallel states handler and the other being the machine final state nor further logic.
+Inside the parallel machine would be found two parallel states waiting for their specific ressources, here `1` and `2`, to be fulfilled by the user before reaching their final states.
+
+A parallel parent state can listen its parallel childs final state transitions through the [onDone](https://xstate.js.org/docs/guides/final.html#parallel-states) property.
 
 ```ts
 import { createMachine } from "xstate";
@@ -250,22 +254,26 @@ We're going to see this in the section just below ! where we use both `XState` p
 ## <BaseAnchor label="Combining both"/>
 
 Just as a reminder in the introduction section we've listed that our need was to await for two async source to finish before going further, taking as an example a `UserCart` and `UserInformation` loading from server endpoints.
+
 Our machine will then need to:
 
-In it's initial first state `Idle`, listen for an event to transition to a `loading` parallel state.
-In this `loading` parallel state will be defined two parallel states that will both invoke a specific service, both being `UserCart` or `UserInformation` fetching functions.
-The `loading` state on it's `onDone` property, when all its children are in final states, will transition to a `loaded` state.
-As we can see our machine states are quite long sentences. This is not mandatory but I really like this ability to give sense to the code by it's definition.
+In it's initial first state `Idle`, listen for an event to transition to a `Load user data` parallel state.
+In this `Load user data` parallel state will be defined two parallel states that will both invoke a specific service, both being `UserCart` or `UserInformation` fetching functions.
+The `Load user data` state on its `onDone` property, when all its children are in final states, will transition to a `Loaded user data` state.
+
+As we can see our machine states are quite long sentences.
+This is not mandatory but I really like this ability to give meaning to the code by it's definition.
 Whatever is your business logic or your need, you can totally describe what state is expecting and used for.
 Also note that thanks to the typegen the autocompletion is even more allowing it.
 
 In the following example nothing new !
-The idea is the same as the other above example codes. We put in parallel states that invoke promises.
-On every promises validation we transtition thanks to the parent parallel state node `onDone` property to a final state.
+The idea is the same as the other above example codes.
+We put in parallel states that invoke promises.
+On every promises validation we transtition thanks to the parent parallel state node `onDone` property to a further state.
 
-Note that the `"Fetch user cart"` and `"Fetch user information"` services are not defined within the machine configuration, when interpreting the machine we will have to provide them to the configuration.
-Their definition doesn't relate to the machine itself, it's recommended to think about a machine as a pure entity without specific dependencies.
-In this way we could integrate this machine anywhere.
+Note that the `"Fetch user cart"` and `"Fetch user information"` services are not defined within the machine configuration, when interpreting the machine we will have to provide them.
+Their definition doesn't relate to the machine itself, it's recommended to think about a machine as a pure entity without specific framework or business dependencies.
+In this way we could integrate this machine anywhere the need is.
 
 ```ts
 import type { UserCart, UserInformation } from "@/type";
@@ -440,6 +448,7 @@ Note that XState provides packages for:
 - [Svelte](https://xstate.js.org/docs/packages/xstate-svelte/)
 
 The idea is not to cover the whole xstate/vue package but to check what we have to user to be able to communicate with the machine from a Vue component.
+The integration on an react app would look very similar.
 
 ### <BaseAnchor label="Creating and interpreting the machine"/>
 
@@ -456,78 +465,57 @@ import { createLoadUserDataMachine } from "@/machines/LoadUserDataMachine";
 const loadUserInformationMachine = createLoadUserDataMachine();
 
 // Interpreting the machine
-const { send: sendToCounterMachine, state: loadUserDataMachineState } =
+const { send: sendToLoadUserDataMachine, state: loadUserDataMachineState } =
   useMachine(loadUserInformationMachine, {
     services: {
       "Fetch user information": async () => await fetchUserInformation(),
       "Fetch user cart": async () => await fetchUserCart(),
     },
   });
+
+// ...
 </script>
 ```
 
-There we go from there we have access to a running instance of our machine.
-The `send` method allowing us to send events to the machine and the state being a Vue3 shallowRef of the machine state.
-Within a machine state we can find, the machine current state value, the machine context and more ! see documentation.
+From there we have access to a running instance of our machine.
+The `send` method allows us to send events to the machine and the `state` being a Vue3 shallowRef of the machine state.
+Within a machine state we can find, the machine current state value, the machine context and more ! see [documentation](https://xstate.js.org/docs/guides/states.html#state-definition).
 
 ### <BaseAnchor label="Communicating with the machine"/>
 
-In our machine configuration we've described only two events.
-One for starting loading everything and the other on the last state reseting the machine context and state.
-
-```ts
-type LoadUserDataMachineEvents =
-  | {
-      type: "User pressed load user data button";
-    }
-  | {
-      type: "User pressed reset machine button";
-    };
-```
-
-Coming back to our previous Vue component code we can add two button onClick handlers to would be using the send method.
+In our machine configuration we've described only two events and .
+`User pressed load user data button` for starting loading everything and `User pressed load user data button` for reseting the machine context and state.
+Coming back to our previous Vue component code we can add two button onClick handlers using the renamed machine `send` method.
 
 ```vue
 <script setup lang="ts">
-import { useMachine } from "@xstate/vue";
-import { fetchUserCart, fetchUserInformation } from "@/services/UserService";
-import { createLoadUserDataMachine } from "@/machines/LoadUserDataMachine";
+// ...
 
-// Creating the machine
-const loadUserInformationMachine = createLoadUserDataMachine();
-
-// Interpreting the machine
-const { send: sendToCounterMachine, state: loadUserDataMachineState } =
-  useMachine(loadUserInformationMachine, {
-    services: {
-      "Fetch user information": async () => await fetchUserInformation(),
-      "Fetch user cart": async () => await fetchUserCart(),
-    },
-  });
-</script>
-```
-
-Note that in our machine we're not explicitly passing payload through events but in fact it's the case for the promises resolution that passes the request response body !
-
-```ts
 function sendUserPressedLoadUserDataToMachine() {
-  sendToCounterMachine({
+  sendToLoadUserDataMachine({
     type: "User pressed load user data button",
   });
 }
 
 function sendResetContextToMachine() {
-  sendToCounterMachine({
+  sendToLoadUserDataMachine({
     type: "User pressed reset machine button",
   });
 }
+
+// ...
+</script>
 ```
 
 Also we will need to update our view depending on the machine current state.
-To avoid woblly assertion on the state machine current state we will be using XState `tags` !
-Lets say that using `state.hasTags("my-tag")` will return true if the current machine state scopes `my-tag`.
+To avoid wobbly assertions on parallel states current values we will be using XState [tags](https://xstate.js.org/docs/guides/states.html#state-methods-and-properties) !
+Lets say that using `state.hasTags("my-tag")` will return true if the current machine state or its parent has `my-tag`.
+Then lets define two computed getting both async operations status depending on `hasTag` returned value.
 
-```ts
+```vue
+<script setup lang="ts">
+// ...
+
 const showLoadUserDataButton = computed(
   // The first .value is for accessing the ShallowRef current value
   // The second is the machine current state
@@ -561,6 +549,9 @@ function getUserCartStatus(): StatusLabel {
   return "success";
 }
 const userCartStatus = computed(() => getUserCartStatus());
+
+// ...
+</script>
 ```
 
 The final component using every of the three above points !
@@ -577,7 +568,7 @@ import { createLoadUserDataMachine } from "@/machines/LoadUserDataMachine";
 
 const loadUserInformationMachine = createLoadUserDataMachine();
 
-const { send: sendToCounterMachine, state: loadUserDataMachineState } =
+const { send: sendToLoadUserDataMachine, state: loadUserDataMachineState } =
   useMachine(loadUserInformationMachine, {
     services: {
       "Fetch user information": async () => await fetchUserInformation(),
@@ -586,13 +577,13 @@ const { send: sendToCounterMachine, state: loadUserDataMachineState } =
   });
 
 function sendUserPressedLoadUserDataToMachine() {
-  sendToCounterMachine({
+  sendToLoadUserDataMachine({
     type: "User pressed load user data button",
   });
 }
 
 function sendResetContextToMachine() {
-  sendToCounterMachine({
+  sendToLoadUserDataMachine({
     type: "User pressed reset machine button",
   });
 }
@@ -702,11 +693,13 @@ const userCartStatus = computed(() => getUserCartStatus());
 </template>
 ```
 
+Check below link to see the final result check the production example using [msw](https://mswjs.io/).
+
+[Final result production example →](https://github.com/prastoin/xstate-handling-async-fetching-operations)
+
 ## <BaseAnchor label="Ending"/>
 
-We've seen how to combine both promises invocations and parallel states.
-Even if we've been working around HTTP request anything could take its place from the moment it's async.
-
+We've seen how to combine both XState promises invocations and parallel states.
 Thanks to XState we're able to build human readable configuration but also an exportable isolated logic outside the view.
 It only determines what to display to the user depending on the exposed machine state.
 Having the logic centralized inside machines allows anyone that knows XState to understand and iterate over the machine abstracting the overall used framework.
