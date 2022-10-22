@@ -11,6 +11,7 @@ import BaseAnchor from "../../../components/kit/BaseAnchor.astro";
 ## <BaseAnchor label="Table of contents"/>
 
 - [Table of contents](#table-of-contents)
+- [TL;DR](#tldr)
 - [Introduction](#introduction)
 - [Invoking promises with XState](#invoking-promises-with-xstate)
 - [Parallel states nodes](#parallel-states-nodes)
@@ -21,29 +22,41 @@ import BaseAnchor from "../../../components/kit/BaseAnchor.astro";
 - [Ending](#ending)
 - [Working example](#working-example)
 
+## <BaseAnchor label="TL;DR" />
+
+In this article we see how to handle several async operations, here HTTP requests, from a client using [XState](https://xstate.js.org/docs/) `Promises invocations` and `Parallel states`.
+
+Thanks to both we're able to design a machine that will invoke at the same time several promises.
+On those promises resolution or rejection each parallel states can transition or not to its final state.
+Depending on every parallel children current state we can determine if every HTTP request has been loaded successfully.
+
+[See the machine configuration →](https://github.com/prastoin/xstate-handling-async-fetching-operations/blob/58d57423af9c19d05391b7b393f6b03b77ae3e78/src/machines/LoadUserDataMachine.ts)
+
+[See the machine component integration →](https://github.com/prastoin/xstate-handling-async-fetching-operations/blob/58d57423af9c19d05391b7b393f6b03b77ae3e78/src/components/LoadUserData.vue)
+
 ## <BaseAnchor label="Introduction" />
 
-Our very first need here, is to await for two async sources to finish before letting the user going further.
-Lets say for the example, waiting for the response of 2 http requests before allowing the user to interact with the view.
+Our need is to await for two async sources to finish before letting the user going further.
+Lets say for the example, waiting for the response of 2 HTTP requests before allowing the user to interact with the view.
 In our example we'll take both the `UserInformation` and `UserCart` requests.
 
 In the [SCXML](https://www.w3.org/TR/scxml/) specification, the very first elements that defines a State Machine are `States` listening to `Events` allowing or not `Transitions` to other `States`.
 It exists several layers where we can run specific `Actions`, `Services` and `Conditions`, as for example when entering/leaving a `State` or receiving a specific `event` and more.
 A State machine carries a `Context` that can be updated on `Actions` as for example storing new fetched information or whatever.
 
-[XState](https://xstate.js.org/docs/) is a library that allows us to write state machines in Javascript.
+[XState](https://xstate.js.org/docs/) is a library that allows us to write state machines in JavaScript.
 It comes with a lot a framework related packages, such as React Vue Angular and more, to be able to interact and interpret the logic a machine can be carrying from any view.
 
-Coming back to our need, the goal of our machine is to load all lets say a user data, before achieving to its final state.
+Coming back to our need, the goal of our machine is to load, lets say all a user's data, before achieving to its final state.
 To do so we'll be using the [promises invocation](https://xstate.js.org/docs/guides/communication.html#invoking-promises) and [parallel states](https://xstate.js.org/docs/guides/parallel.html).
 Before achieving to our final machine answering to our need, we're going to see both of above points one by one.
 
 ## <BaseAnchor label="Invoking promises with XState"/>
 
 XState thanks to its [Invoke](https://xstate.js.org/docs/guides/communication.html) API, allows us to invoke Callbacks/Machines/Observables/Promises.
-In our case we will be invoking promises, and more precisely http services.
+In our case we will be invoking promises, and more precisely HTTP services.
 
-Lets think about a machine that when interpreted instantly send an HTTP request to a server in order to retrieve a user instance.
+Lets think about a machine that when interpreted instantly sends an HTTP request to a server in order to retrieve a user instance.
 That machine needs to have an initial state that invoke our fetching promise, lets call that state `Loading user`.
 
 In that state thanks to `invoke` we run the user fetch, then within the same state we listen to both failing and success use cases using the `onDone` and `onError` properties, that respectively handle the promise resolution and promise rejection.
@@ -706,6 +719,6 @@ Having the logic centralized inside machines allows anyone that knows XState to 
 
 ## <BaseAnchor label="Working Example" />
 
-You can find a tested working reproduction of the `UserCart` and `UserInformation` using vue3 and cypress e2e testing & @xstate/test:
+You can find a tested working reproduction of the `UserCart` and `UserInformation` using `Vue3` and `Cypress` e2e testing & `@xstate/test`:
 
 [XState handling async operations reproduction →](https://github.com/prastoin/xstate-handling-async-fetching-operations)
