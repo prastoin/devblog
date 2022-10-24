@@ -167,17 +167,14 @@ In this way we will need our machine to be able to "be" in several states at onc
 This is when the `parallel` states nodes make an entrance.
 It exists several machine [states node types](https://xstate.js.org/docs/guides/statenodes.html#state-node-types):
 
-```
-- An atomic state node has no child states. (I.e., it is a leaf node.)
-- A compound state node contains one or more child states, and has an initial state, which is the key of one of those child states.
-- A parallel state node contains two or more child states, and has no initial state, since it represents being in all of its child states at the same time.
-- A final state node is a leaf node that represents an abstract "terminal" state.
-- A history state node is an abstract node that represents resolving to its parent node's most recent shallow or deep history state.
-```
+- An `atomic` state node has no child states. (I.e., it is a leaf node.)
+- A `compound` state node contains one or more child states, and has an initial state, which is the key of one of those child states.
+- A `parallel` state node contains two or more child states, and has no initial state, since it represents being in all of its child states at the same time.
+- A `final` state node is a leaf node that represents an abstract "terminal" state.
+- A `history` state node is an abstract node that represents resolving to its parent node's most recent shallow or deep history state.
 
-From there we can imagine a machine that starts within 2 parallel states that both waits for a specific events to transition to their final state.
-Lets say a root parent state that has two states child, one being the parallel states handler and the other being the machine final state nor further logic.
-Inside the parallel machine would be found two parallel states waiting for their specific resources, here `1` and `2`, to be fulfilled by the user before reaching their final states.
+From there we can imagine a root parent state that has two states child, one being the parallel states handler and the other being the machine final state nor further logic.
+Inside the parallel states would be found two parallel states waiting for their specific resources to be fulfilled by the user before reaching their final states.
 
 A parallel parent state can listen its parallel children final state transitions through the [onDone](https://xstate.js.org/docs/guides/final.html#parallel-states) property.
 
@@ -204,7 +201,7 @@ export const machine = createMachine({
   states: {
     "Pending until user fulfilled all required resources": {
       type: "parallel",
-      // The onDone property we'll be triggered when every child states
+      // The onDone property we'll be triggered when every children states
       // reach their final state
       onDone: "All resources has been fulfilled by the user",
       // We do not declare any initial state there as the machine
