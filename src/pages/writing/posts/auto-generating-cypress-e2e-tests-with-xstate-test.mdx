@@ -1,0 +1,32 @@
+---
+layout: ../../../layouts/WritingLayout.astro
+title: Auto generating Cypress tests with @xstate/test.
+publishDate: 24 oct 2022
+name: prastoin
+description: DESCRIPTION
+---
+
+import BaseAnchor from "../../../components/kit/BaseAnchor.astro";
+
+## <BaseAnchor label="Table of contents"/>
+
+- [Table of contents](#table-of-contents)
+- [TL;DR](#tldr)
+- [Introduction](#introduction)
+- [Cypress](#quick-adonisauth-overview)
+- [XState tests](#socket-io-and-authentication)
+- [Common Troubleshooting](#common-troubleshooting)
+- [Ending](#ending)
+- [Working example](#working-example)
+
+## <BaseAnchor label="Introduction"/>
+
+Manually written tests usually involve a lot of block lack coverage, but also brings a lot a of code depending on your application complexity.
+Imagine a wizard form already tested and implemented in an application, a new need appears we have to add a new input between two existing one.
+Depending on your test architecture this could bring a lot a complexity in the refactor, as it could spread to be refactoring every wizard form related test legacy environment.
+When where with XState/test this could lead to adding a new state inside the tests machine, every possible combination would be covered by the tool.
+
+Between tests getters could not be exactly the same, as for example asserting on a `Label` or a `testId`.
+Centralizing interaction with an element allows a strong and controlled assertions on it every time we need.
+
+## <BaseAnchor label="XState test in a nutshell"/>
