@@ -12,11 +12,11 @@ import BaseAnchor from "../../../components/kit/BaseAnchor.astro";
 
 - [Table of contents](#table-of-contents)
 - [Introduction](#introduction)
-- [What we're testing](#what-were-testing)
+- [What and how we're testing](#what-and-how-zzwere-testing)
 - [@xstate/test benefits in our case](#xstatetest-benefits-in-our-case)
 - [How to make assertions with @xstate/test](#how-to-make-assertions-with-xstatetest)
 - [Defining the events](#defining-the-events)
-- [Autogenerating the tests](#autogenerating-the-tests)
+- [Auto generating the tests](#auto-generating-the-tests)
 - [Common troubleshooting](#common-troubleshooting)
   - [Not returning path tests](#not-returning-path-tests)
   - [Using async operations aside Cypress methods](#using-async-operations-aside-cypress-methods)
@@ -28,17 +28,18 @@ import BaseAnchor from "../../../components/kit/BaseAnchor.astro";
 Manually written tests usually involve a lack of block coverage, but also brings a lot of repetitions depending on your application architecture and complexity.
 Imagine a wizard form already tested and implemented in an application, a new need appears we have to add a new input between two existing one.
 Depending on your test architecture this could bring a lot of mess in the refactor, as it could spread to be refactoring every wizard form related tests.
-When where with XState/test this could lead to adding a new state inside the tests machine, every possible combination would be covered by the tool.
+When where with [@xstate/test](https://xstate.js.org/docs/packages/xstate-test/) this could lead to adding a new state inside the tests state machine, every possible combination would be covered by the tool.
 
-Between tests getters could not be exactly the same, as for example asserting on a `Label` or a `testId`.
-Centralizing interaction with an element allows a strong and controlled assertions on it every time we need inside the same tests group.
+Between tests, getters might not be exactly the same, as for example asserting on a `Label` or a `testId`.
+Centralizing interactions with an element allows a strong and controlled assertions on it every time we need inside the same tests env.
 
-## <BaseAnchor label="What we're testing" />
+## <BaseAnchor label="What and how we're testing" />
 
 We're going to review the coverage of my previous [article](https://paul.rastoin.dev) application.
-Its using Msw to mock API responses on two routes, `/user-information` and `/user-data`.
+It's using [MSW](https://mswjs.io/) to mock API responses on two routes, `/user-information` and `/user-data`.
+[See the live example →](https://xstate-handling-async-operations.netlify.app/)
 
-Before talking about xstate/test a word about states machines:
+Before talking about `xstate/test` a word about states machines:
 
 In the [SCXML](https://www.w3.org/TR/scxml/) specification, the very first elements that defines a State Machine are `States` listening to `Events` allowing or not `Transitions` to other `States`.
 It exists several layers where we can run specific `Actions`, `Services` and `Conditions`, as for example when entering/leaving a `State` or receiving a specific `event` and more.
@@ -47,7 +48,7 @@ A State machine carries a `Context` that can be updated on `Actions` as for exam
 [XState](https://xstate.js.org/docs/) is a library that allows us to write state machines in JavaScript.
 It comes with a lot a framework related packages, such as React Vue Angular and more, to be able to interact and interpret the logic a machine can be carrying from any view.
 
-We're then about to use `@xstate/test` to auto generate tests depending on the test state machine we define, it will generate tests from paths to all the machine states, knowing that each state will involve a specific `Cypress` assertion.
+We're then about to use [@xstate/test](https://xstate.js.org/docs/packages/xstate-test/) to auto generate tests depending on the test state machine we define, it will generate tests from paths to all the machine states, knowing that each state will involve specific `Cypress` assertions.
 
 ## <BaseAnchor label="@xstate/test benefits in our case" />
 
@@ -57,14 +58,14 @@ The app displays only one view, the view is composed in 3 steps:
 
 - Waiting for the user interaction to begin loading the user data
 - Loading the user data that can lead to 4 situations
-  - Both request succeded
+  - Both request succeeded
   - Both requests failed
   - Only `userCart` request failed
   - Only `userInformation` request failed
 - On at least one request failure, waiting for user interaction to retry
 - If every request has been loaded then appears on the view the fetched data
 
-To be able to cover this whole matrice by writting tests manually it would at least need the following tests:
+To be able to cover this whole matrix by writing tests manually it would at least need the following tests:
 
 - Testing the application with both `userCart` and `userInformation` succeeding
 - Testing the application with both `userCart` and `userInformation` failing then on retry succeed
@@ -72,7 +73,6 @@ To be able to cover this whole matrice by writting tests manually it would at le
 - Testing the application with `userCart` succeeding and `userInformation` failing then on retry succeed
 
 In fact we could be testing nearly an infinite succeeding and failing combinations between `userCart` and `userInformation` but we will hold to only one failure degree.
-{/* If we add a new step, lets say between the loading step and the last step then we will have to rethink every tests. */}
 
 Lets think about all that use cases as a machine definition.
 We have an initial state and a final state, being respectively the `Waiting for user interaction to load the user data` and `Displaying fetched information`.
@@ -82,8 +82,8 @@ In the other hand if no requests fail then we transition to the final state from
 
 ### <BaseAnchor label="How to make assertions with @xstate/test" />
 
-We can run assertions using a state scoped `meta` property, in this metro property we can execute any assertions we want that could be either `Cypress` or `Playwright`.
-Also inside those `meta`, we can have a access to a `testing context` that can be mutated by both events definition than `meta` executions.
+We can run assertions using a state scoped `meta` property, in this `meta` property we can execute any assertions we want that could be either [Cypress](https://www.cypress.io/) or any libs.
+Also inside those `meta`, we can have a access to a `testing context` that can be mutated by both events and `meta` definitions.
 Below is the above described machine configuration only, we still have to implement the events definition over it.
 
 ```ts
@@ -188,10 +188,10 @@ const testLoadUserDataMachine = createMachine({
 
 ### <BaseAnchor label="Defining the events" />
 
-From there we have defined how the application must handle depending on user interaction, we then still have to define the expected events definition, such as the request mocks that involves `Make User Cart request failed` etc.
+From there we have defined how the application must handle depending on user interactions, we then still have to define the expected events definition, such as the request mocks that involves `Make User Cart request failed` etc.
 To do we have to create a model passing the previous machine configuration and our events definitions.
 
-Concerning the msw mocks that are imported at the top of the file, their definition is not a big deal.
+Concerning the [MSW](https://mswjs.io/) mocks that are imported at the top of the file, their definition is not a big deal.
 If you wanna see their complete definition please have a look to this [file](https://github.com/prastoin/xstate-handling-async-fetching-operations/blob/58d57423af9c19d05391b7b393f6b03b77ae3e78/src/mocks/handler.ts) from the example github [repository](https://github.com/prastoin/xstate-handling-async-fetching-operations).
 
 ```ts
@@ -276,8 +276,7 @@ const loadUserDataModel = createModel<TestingContext>(testLoadUserDataMachine, {
           .its("msw")
           .then((msw) => {
             const { worker, rest } = msw;
-
-``            worker.use(
+            worker.use(
               UserCartSuccessHandler(rest),
               UserInformationFailingHandler(rest)
             );
@@ -314,10 +313,11 @@ const loadUserDataModel = createModel<TestingContext>(testLoadUserDataMachine, {
 // ...
 ```
 
-### <BaseAnchor label="Autogenerating the tests"/>
+### <BaseAnchor label="Auto generating the tests"/>
 
 From there we have our state test machine configuration and our related events definitions !
 What we need is to literally generate the tests.
+
 `@xstate/test` provides a method [model.getSimplePaths](https://xstate.js.org/docs/packages/xstate-test/#api) that returns an array of testing plans based on the simple paths from the test model's initial state to every other reachable state.
 Also we're using [model.testCoverage](https://xstate.js.org/docs/packages/xstate-test/#api) that verifies that every state's assertion are browsed by the tests paths.
 
@@ -385,7 +385,7 @@ Load user data
 
 ## <BaseAnchor label="Common troubleshooting"/>
 
-While implementing the related tests I've faced few issues that I'm sharing today.
+While implementing the previous tests I've faced few issues that I'm sharing today.
 
 ### <BaseAnchor label="Not returning path tests" />
 
@@ -397,7 +397,7 @@ testPlans.forEach((plan) => {
     plan.paths.forEach((path) => {
       it(path.description, () => {
         return cy.visit("/").then(() => {
-          // Here
+          // return is important there
           return path.test({
             loadUserCartShouldFail: undefined,
             loadUserInformationShouldFail: undefined,
@@ -409,7 +409,7 @@ testPlans.forEach((plan) => {
 });
 ```
 
-If we don't, from the moment your test path pass through at least two states we will encounter race conditions where the target state meta will run before the received event assertions.
+If we don't, from the moment your test path pass through at least two states we will encounter race conditions where the target state `meta` will run before the received event assertions.
 Lets say verifying we're redirected on a page before even having making the redirection.
 
 ### <BaseAnchor label="Using async operations aside Cypress methods" />
@@ -435,8 +435,8 @@ cy.visit("/tested-page").then(() => {
 ## <BaseAnchor label="Ending" />
 
 We've been using `@xstate/test` and `Cypress` together to cover a specific feature.
-The state machine spread our business logic by it's definition, it also allows us to cover a new feature modification easily witouth having to refactor the whole tests suite one by one.
-`@xstate/test` might not be the solution everytime, difficulty being knowing when and where to build a test state machine or not.
+The test state machine and events spread our business logic by their definition, it would also allows us to cover a new feature modification easily without having to refactor the whole tests suite one by one.
+`@xstate/test` might not be the solution we need every time, the difficulty being knowing when and where to build a test state machine or not.
 As for example I do not recommend testing all an app logic though one `xstate/test` state machine.
 But as far as specific feature or form is concerned this might be a really good deal.
 
@@ -446,6 +446,6 @@ But as far as specific feature or form is concerned this might be a really good 
 
 You can find a tested working reproduction of the tested application:
 
-[XState handling async operations repository →](https://github.com/prastoin/xstate-handling-async-fetching-operations)
+[XState handling async operations repository tests →](https://github.com/prastoin/xstate-handling-async-fetching-operations/blob/main/cypress/e2e/LoadUserData.cy.ts)
 
 [XState handling async operations production →](https://xstate-handling-async-operations.netlify.app/)
