@@ -1,7 +1,7 @@
 ---
 layout: ../../../layouts/WritingLayout.astro
-title: Auto generating Cypress tests with @xstate/test.
-publishDate: 24 oct 2022
+title: Auto generating Cypress tests with @xstate/test
+publishDate: 05 nov 2022
 name: prastoin
 description: DESCRIPTION
 ---
@@ -11,25 +11,29 @@ import BaseAnchor from "../../../components/kit/BaseAnchor.astro";
 ## <BaseAnchor label="Table of contents"/>
 
 - [Table of contents](#table-of-contents)
-- [TL;DR](#tldr)
 - [Introduction](#introduction)
-- [What and how we're testing](#what-and-how-we-re-testing)
-- [@xstate/test quick overview](#xstate-test-quick-overview)
-- [Common Troubleshooting](#common-troubleshooting)
+- [What we're testing](#what-were-testing)
+- [@xstate/test benefits in our case](#xstatetest-benefits-in-our-case)
+- [How to make assertions with @xstate/test](#how-to-make-assertions-with-xstatetest)
+- [Defining the events](#defining-the-events)
+- [Autogenerating the tests](#autogenerating-the-tests)
+- [Common troubleshooting](#common-troubleshooting)
+  - [Not returning path tests](#not-returning-path-tests)
+  - [Using async operations aside Cypress methods](#using-async-operations-aside-cypress-methods)
 - [Ending](#ending)
 - [Working example](#working-example)
 
 ## <BaseAnchor label="Introduction"/>
 
-Manually written tests usually involve a lot of block lack coverage, but also brings a lot a of code depending on your application complexity.
+Manually written tests usually involve a lack of block coverage, but also brings a lot of repetitions depending on your application architecture and complexity.
 Imagine a wizard form already tested and implemented in an application, a new need appears we have to add a new input between two existing one.
-Depending on your test architecture this could bring a lot a complexity in the refactor, as it could spread to be refactoring every wizard form related tests.
+Depending on your test architecture this could bring a lot of mess in the refactor, as it could spread to be refactoring every wizard form related tests.
 When where with XState/test this could lead to adding a new state inside the tests machine, every possible combination would be covered by the tool.
 
 Between tests getters could not be exactly the same, as for example asserting on a `Label` or a `testId`.
 Centralizing interaction with an element allows a strong and controlled assertions on it every time we need inside the same tests group.
 
-## <BaseAnchor label="What and how we're testing" />
+## <BaseAnchor label="What we're testing" />
 
 We're going to review the coverage of my previous [article](https://paul.rastoin.dev) application.
 Its using Msw to mock API responses on two routes, `/user-information` and `/user-data`.
@@ -45,7 +49,7 @@ It comes with a lot a framework related packages, such as React Vue Angular and 
 
 We're then about to use `@xstate/test` to auto generate tests depending on the test state machine we define, it will generate tests from paths to all the machine states, knowing that each state will involve a specific `Cypress` assertion.
 
-## <BaseAnchor label="@xstate/test face to our app" />
+## <BaseAnchor label="@xstate/test benefits in our case" />
 
 How does our applications works:
 
@@ -62,10 +66,10 @@ The app displays only one view, the view is composed in 3 steps:
 
 To be able to cover this whole matrice by writting tests manually it would at least need the following tests:
 
-- `Testing the application with both userCart and userInformation succeeding`
-- `Testing the application with both userCart and userInformation failing then on retry succeed`
-- `Testing the application with userCart failing and userInformation succeeding then on retry succeed`
-- `Testing the application with userCart succeeding and userInformation failing then on retry succeed`
+- Testing the application with both `userCart` and `userInformation` succeeding
+- Testing the application with both `userCart` and `userInformation` failing then on retry succeed
+- Testing the application with `userCart` failing and `userInformation` succeeding then on retry succeed
+- Testing the application with `userCart` succeeding and `userInformation` failing then on retry succeed
 
 In fact we could be testing nearly an infinite succeeding and failing combinations between `userCart` and `userInformation` but we will hold to only one failure degree.
 {/* If we add a new step, lets say between the loading step and the last step then we will have to rethink every tests. */}
@@ -310,7 +314,7 @@ const loadUserDataModel = createModel<TestingContext>(testLoadUserDataMachine, {
 // ...
 ```
 
-### <BaseAnchor lable="Autogenerating the tests"/>
+### <BaseAnchor label="Autogenerating the tests"/>
 
 From there we have our state test machine configuration and our related events definitions !
 What we need is to literally generate the tests.
@@ -383,7 +387,7 @@ Load user data
 
 While implementing the related tests I've faced few issues that I'm sharing today.
 
-### Not returning promises in paths generations
+### <BaseAnchor label="Not returning path tests" />
 
 While generating tests paths with `xstate/test` it's really important returning the test itself within the `forEach` as follows:
 
@@ -408,7 +412,7 @@ testPlans.forEach((plan) => {
 If we don't, from the moment your test path pass through at least two states we will encounter race conditions where the target state meta will run before the received event assertions.
 Lets say verifying we're redirected on a page before even having making the redirection.
 
-### Using async operations aside Cypress assertions
+### <BaseAnchor label="Using async operations aside Cypress methods" />
 
 If you encounter the following error [Cypress detected that you returned a promise from a command while also invoking one or more cy commands in that promise.](https://docs.cypress.io/guides/references/error-messages#Cypress-detected-that-you-returned-a-promise-from-a-command-while-also-invoking-one-or-more-cy-commands-in-that-promise) then it means that you're using async/await operations along your Cypress getters.
 Because Cypress commands are already promise-like, you don't need to wrap them or return your own promise.
@@ -436,9 +440,9 @@ The state machine spread our business logic by it's definition, it also allows u
 As for example I do not recommend testing all an app logic though one `xstate/test` state machine.
 But as far as specific feature or form is concerned this might be a really good deal.
 
-`xstate/test` is still under development and might soon release it's [v1.0](https://github.com/statelyai/xstate/releases/tag/%40xstate%2Ftest%401.0.0-alpha.0) !
+`xstate/test` is still under development and might soon release its [v1.0](https://github.com/statelyai/xstate/releases/tag/%40xstate%2Ftest%401.0.0-alpha.0) !
 
-## <BaseAnchor label="Working and test example" />
+## <BaseAnchor label="Working example" />
 
 You can find a tested working reproduction of the tested application:
 
