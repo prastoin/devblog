@@ -381,17 +381,62 @@ Load user data
 
 ## <BaseAnchor label="Common troubleshooting"/>
 
-TESTS:
+While implementing the related tests I've faced few issues that I'm sharing today.
 
-- not returning promises in PATH generation
-- Using async operation/functions inside cypress assertions
+### Not returning promises in paths generations
 
-Cypress related CI:
+While generating tests paths with `xstate/test` it's really important returning the test itself within the `forEach` as follows:
 
-- Edge cases on the wait-on inside CI
-- node version is incorrect
+```ts
+testPlans.forEach((plan) => {
+  describe(plan.description, () => {
+    plan.paths.forEach((path) => {
+      it(path.description, () => {
+        return cy.visit("/").then(() => {
+          // Here
+          return path.test({
+            loadUserCartShouldFail: undefined,
+            loadUserInformationShouldFail: undefined,
+          });
+        });
+      });
+    });
+  });
+});
+```
+
+If we don't, from the moment your test path pass through at least two states we will encounter race conditions where the target state meta will run before the received event assertions.
+Lets say verifying we're redirected on a page before even having making the redirection.
+
+### Using async operations aside Cypress assertions
+
+If you encounter the following error [Cypress detected that you returned a promise from a command while also invoking one or more cy commands in that promise.](https://docs.cypress.io/guides/references/error-messages#Cypress-detected-that-you-returned-a-promise-from-a-command-while-also-invoking-one-or-more-cy-commands-in-that-promise) then it means that you're using async/await operations along your Cypress getters.
+Because Cypress commands are already promise-like, you don't need to wrap them or return your own promise.
+Instead use chainable getters as explained here in the Cypress [Return Values](https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Return-Values).
+As for example this won't work:
+
+```ts
+// This brings high risk of race conditions
+cy.visit("/tested-page");
+cy.get('[data-cy="tested-page-button"]');
+```
+
+```ts
+// This will work
+cy.visit("/tested-page").then(() => {
+  cy.get('[data-cy="tested-page-button"]');
+});
+```
 
 ## <BaseAnchor label="Ending" />
+
+We've been using `@xstate/test` and `Cypress` together to cover a specific feature.
+The state machine spread our business logic by it's definition, it also allows us to cover a new feature modification easily witouth having to refactor the whole tests suite one by one.
+`@xstate/test` might not be the solution everytime, difficulty being knowing when and where to build a test state machine or not.
+As for example I do not recommend testing all an app logic though one `xstate/test` state machine.
+But as far as specific feature or form is concerned this might be a really good deal.
+
+`xstate/test` is still under development and might soon release it's [v1.0](https://github.com/statelyai/xstate/releases/tag/%40xstate%2Ftest%401.0.0-alpha.0) !
 
 ## <BaseAnchor label="Working and test example" />
 
