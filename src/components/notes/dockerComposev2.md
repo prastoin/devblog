@@ -1,0 +1,19 @@
+---
+title: Difference between docker compose & docker-compose
+publishDate: 14 nov 2022
+name: prastoin
+---
+
+The original but now deprecated version of the `docker-compose` written in Python allowed us to start a container using:
+
+```sh
+docker-compose up
+```
+
+Now the new migrated to Golang version is now a `docker` plugin that starts containers with:
+
+```sh
+docker compose up
+```
+
+See [Install the compose plugin](https://docs.docker.com/compose/install/linux/)
