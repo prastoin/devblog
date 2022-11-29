@@ -1,0 +1,45 @@
+---
+import { ReadingPostPreviewInformation } from "../../types/ReadingType";
+import BaseElementHeading from "../kit/BaseElementHeading.astro";
+import BaseHr from "../kit/BaseHr.astro";
+import BaseLink from "../kit/BaseLink.astro";
+import BaseSection from "../kit/BaseSection.astro";
+import BaseTag from "../kit/BaseTag.astro";
+export interface Props {
+  readingPostPreviewIndex: number;
+  readingPostPreview: ReadingPostPreviewInformation;
+}
+
+const {
+  readingPostPreviewIndex,
+  readingPostPreview: { tags, title, urlToContent, url },
+} = Astro.props;
+const showBaseHr = readingPostPreviewIndex !== 0;
+---
+
+<Fragment>
+  {showBaseHr && <BaseHr />}
+  <BaseSection>
+    <header class="mb-4 font-bold text-primary">
+      <BaseElementHeading>
+        <BaseLink href={url}>
+          <span class="font-bold">
+            {title}
+          </span>
+        </BaseLink>
+      </BaseElementHeading>
+      <span
+        >{
+          tags &&
+            tags.map((tag) => (
+              <BaseTag>
+                <a href="">{tag}</a>
+              </BaseTag>
+            ))
+        }</span
+      >
+    </header>
+
+    <BaseLink href={urlToContent}>Direct link to ressource</BaseLink>
+  </BaseSection>
+</Fragment>

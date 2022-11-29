@@ -29,6 +29,13 @@ const HeaderLinks: React.FC = () => (
     >
       Writing
     </a>
+
+    <a
+      href="/reading"
+      className="text-primary hover:text-secondary hover:underline font-medium"
+    >
+      Reading
+    </a>
   </>
 );
 

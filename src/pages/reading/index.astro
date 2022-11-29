@@ -1,0 +1,53 @@
+---
+// Component Imports
+import BaseHead from "../../components/kit/BaseHead.astro";
+import BaseBody from "../../components/kit/BaseBody.astro";
+import "../../styles/global.css";
+
+import BasePageHeading from "../../components/kit/BasePageHeading.astro";
+import ReadingPreview from "../../components/reading/ReadingPreview.astro";
+import { ReadingPostFrontMatter } from "../../types/ReadingType";
+
+const title = "Paul Rastoin | Reading";
+const description = "Because I'm always searching for them";
+const permalink = "https://example.com/";
+
+// Data Fetching: List all Markdown posts in the repo.
+let allPosts = (
+  await Astro.glob<ReadingPostFrontMatter>("./readingPosts/*.mdx")
+).sort(
+  (a, b) =>
+    new Date(b.frontmatter.publishDate).valueOf() -
+    new Date(a.frontmatter.publishDate).valueOf()
+);
+
+// Full Astro Component Syntax:
+// https://docs.astro.build/core-concepts/astro-components/
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} permalink={permalink} />
+  </head>
+
+  <BaseBody>
+    <div class="flex flex-col justify-evenly">
+      <BasePageHeading>Reading</BasePageHeading>
+      <div aria-label="Blog readings list">
+        {
+          allPosts.map(({ frontmatter: postInformation, url }, index) => (
+            <ReadingPreview
+              readingPostPreviewIndex={index}
+              readingPostPreview={{
+                ...postInformation,
+                url,
+              }}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </BaseBody>
+
+
+</html>
