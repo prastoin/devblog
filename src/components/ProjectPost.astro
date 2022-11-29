@@ -5,6 +5,7 @@ import BaseElementHeading from "./kit/BaseElementHeading.astro";
 import BaseProseSection from "./kit/BaseProseSection.astro";
 import BaseSection from "./kit/BaseSection.astro";
 import BaseIcon from "./kit/BaseIcon.astro";
+import BaseTag from "./kit/BaseTag.astro";
 export interface Props {
   projectFronmatter: ProjectFrontmatter;
   compiledContent: string;
@@ -77,9 +78,7 @@ const {
           tags && (
             <p class="flex items-center flex-wrap">
               {tags.map((tag) => (
-                <span class="mt-1 mr-2.5 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                  {tag}
-                </span>
+                <BaseTag>{tag}</BaseTag>
               ))}
             </p>
           )
