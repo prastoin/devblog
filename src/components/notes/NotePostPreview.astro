@@ -19,7 +19,7 @@ const {
 } = Astro.props;
 const showHrElement = noteEntryIndex !== 0;
 const { Content } = await render();
-const postUrl = `/notes/${slug}`;
+const noteUrl = `/notes/${slug}`;
 ---
 
 <>
@@ -28,7 +28,7 @@ const postUrl = `/notes/${slug}`;
     <article>
       <header class="mb-4 font-bold text-primary">
         <BaseElementHeading>
-          <BaseLink href={postUrl}>
+          <BaseLink href={noteUrl}>
             <span class="font-bold">
               {title}
             </span>

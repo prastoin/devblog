@@ -6,19 +6,19 @@ import BaseLink from "../kit/BaseLink.astro";
 import BaseParagraph from "../kit/BaseParagraph.astro";
 import BaseSection from "../kit/BaseSection.astro";
 export interface Props {
-  postEntryIndex: number;
-  postEntry: CollectionEntry<"writings">;
+  writingEntryIndex: number;
+  writingEntry: CollectionEntry<"writings">;
 }
 
 const {
-  postEntryIndex,
-  postEntry: {
+  writingEntryIndex,
+  writingEntry: {
     data: { description, publishDate, title },
     slug,
   },
 } = Astro.props;
-const showBaseHr = postEntryIndex !== 0;
-const postUrl = `/writing/${slug}`;
+const showBaseHr = writingEntryIndex !== 0;
+const writingUrl = `/writing/${slug}`;
 ---
 
 <Fragment>
@@ -26,7 +26,7 @@ const postUrl = `/writing/${slug}`;
   <BaseSection>
     <header class="mb-4 font-bold text-primary">
       <BaseElementHeading>
-        <BaseLink href={postUrl}>
+        <BaseLink href={writingUrl}>
           <span class="font-bold">
             {title}
           </span>
@@ -39,6 +39,6 @@ const postUrl = `/writing/${slug}`;
       {description}
     </BaseParagraph>
 
-    <BaseLink href={postUrl}>Read more</BaseLink>
+    <BaseLink href={writingUrl}>Read more</BaseLink>
   </BaseSection>
 </Fragment>
