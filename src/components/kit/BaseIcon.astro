@@ -1,14 +1,13 @@
 ---
 import { Icon } from "astro-icon";
-
-type IconSize = "s" | "m" | "xl";
+import { StandardSize } from "../../type";
 
 export interface Props {
   name: string;
-  size?: IconSize;
+  size?: StandardSize;
 }
 
-function getIconWidth(iconSize: IconSize = "xl") {
+function getIconWidth(iconSize: StandardSize = "xl") {
   const smallStyle = "w-4 lg:w-5";
   const mediumStyle = "w-7 lg:w-8";
   const extraLargeStyle = "w-8 lg:w-10";
