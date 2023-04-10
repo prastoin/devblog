@@ -1,0 +1,449 @@
+---
+title: Auto generating Cypress tests with @xstate/test
+publishDate: 05 nov 2022
+description: Sometimes maintaining manually written tests can quite rough. Thanks to @xstate/test we can auto generate tests based on a state machine definition that spreads the related business logic and is highly updateable.
+---
+
+import BaseAnchor from "../../components/kit/BaseAnchor.astro";
+
+## <BaseAnchor label="Table of contents"/>
+
+- [Table of contents](#table-of-contents)
+- [Introduction](#introduction)
+- [What and how we're testing](#what-and-how-zzwere-testing)
+- [@xstate/test benefits in our case](#xstatetest-benefits-in-our-case)
+- [How to make assertions with @xstate/test](#how-to-make-assertions-with-xstatetest)
+- [Defining the events](#defining-the-events)
+- [Auto generating the tests](#auto-generating-the-tests)
+- [Common troubleshooting](#common-troubleshooting)
+  - [Not returning path tests](#not-returning-path-tests)
+  - [Using async operations aside Cypress methods](#using-async-operations-aside-cypress-methods)
+- [Ending](#ending)
+- [Working example](#working-example)
+
+## <BaseAnchor label="Introduction"/>
+
+Manually written tests usually involve a lack of block coverage, but also brings a lot of repetitions depending on your application architecture and complexity.
+Imagine a wizard form already tested and implemented in an application, a new need appears we have to add a new input between two existing one.
+Depending on your test architecture this could bring a lot of mess in the refactor, as it could spread to be refactoring every wizard form related tests.
+When where with [@xstate/test](https://xstate.js.org/docs/packages/xstate-test/) this could lead to adding a new state inside the tests state machine, every possible combination would be covered by the tool.
+
+Between tests, getters might not be exactly the same, as for example asserting on a `Label` or a `testId`.
+Centralizing interactions with an element allows a strong and controlled assertions on it every time we need inside the same tests env.
+
+## <BaseAnchor label="What and how we're testing" />
+
+We're going to review the coverage of my previous [article](https://paul.rastoin.dev) application.
+It's using [MSW](https://mswjs.io/) to mock API responses on two routes, `/user-information` and `/user-data`.
+[See the live example →](https://xstate-handling-async-operations.netlify.app/)
+
+Before talking about `xstate/test` a word about states machines:
+
+In the [SCXML](https://www.w3.org/TR/scxml/) specification, the very first elements that defines a State Machine are `States` listening to `Events` allowing or not `Transitions` to other `States`.
+It exists several layers where we can run specific `Actions`, `Services` and `Conditions`, as for example when entering/leaving a `State` or receiving a specific `event` and more.
+A State machine carries a `Context` that can be updated on `Actions` as for example storing new fetched information or whatever.
+
+[XState](https://xstate.js.org/docs/) is a library that allows us to write state machines in JavaScript.
+It comes with a lot a framework related packages, such as React Vue Angular and more, to be able to interact and interpret the logic a machine can be carrying from any view.
+
+We're then about to use [@xstate/test](https://xstate.js.org/docs/packages/xstate-test/) to auto generate tests depending on the test state machine we define, it will generate tests from paths to all the machine states, knowing that each state will involve specific `Cypress` assertions.
+
+## <BaseAnchor label="@xstate/test benefits in our case" />
+
+How does our applications works:
+
+The app displays only one view, the view is composed in 3 steps:
+
+- Waiting for the user interaction to begin loading the user data
+- Loading the user data that can lead to 4 situations
+  - Both request succeeded
+  - Both requests failed
+  - Only `userCart` request failed
+  - Only `userInformation` request failed
+- On at least one request failure, waiting for user interaction to retry
+- If every request has been loaded then appears on the view the fetched data
+
+To be able to cover this whole matrix by writing tests manually it would at least need the following tests:
+
+- Testing the application with both `userCart` and `userInformation` succeeding
+- Testing the application with both `userCart` and `userInformation` failing then on retry succeed
+- Testing the application with `userCart` failing and `userInformation` succeeding then on retry succeed
+- Testing the application with `userCart` succeeding and `userInformation` failing then on retry succeed
+
+In fact we could be testing nearly an infinite succeeding and failing combinations between `userCart` and `userInformation` but we will hold to only one failure degree.
+
+Lets think about all that use cases as a machine definition.
+We have an initial state and a final state, being respectively the `Waiting for user interaction to load the user data` and `Displaying fetched information`.
+Before achieving the final state we have to press the `load user data button` that's where complexity appears, we have to test `AA AB BA BB` requests responses status are defined by events.
+Then if one event leads to a failing request we transition to a state expecting an `User pressed retry button` that leads to transition to the final state.
+In the other hand if no requests fail then we transition to the final state from there.
+
+### <BaseAnchor label="How to make assertions with @xstate/test" />
+
+We can run assertions using a state scoped `meta` property, in this `meta` property we can execute any assertions we want that could be either [Cypress](https://www.cypress.io/) or any libs.
+Also inside those `meta`, we can have a access to a `testing context` that can be mutated by both events and `meta` definitions.
+Below is the above described machine configuration only, we still have to implement the events definition over it.
+
+```ts
+/// <reference types="cypress" />
+
+import { createModel } from "@xstate/test";
+import { createMachine } from "xstate";
+import {
+  UserCartFailingHandler,
+  UserCartSuccessHandler,
+  UserInformationFailingHandler,
+  UserInformationSuccessHandler,
+} from "../../src/mocks/handler";
+
+type TestingContext = {
+  loadUserCartShouldFail?: boolean;
+  loadUserInformationShouldFail?: boolean;
+};
+
+const testLoadUserDataMachine = createMachine({
+  id: "load user data test machine",
+  initial: "User is on home",
+  states: {
+    "User is on home": {
+      on: {
+        "Make both requests success": {
+          target: "Loaded user data successfully",
+        },
+
+        "Make both requests fail": {
+          target: "Loading user data failed",
+        },
+
+        "Make User Cart request failed": {
+          target: "Loading user data failed",
+        },
+
+        "Make User Information request failed": {
+          target: "Loading user data failed",
+        },
+      },
+
+      // We can run a state scoped assertion using the meta property
+      // here using cypress
+      meta: {
+        test: () => {
+          cy.contains(/Idle/i);
+        },
+      },
+    },
+
+    "Loaded user data successfully": {
+      meta: {
+        test: function () {
+          cy.contains(/.*Reached final state.*/i);
+        },
+      },
+    },
+
+    "Loading user data failed": {
+      on: {
+        "User pressed retry button": {
+          target: "Loaded user data successfully",
+        },
+      },
+
+      meta: {
+        test: function ({
+          loadUserCartShouldFail,
+          loadUserInformationShouldFail,
+        }: TestingContext) {
+          cy.get('[data-cy="retry-button"]');
+
+          // Depending on the TestingContext with run specific assertions
+          // Note that in our case the TestingContext is mutated by the events see section below
+          if (
+            loadUserCartShouldFail === false &&
+            loadUserInformationShouldFail === false
+          ) {
+            throw new Error(
+              "At least one of the request must be expected to fail"
+            );
+          }
+
+          if (loadUserInformationShouldFail) {
+            cy.get('[data-cy="user-information-loading-container"]').contains(
+              /user.*information.*failed/i
+            );
+          }
+          if (loadUserCartShouldFail) {
+            cy.get('[data-cy="user-cart-loading-container"]').contains(
+              /user.*cart.*failed/i
+            );
+          }
+        },
+      },
+    },
+  },
+});
+// ...
+```
+
+### <BaseAnchor label="Defining the events" />
+
+From there we have defined how the application must handle depending on user interactions, we then still have to define the expected events definition, such as the request mocks that involves `Make User Cart request failed` etc.
+To do we have to create a model passing the previous machine configuration and our events definitions.
+
+Concerning the [MSW](https://mswjs.io/) mocks that are imported at the top of the file, their definition is not a big deal.
+If you wanna see their complete definition please have a look to this [file](https://github.com/prastoin/xstate-handling-async-fetching-operations/blob/58d57423af9c19d05391b7b393f6b03b77ae3e78/src/mocks/handler.ts) from the example github [repository](https://github.com/prastoin/xstate-handling-async-fetching-operations).
+
+```ts
+/// <reference types="cypress" />
+
+import { createModel } from "@xstate/test";
+import { createMachine } from "xstate";
+import {
+  UserCartFailingHandler,
+  UserCartSuccessHandler,
+  UserInformationFailingHandler,
+  UserInformationSuccessHandler,
+} from "../../src/mocks/handler";
+
+// ...
+
+const loadUserDataModel = createModel<TestingContext>(testLoadUserDataMachine, {
+  events: {
+    "Make both requests success": {
+      exec: (context) => {
+        cy.window()
+          .its("msw")
+          .then((msw) => {
+            const { worker, rest } = msw;
+
+            worker.use(
+              UserCartSuccessHandler(rest),
+              UserInformationSuccessHandler(rest)
+            );
+
+            context.loadUserCartShouldFail = false;
+            context.loadUserInformationShouldFail = false;
+          });
+
+        cy.get('[data-cy="load-user-data-button"]').click();
+      },
+    },
+
+    "Make both requests fail": {
+      exec: (context) => {
+        cy.window()
+          .its("msw")
+          .then((msw) => {
+            const { worker, rest } = msw;
+
+            worker.use(
+              UserCartFailingHandler(rest),
+              UserInformationFailingHandler(rest)
+            );
+
+            context.loadUserCartShouldFail = true;
+            context.loadUserInformationShouldFail = true;
+          });
+
+        cy.get('[data-cy="load-user-data-button"]').click();
+      },
+    },
+
+    "Make User Cart request failed": {
+      exec: (context) => {
+        cy.window()
+          .its("msw")
+          .then((msw) => {
+            const { worker, rest } = msw;
+
+            worker.use(
+              UserCartFailingHandler(rest),
+              UserInformationSuccessHandler(rest)
+            );
+
+            context.loadUserCartShouldFail = true;
+            context.loadUserInformationShouldFail = false;
+          });
+
+        cy.get('[data-cy="load-user-data-button"]').click();
+      },
+    },
+
+    "Make User Information request failed": {
+      exec: (context) => {
+        cy.window()
+          .its("msw")
+          .then((msw) => {
+            const { worker, rest } = msw;
+            worker.use(
+              UserCartSuccessHandler(rest),
+              UserInformationFailingHandler(rest)
+            );
+
+            context.loadUserCartShouldFail = false;
+            context.loadUserInformationShouldFail = true;
+          });
+
+        cy.get('[data-cy="load-user-data-button"]').click();
+      },
+    },
+
+    "User pressed retry button": {
+      exec: (context) => {
+        cy.window()
+          .its("msw")
+          .then((msw) => {
+            const { worker, rest } = msw;
+
+            worker.use(
+              UserCartSuccessHandler(rest),
+              UserInformationSuccessHandler(rest)
+            );
+
+            context.loadUserCartShouldFail = false;
+            context.loadUserInformationShouldFail = false;
+          });
+
+        cy.get('[data-cy="retry-button"]').click();
+      },
+    },
+  },
+});
+// ...
+```
+
+### <BaseAnchor label="Auto generating the tests"/>
+
+From there we have our state test machine configuration and our related events definitions !
+What we need is to literally generate the tests.
+
+`@xstate/test` provides a method [model.getSimplePaths](https://xstate.js.org/docs/packages/xstate-test/#api) that returns an array of testing plans based on the simple paths from the test model's initial state to every other reachable state.
+Also we're using [model.testCoverage](https://xstate.js.org/docs/packages/xstate-test/#api) that verifies that every state's assertion are browsed by the tests paths.
+
+```ts
+/// <reference types="cypress" />
+
+import { createModel } from "@xstate/test";
+import { createMachine } from "xstate";
+import {
+  UserCartFailingHandler,
+  UserCartSuccessHandler,
+  UserInformationFailingHandler,
+  UserInformationSuccessHandler,
+} from "../../src/mocks/handler";
+
+//  ...
+
+describe("Load user data", () => {
+  const testPlans = loadUserDataModel.getSimplePathPlans();
+
+  testPlans.forEach((plan) => {
+    describe(plan.description, () => {
+      plan.paths.forEach((path) => {
+        it(path.description, () => {
+          // Here we run any required previous assertions
+          // Such as navigating to '/'
+          return cy.visit("/").then(() => {
+            // We pass the initial TestingContext
+            return path.test({
+              loadUserCartShouldFail: undefined,
+              loadUserInformationShouldFail: undefined,
+            });
+          });
+        });
+      });
+    });
+  });
+
+  describe("coverage", () => {
+    it("should have full coverage", () => {
+      return loadUserDataModel.testCoverage();
+    });
+  });
+});
+```
+
+The `model.getSimplePathPlans` will generates the following tests:
+
+```bash
+Load user data
+  reaches state: "User is on home"
+    ✓ via  (1046ms)
+  reaches state: "Loaded user data successfully"
+    ✓ via Make both requests success (612ms)
+    ✓ via Make both requests fail → User pressed retry button (977ms)
+    ✓ via Make User Cart request failed → User pressed retry button (1007ms)
+    ✓ via Make User Information request failed → User pressed retry button (676ms)
+  reaches state: "Loading user data failed"
+    ✓ via Make both requests fail (936ms)
+    ✓ via Make User Cart request failed (931ms)
+    ✓ via Make User Information request failed (908ms)
+  coverage
+    ✓ should have full coverage (21ms)
+```
+
+## <BaseAnchor label="Common troubleshooting"/>
+
+While implementing the previous tests I've faced few issues that I'm sharing today.
+
+### <BaseAnchor label="Not returning path tests" />
+
+While generating tests paths with `xstate/test` it's really important returning the test itself within the `forEach` as follows:
+
+```ts
+testPlans.forEach((plan) => {
+  describe(plan.description, () => {
+    plan.paths.forEach((path) => {
+      it(path.description, () => {
+        return cy.visit("/").then(() => {
+          // return is important there
+          return path.test({
+            loadUserCartShouldFail: undefined,
+            loadUserInformationShouldFail: undefined,
+          });
+        });
+      });
+    });
+  });
+});
+```
+
+If we don't, from the moment your test path pass through at least two states we will encounter race conditions where the target state `meta` will run before the received event assertions.
+Lets say verifying we're redirected on a page before even having making the redirection.
+
+### <BaseAnchor label="Using async operations aside Cypress methods" />
+
+If you encounter the following error [Cypress detected that you returned a promise from a command while also invoking one or more cy commands in that promise.](https://docs.cypress.io/guides/references/error-messages#Cypress-detected-that-you-returned-a-promise-from-a-command-while-also-invoking-one-or-more-cy-commands-in-that-promise) then it means that you're using async/await operations along your Cypress getters.
+Because Cypress commands are already promise-like, you don't need to wrap them or return your own promise.
+Instead use chainable getters as explained here in the Cypress [Return Values](https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Return-Values).
+As for example this won't work:
+
+```ts
+// This brings high risk of race conditions
+cy.visit("/tested-page");
+cy.get('[data-cy="tested-page-button"]');
+```
+
+```ts
+// This will work
+cy.visit("/tested-page").then(() => {
+  cy.get('[data-cy="tested-page-button"]');
+});
+```
+
+## <BaseAnchor label="Ending" />
+
+We've been using `@xstate/test` and `Cypress` together to cover a specific feature.
+The test state machine and events spread our business logic by their definition, it would also allows us to cover a new feature modification easily without having to refactor the whole tests suite one by one.
+`@xstate/test` might not be the solution we need every time, the difficulty being knowing when and where to build a test state machine or not.
+As for example I do not recommend testing all an app logic though one `xstate/test` state machine.
+But as far as specific feature or form is concerned this might be a really good deal.
+
+`xstate/test` is still under development and might soon release its [v1.0](https://github.com/statelyai/xstate/releases/tag/%40xstate%2Ftest%401.0.0-alpha.0) !
+
+## <BaseAnchor label="Working example" />
+
+You can find a tested working reproduction of the tested application:
+
+[XState handling async operations repository tests →](https://github.com/prastoin/xstate-handling-async-fetching-operations/blob/main/cypress/e2e/LoadUserData.cy.ts)
+
+[XState handling async operations production →](https://xstate-handling-async-operations.netlify.app/)

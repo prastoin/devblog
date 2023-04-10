@@ -6,10 +6,11 @@ import WritingPost from "../components/writing/WritingPost.astro";
 import type { CollectionEntry } from "astro:content";
 
 interface Props {
-  frontmatter: CollectionEntry<"posts">["data"];
+  frontmatter: CollectionEntry<"writings">["data"];
 }
 
-const { publishDate, title, description } = Astro.props.frontmatter;
+const { frontmatter } = Astro.props;
+const { description, title } = frontmatter;
 const permalink = "";
 ---
 
@@ -19,7 +20,7 @@ const permalink = "";
   </head>
 
   <BaseBody>
-    <WritingPost title={title} publishDate={publishDate}>
+    <WritingPost frontmatter={frontmatter}>
       <slot />
     </WritingPost>
   </BaseBody>

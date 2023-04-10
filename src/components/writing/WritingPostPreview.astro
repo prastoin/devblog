@@ -7,7 +7,7 @@ import BaseParagraph from "../kit/BaseParagraph.astro";
 import BaseSection from "../kit/BaseSection.astro";
 export interface Props {
   postEntryIndex: number;
-  postEntry: CollectionEntry<"posts">;
+  postEntry: CollectionEntry<"writings">;
 }
 
 const {
@@ -18,7 +18,7 @@ const {
   },
 } = Astro.props;
 const showBaseHr = postEntryIndex !== 0;
-const postUrl = `/posts-v2/posts/${slug}`;
+const postUrl = `/writing/posts/${slug}`;
 ---
 
 <Fragment>
