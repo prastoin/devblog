@@ -1,0 +1,45 @@
+---
+import { CollectionEntry } from "astro:content";
+import BaseElementHeading from "../kit/BaseElementHeading.astro";
+import BaseHr from "../kit/BaseHr.astro";
+import BaseProseSection from "../kit/BaseProseSection.astro";
+import BaseSection from "../kit/BaseSection.astro";
+import BaseLink from "../kit/BaseLink.astro";
+export interface Props {
+  noteEntryIndex: number;
+  noteEntry: CollectionEntry<"notes">;
+}
+const {
+  noteEntryIndex,
+  noteEntry: {
+    data: { publishDate, title },
+    render,
+    slug,
+  },
+} = Astro.props;
+const showHrElement = noteEntryIndex !== 0;
+const { Content } = await render();
+const noteUrl = `/notes/${slug}`;
+---
+
+<>
+  {showHrElement && <BaseHr />}
+  <BaseSection>
+    <article>
+      <header class="mb-4 font-bold text-primary">
+        <BaseElementHeading>
+          <BaseLink href={noteUrl}>
+            <span class="font-bold">
+              {title}
+            </span>
+          </BaseLink>
+        </BaseElementHeading>
+        <span class="italic">{publishDate}</span>
+      </header>
+
+      <BaseProseSection>
+        <Content />
+      </BaseProseSection>
+    </article>
+  </BaseSection>
+</>

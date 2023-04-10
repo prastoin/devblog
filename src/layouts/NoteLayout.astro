@@ -2,15 +2,17 @@
 import BaseHead from "../components/kit/BaseHead.astro";
 import BaseBody from "../components/kit/BaseBody.astro";
 import "../styles/global.css";
-import WritingPost from "../components/writing/WritingPost.astro";
 import type { CollectionEntry } from "astro:content";
+import NotePost from "../components/notes/NotePost.astro";
 
 interface Props {
-  frontmatter: CollectionEntry<"writings">["data"];
+  frontmatter: CollectionEntry<"notes">["data"];
 }
 
 const { frontmatter } = Astro.props;
-const { description, title } = frontmatter;
+const { title } = frontmatter;
+const description =
+  "Things I've learned recently that I consider deserve to keep a trace of";
 const permalink = "";
 ---
 
@@ -20,8 +22,8 @@ const permalink = "";
   </head>
 
   <BaseBody>
-    <WritingPost frontmatter={frontmatter}>
+    <NotePost frontmatter={frontmatter}>
       <slot />
-    </WritingPost>
+    </NotePost>
   </BaseBody>
 </html>

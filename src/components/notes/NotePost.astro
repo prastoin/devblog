@@ -4,10 +4,10 @@ import BaseElementHeading from "../kit/BaseElementHeading.astro";
 import BaseProseSection from "../kit/BaseProseSection.astro";
 import BaseSection from "../kit/BaseSection.astro";
 export interface Props {
-  frontmatter: CollectionEntry<"writings">["data"];
+  frontmatter: CollectionEntry<"notes">["data"];
 }
 
-const { title, publishDate } = Astro.props;
+const { publishDate, title } = Astro.props.frontmatter;
 ---
 
 <BaseSection>

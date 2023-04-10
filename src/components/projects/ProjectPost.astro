@@ -1,27 +1,29 @@
 ---
-import { ProjectFrontmatter } from "../types/ProjectsType";
 import { Picture } from "@astrojs/image/components";
-import BaseElementHeading from "./kit/BaseElementHeading.astro";
-import BaseProseSection from "./kit/BaseProseSection.astro";
-import BaseSection from "./kit/BaseSection.astro";
-import BaseIcon from "./kit/BaseIcon.astro";
+import BaseElementHeading from "../kit/BaseElementHeading.astro";
+import BaseProseSection from "../kit/BaseProseSection.astro";
+import BaseSection from "../kit/BaseSection.astro";
+import BaseIcon from "../kit/BaseIcon.astro";
+import { CollectionEntry } from "astro:content";
 export interface Props {
-  projectFronmatter: ProjectFrontmatter;
-  compiledContent: string;
+  projectEntry: CollectionEntry<"projects">;
 }
 const {
-  compiledContent,
-  projectFronmatter: {
-    title,
-    imageName,
-    publishDate,
-    githubRepoUrl,
-    is42Project,
-    tags,
-    peopleCounter,
-    productionUrl,
+  projectEntry: {
+    data: {
+      githubRepoUrl,
+      imageName,
+      peopleCounter,
+      publishDate,
+      tags,
+      title,
+      is42Project,
+      productionUrl,
+    },
+    render,
   },
 } = Astro.props;
+const { Content } = await render();
 ---
 
 <>
@@ -37,7 +39,7 @@ const {
 
         <a class="mb-4 mx-auto" href={productionUrl || githubRepoUrl}>
           <Picture
-            src={import(`../assets/${imageName}.jpg`)}
+            src={import(`../../assets/${imageName}.jpg`)}
             widths={[200, 300, 400, 500]}
             sizes="(max-width: 800px) 100vw, 800px"
             alt={`${title} project image presentation`}
@@ -67,9 +69,13 @@ const {
             <a href={githubRepoUrl}>
               <BaseIcon name="akar-icons:github-fill" />
             </a>
-            <a class="pl-3" href={productionUrl}>
-              <BaseIcon name="akar-icons:link-out" />
-            </a>
+            {
+              productionUrl && (
+                <a class="pl-3" href={productionUrl}>
+                  <BaseIcon name="akar-icons:link-out" />
+                </a>
+              )
+            }
           </div>
         </div>
 
@@ -87,7 +93,7 @@ const {
       </header>
 
       <BaseProseSection>
-        <Fragment set:html={compiledContent} />
+        <Content />
       </BaseProseSection>
     </article>
   </BaseSection>

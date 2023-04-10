@@ -1,20 +1,24 @@
 ---
-import { PostPreviewInformation } from "../../types/PostsType";
+import type { CollectionEntry } from "astro:content";
 import BaseElementHeading from "../kit/BaseElementHeading.astro";
 import BaseHr from "../kit/BaseHr.astro";
 import BaseLink from "../kit/BaseLink.astro";
 import BaseParagraph from "../kit/BaseParagraph.astro";
 import BaseSection from "../kit/BaseSection.astro";
 export interface Props {
-  writingPostPreviewIndex: number;
-  postInformation: PostPreviewInformation;
+  writingEntryIndex: number;
+  writingEntry: CollectionEntry<"writings">;
 }
 
 const {
-  writingPostPreviewIndex,
-  postInformation: { description, publishDate, title, url },
+  writingEntryIndex,
+  writingEntry: {
+    data: { description, publishDate, title },
+    slug,
+  },
 } = Astro.props;
-const showBaseHr = writingPostPreviewIndex !== 0;
+const showBaseHr = writingEntryIndex !== 0;
+const writingUrl = `/writing/${slug}`;
 ---
 
 <Fragment>
@@ -22,7 +26,7 @@ const showBaseHr = writingPostPreviewIndex !== 0;
   <BaseSection>
     <header class="mb-4 font-bold text-primary">
       <BaseElementHeading>
-        <BaseLink href={url}>
+        <BaseLink href={writingUrl}>
           <span class="font-bold">
             {title}
           </span>
@@ -35,6 +39,6 @@ const showBaseHr = writingPostPreviewIndex !== 0;
       {description}
     </BaseParagraph>
 
-    <BaseLink href={url}>Read more</BaseLink>
+    <BaseLink href={writingUrl}>Read more</BaseLink>
   </BaseSection>
 </Fragment>

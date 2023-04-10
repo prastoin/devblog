@@ -8,7 +8,7 @@
         "build": "astro build",
         "preview": "astro preview",
         "lint": "eslint src/**/*.{astro,tsx,ts}",
-        "lint:markdown": "eslint src/**/*.{md,mdx}",
+        "lint:markdown": "eslint src/content/**/*.{md,mdx}",
         "pretty": "prettier --write ./src/**/*.{md,mdx,astro,ts,tsx}"
     },
     "devDependencies": {
