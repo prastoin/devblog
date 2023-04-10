@@ -10,7 +10,8 @@ interface Props {
 }
 
 const { data: frontmatter, slug } = Astro.props.writingEntry;
-const { description, title } = frontmatter;
+const { description, title: writingTitle } = frontmatter;
+const title = `Paul Rastoin | ${writingTitle}`;
 const permalink = `https://paul.rastoin.dev/notes/${slug}/`;
 ---
 

@@ -6,8 +6,9 @@ import BasePageHeading from "../../components/kit/BasePageHeading.astro";
 import { getCollection } from "astro:content";
 import NotePostPreview from "../../components/notes/NotePostPreview.astro";
 
-const title = "Paul Rastoin | Today I learned";
-const description = "Everything I learn everyday";
+const title = "Paul Rastoin | Notes";
+const description =
+  "Things I've learned recently that I consider deserve to keep a trace of";
 const permalink = "https://paul.rastoin.dev/notes/";
 const allNotes = (await getCollection("notes")).sort(
   (a, b) =>
