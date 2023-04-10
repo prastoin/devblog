@@ -6,14 +6,14 @@ import type { CollectionEntry } from "astro:content";
 import NotePost from "../components/notes/NotePost.astro";
 
 interface Props {
-  frontmatter: CollectionEntry<"notes">["data"];
+  noteEntry: CollectionEntry<"notes">;
 }
 
-const { frontmatter } = Astro.props;
+const { data: frontmatter, slug } = Astro.props.noteEntry;
 const { title } = frontmatter;
 const description =
   "Things I've learned recently that I consider deserve to keep a trace of";
-const permalink = "";
+const permalink = `https://paul.rastoin.dev/notes/${slug}/`;
 ---
 
 <html lang="en">

@@ -6,12 +6,12 @@ import WritingPost from "../components/writing/WritingPost.astro";
 import type { CollectionEntry } from "astro:content";
 
 interface Props {
-  frontmatter: CollectionEntry<"writings">["data"];
+  writingEntry: CollectionEntry<"writings">;
 }
 
-const { frontmatter } = Astro.props;
+const { data: frontmatter, slug } = Astro.props.writingEntry;
 const { description, title } = frontmatter;
-const permalink = "";
+const permalink = `https://paul.rastoin.dev/notes/${slug}/`;
 ---
 
 <html lang="en">

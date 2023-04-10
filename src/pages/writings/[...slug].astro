@@ -18,6 +18,6 @@ const { entry } = Astro.props;
 const { Content } = await entry.render();
 ---
 
-<WritingLayout frontmatter={entry.data}>
+<WritingLayout writingEntry={entry}>
   <Content />
 </WritingLayout>

@@ -8,7 +8,7 @@ import NotePostPreview from "../../components/notes/NotePostPreview.astro";
 
 const title = "Paul Rastoin | Today I learned";
 const description = "Everything I learn everyday";
-const permalink = "https://example.com"; //TODO update ?
+const permalink = "https://paul.rastoin.dev/notes/";
 const allNotes = (await getCollection("notes")).sort(
   (a, b) =>
     new Date(b.data.publishDate).valueOf() -

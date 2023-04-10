@@ -6,10 +6,14 @@ import WritingPostPreview from "../../components/writing/WritingPostPreview.astr
 import BasePageHeading from "../../components/kit/BasePageHeading.astro";
 import { getCollection } from "astro:content";
 
-const title = "Paul Rastoin | Writing";
+const title = "Paul Rastoin | Writings";
 const description = "Writing articles about things I'm interested in";
-const permalink = "https://example.com/";
-const allWritingEntries = await getCollection("writings");
+const permalink = "https://paul.rastoin.dev/writings/";
+const allWritingEntries = (await getCollection("writings")).sort(
+  (a, b) =>
+    new Date(b.data.publishDate).valueOf() -
+    new Date(a.data.publishDate).valueOf()
+);
 ---
 
 <html lang="en">
@@ -19,7 +23,7 @@ const allWritingEntries = await getCollection("writings");
 
   <BaseBody>
     <div class="flex flex-col justify-evenly">
-      <BasePageHeading>Writing</BasePageHeading>
+      <BasePageHeading>Writings</BasePageHeading>
       <div aria-label="Blog post list">
         {
           allWritingEntries.map((entry, index) => (
