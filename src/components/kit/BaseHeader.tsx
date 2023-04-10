@@ -24,10 +24,10 @@ const HeaderLinks: React.FC = () => (
     </a>
 
     <a
-      href="/writing"
+      href="/writings"
       className="text-primary hover:text-secondary hover:underline font-medium"
     >
-      Writing
+      Writings
     </a>
   </>
 );
