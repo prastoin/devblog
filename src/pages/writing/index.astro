@@ -1,25 +1,15 @@
 ---
-// Component Imports
 import BaseHead from "../../components/kit/BaseHead.astro";
 import BaseBody from "../../components/kit/BaseBody.astro";
 import "../../styles/global.css";
-
 import WritingPostPreview from "../../components/writing/WritingPostPreview.astro";
-import { PostFrontmatter } from "../../types/PostsType";
 import BasePageHeading from "../../components/kit/BasePageHeading.astro";
+import { getCollection } from "astro:content";
 
 const title = "Paul Rastoin | Writing";
 const description = "Writing articles about things I'm interested in";
 const permalink = "https://example.com/";
-
-// Data Fetching: List all Markdown posts in the repo.
-const allPosts = (await Astro.glob<PostFrontmatter>("./posts/*.mdx")).sort(
-  (a, b) =>
-    new Date(b.frontmatter.publishDate).valueOf() -
-    new Date(a.frontmatter.publishDate).valueOf()
-);
-// Full Astro Component Syntax:
-// https://docs.astro.build/core-concepts/astro-components/
+const allBlogPosts = await getCollection("posts");
 ---
 
 <html lang="en">
@@ -32,14 +22,8 @@ const allPosts = (await Astro.glob<PostFrontmatter>("./posts/*.mdx")).sort(
       <BasePageHeading>Writing</BasePageHeading>
       <div aria-label="Blog post list">
         {
-          allPosts.map(({ frontmatter: postInformation, url }, index) => (
-            <WritingPostPreview
-              writingPostPreviewIndex={index}
-              postInformation={{
-                ...postInformation,
-                url,
-              }}
-            />
+          allBlogPosts.map((entry, index) => (
+            <WritingPostPreview postEntryIndex={index} postEntry={entry} />
           ))
         }
       </div>

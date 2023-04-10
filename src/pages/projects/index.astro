@@ -20,7 +20,6 @@ const allProjects = (await fetchAllProjects()).sort(
     new Date(b.frontmatter.publishDate).valueOf() -
     new Date(a.frontmatter.publishDate).valueOf()
 );
-console.log(allProjects[0].frontmatter);
 ---
 
 <html lang="en">
