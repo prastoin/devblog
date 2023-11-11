@@ -1,21 +1,21 @@
 ---
 import { CollectionEntry } from "astro:content";
-import BaseElementHeading from "../kit/BaseElementHeading.astro";
 import BaseProseSection from "../kit/BaseProseSection.astro";
 import BaseSection from "../kit/BaseSection.astro";
+import BasePageHeading from "../kit/BasePageHeading.astro";
 export interface Props {
   frontmatter: CollectionEntry<"writings">["data"];
 }
 
-const { title, publishDate } = Astro.props;
+const { title, publishDate } = Astro.props.frontmatter;
 ---
 
 <BaseSection>
   <article>
     <header class="mb-4 font-bold text-primary">
-      <BaseElementHeading>
+      <BasePageHeading>
         {title}
-      </BaseElementHeading>
+      </BasePageHeading>
       <span class="italic">{publishDate}</span>
     </header>
 
