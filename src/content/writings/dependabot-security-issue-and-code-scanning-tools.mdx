@@ -8,13 +8,13 @@ description: TODO
 
 - Introduction
   . Most common interaction with dependabot ( unread mail, pain in the ass etc ), not knowing what this sub deps security issue is related to
-  . What is dependabot
+  . What is dependabot in a nutshell
   . Importance of keeping versions updated to latest semver
   . Other noticeable github security scanning tools: Secret scanning, code scanning ( such as could do sonarQube ), dependency review => GitHubActions on steroids
 - Workflow of dependabot alert
 - Configure your dependabot alert for your needs
   . See Version updates notes
-- Reading your project dependency graph ( https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-the-dependency-graph )
+- Reading your repo dependency graph ( https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-the-dependency-graph )
 
 # Introduction
 
@@ -58,3 +58,56 @@ A lot of supported package manager
 ### Dependcy consumers
 
 1/ Receives an dependabot alert
+2/ Checks security issue applied to its business
+3/ Checks project integrity
+4/ Merges
+
+# Dependency graph
+
+Interprets the lockfile => One more reason to push the lockfile
+Shows transitive dependencies or sub-dependencies
+Support a lot of ecosystem even brings solution with beta API to publish your own dependencies if not supported lockfile etc example GO
+
+---
+
+# Podcast structure:
+
+## Introduction
+
+. Most common interaction with dependabot ( unread mail, pain in the ass etc ), not knowing what this sub deps security issue is related to
+. What is dependabot in a nutshell
+Is a dependency management tool
+. Importance of keeping versions updated to latest semver
+This helps reduce your exposure to older versions of dependencies. Using newer versions makes it easier to apply patches if security vulnerabilities are discovered, and also makes it easier for Dependabot security updates to successfully raise pull requests to upgrade vulnerable dependencies.
+. Other noticeable github security scanning tools:
+Secret scanning,
+Code scanning ( such as could do sonarQube ),
+Dependency review => GitHubActions on steroids
+
+## The lifecycle of an alert
+
+- Consumed depdency side
+  1/ open sourcer/mainteners discovers a security issues
+  2/ Privately discuss it and fix
+  3/ Publish a security advisory encouraging community to upgrade
+  (Remark) 4/ It updates the GitHub advisory Database
+
+- Dependcy consumers
+  1/ Receives an dependabot alert
+  2/ Checks security issue applied to its business
+  3/ Checks project integrity
+  4/ Merges
+
+## Configuration
+
+. Handling pull request
+. GitHub Actions on dependabot PR combinations  
+. Vendored dependency
+. Mononrepo package related PR https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/customizing-dependency-updates
+. Organization dependency
+
+- Configure your dependabot alert for your needs
+  . See Version updates notes
+- Reading your repo dependency graph ( https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-the-dependency-graph )
+
+## Conclusion and questions
