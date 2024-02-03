@@ -13,11 +13,36 @@ import BaseAnchor from "../../components/kit/BaseAnchor.astro";
 
 ## <BaseAnchor label="TL;DR" />
 
-TODO WIP
+When onboarding on a `TypeScript` or just migrated to `TypeScript` project you might encounter way too permissive TypeScript configuration, that could result on runtime bugs or just not handled use cases.
+When accumulating through time this might become not humanly handle-able.
+
+Configuration example:
+
+```json
+{
+  // ...
+  "compilerOptions": {
+    "strict": false,
+    "strictNullChecks": false,
+    "strictPropertyInitialization": false,
+    "skipLibCheck": true,
+    "noImplicitAny": false
+    // ...
+  }
+}
+```
+
+It's not even imaginable to manually fix thousands of `ts-errors`.
+When you can't rely on your types, you must regain trust on other deterministic pillar of your application such as:
+
+- Testing
+- Ingoing data
+- Outgoing data
 
 ## <BaseAnchor label="Introduction" />
 
-Lets say we've just landed on a new job or we're just given the responsibility of an existing TypeScript application, either client or server.
+In this text I'm going to describe the way I would take from this day to handle strong legacy on a TypeScript application, either server or front.
+Lets say we've just landed on a new job or we're just given the responsibility of an existing and still currently developed TypeScript application.
 Giving a look to the `tsconfig` you see this:
 
 ```json
@@ -35,7 +60,25 @@ Giving a look to the `tsconfig` you see this:
 ```
 
 From there if you're working on an Node.js API I would be personally very worried of the server'security potential data leakage and consistency.
-Anyway, your goal is to enhance, by activating TypeScript strictness on this application.
+Anyway, your goal is to enhance the application, avoid recurrent production issues or what ever, by activating TypeScript strictness on this application.
+
+## Why it's important
+
+It might not be objective as I really love TypeScript, but in my opinion, is often seen as enemy to production shipping. This can be accurate depending on the product and working context. But overall TypeScript, again in my opinion, helps a lot on the following aspect:
+
+- Dev env comfort
+- Confidence toward application stability
+- Maintainability
+- Standardization
+- Human readability
+
+The first thing I wanna do, as a TypeScript developer, is think of my types. What is going the model I'm going to work on. How will it mutate to be able to be processed afterwards etc.
+All of those steps that allows you taking a step back on the technical aspect of the implementation such as could be doing Test Driven development.
+
+## The problematic flags
+
+We will shortly list all the most recurrent problematic flags, too often activated by mistake.
+Making TypeScript way too permissive.
 
 ## "strict"
 
@@ -51,11 +94,17 @@ interface Foo {
   bar: string;
 }
 
+// Would not raise any errors
 const toto: Foo = undefined;
 const titi: Foo = {};
-
-// Reading the references
-console.log(titi.bar);
+const tata: Foo = null;
+const tata: Foo = {
+  bar: null,
+};
+const tutu: Foo = {
+  bar: undefined,
+};
+// ... and so many more
 ```
 
 ## "strictPropertyInitialization"
@@ -64,20 +113,20 @@ By activating this flag no need to assign `class` properties just after declarat
 Commonly found on `NestJs` when declaring model.
 Combined with the `strictNullChecks` this can be really dangerous leading to unhandled behavior.
 
-# "skipLibCheck"
-
-Might be really legitimate to be used depending on the project, but before activating this still have a look to your types peer dependencies.
-
 ```ts
 class Foo {
   bar: string;
 
   constructor(value: string | null) {
-    // here at runtime this.bar can either be undefined null or a string
+    // here at runtime this.bar can either be undefined null or a string whereas is only typed as string
     this.bar = value;
   }
 }
 ```
+
+## "skipLibCheck"
+
+Might be really legitimate to be used depending on the project, but might quite often be lazy shortcut to what could be a types peer dependency issue.
 
 ## <BaseAnchor label="The diagnostic" />
 
@@ -98,7 +147,10 @@ Seeing the quantity of them this is not something we wanna fix manually even inc
 What I mean is that developers cannot, for budget or even human capacity all focus on this kind of task.
 But can be set good practices to avoid introducing new legacy but also specific refactor/enhancement to allow a better global strictness.
 
-## <BaseAnchor label="My spec" />
+## <BaseAnchor label="My approach" />
+
+Of course it's really subjective and will depend on your stack etc.
+There are not all the existing entrypoint that can leverage global TypeScript enhancement.
 
 ### <BaseAnchor label="Deadcode" />
 
@@ -111,19 +163,64 @@ To do so we can use great tools such as [knip](https://knip.dev/) that will dete
 - unused types
   and more !
 
-Removing deadcode is IMO a pretty descent first step
+Removing deadcode is IMO a pretty descent first step.
 
-### <BaseAnchor label="Avoid regression / Confidence in the refactor" />
+### <BaseAnchor label="Freeze your business core" />
 
 This might sound quite paradoxical due to TypeScript nature, but yes fixing TypeScript issues might bring functional regression on stabilized bugs.
 This is why it's really important to take time to understand the section's business logic you're refactoring.
 Also I would recommend, if it's not already the case to implement user oriented tests, such as integration or e2e. To attest the application's status before starting fixing ts-errors.
+Of course even the best coverage won't cover all possible blocks of your application, such a refactor might always introduce regressions.
 
 Note that unit tests might false positive, as you will have to fix type issues on them that can lead to previously untested behavior. Where as integration/e2e tests should not be requiring such a deep refactor if it's not the mocked data.
 
 ### <BaseAnchor label="Refactor the contract API" />
 
-### <BaseAnchor label="New development" />
+One thing that can really be troubleshooting, in my opinion, are the models definition. By model I want to say any incoming data from external services, API libs etc.
+What I mean here is that, if you don't know what's in your app, you should be able to strictly define what's coming ou or going in it.
+Being able to rely on the outgoing data is good way to determine the final transpilation of your inner states before leaving your scope. It's also a good to avoid sending invalid or unhandled `reqs` bodies that could lead to unwanted database mutation.
+In the same way, being able to rely on the oncoming data is always mind relaxing on rethinking your inner application state definition.
 
-Activating the flags for a given folder or file with specific extension ?
-Enable tsc compilation in cicd to avoid nut maintaining tests and mocks
+Model de-synchronization can come from several client side sources such as
+
+- Expecting a never received entry in the model
+- Making a typo either at the model declaration level, or while directly referencing a model instance entry.
+
+For instance:
+
+```ts
+// User.model.ts
+type User {
+  id: string;
+  name: string;
+  birthdate: Date;
+}
+
+// UserProfile.tsx
+// ...
+const {id, name, birthDate} = props.user //birthDate will always be null
+// ...
+```
+
+Of course this example is trivial, anyone testing its application will be able to analyze it pretty fast, this is a representation.
+
+### <BaseAnchor label="Benefic routine" />
+
+When having existing legacy one of the main focus should also be not appending new one.
+In this way, in the limits of the possible, defining new standardization with mates is really necessary. Such as when creating anything from scratch, components models etc, make it strictly typed. Also when updating anything carrying legacy, as much as possible, either fix it or only add typed updates.
+
+Something anyone, when having to handle TypeScript legacy has been thinking is to attribute scoped rules to a specific folder.
+Such as lets way you wanna refactor only `featureA` your goal would be to apply a very strict `tsconfig` to its folder only.
+From what I've been able to find this is not something doable.
+Also this has its limitations regarding features sharing or being dependent to each others.
+
+But what can be done is to say only focus on a given feature to refactor from bottom to the top, types model views functions etc.
+Note that running a `tsc` compilation within your `cicd` not only within your framework build step, that might not even run type-check, is always a good practice to also cover tests files.
+
+## Conclusion
+
+There's not finite number of ways to approach such a TypeScript refactor. It relies on so many app related factors. Also can be notified `JavaScript` project migrating toward a `TypeScript`, where legacy would be incorrectly labelled.
+Anyway this way from today, the main things I would focus on in aim to enhance a TypeScript project with a permissive configuration.
+If you have any suggestion, questions or wanna share your approach I would be really interested, just ping me !
+
+Thanks for reading
