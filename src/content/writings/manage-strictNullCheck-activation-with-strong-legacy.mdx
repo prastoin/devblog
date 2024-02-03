@@ -1,5 +1,5 @@
 ---
-title: Fix massive amounts of TypeScript on project with strong legacy
+title: Approaching massive volumes of TypeScript errors
 publishDate: 20 jan 2024
 description: When onboarding on a new TypeScript project you might encounter strong legacy due to too permissive configuration or not idiomatic implementation, in this article we see my approach to handle them.
 ---
@@ -10,6 +10,7 @@ import BaseAnchor from "../../components/kit/BaseAnchor.astro";
 
 - [Table of contents](#table-of-contents)
 - [TL;DR](#tldr)
+  {/* TODO AUTO-GENERATE this */}
 
 ## <BaseAnchor label="TL;DR" />
 
@@ -33,11 +34,14 @@ Configuration example:
 ```
 
 It's not even imaginable to manually fix thousands of `ts-errors`.
+To a point that this might never be !
 When you can't rely on your types, you must regain trust on other deterministic pillar of your application such as:
 
-- Testing
-- Ingoing data
-- Outgoing data
+- Testing, freezing the state of the application
+- Deadcode, using for example [knip](https://knip.dev/), we don't wanna fix ts-errors on anything unused.
+- Outgoing and incoming data, following API contracts.
+
+Afterwards becomes more thinkable to step by step refactor features by features, define benefic routine within your team to avoid adding new legacy to the codebase and in parallel of development fix the old one as possible.
 
 ## <BaseAnchor label="Introduction" />
 
@@ -70,10 +74,11 @@ It might not be objective as I really love TypeScript, but in my opinion, is oft
 - Confidence toward application stability
 - Maintainability
 - Standardization
-- Human readability
 
 The first thing I wanna do, as a TypeScript developer, is think of my types. What is going the model I'm going to work on. How will it mutate to be able to be processed afterwards etc.
 All of those steps that allows you taking a step back on the technical aspect of the implementation such as could be doing Test Driven development.
+I also want to ts-server to shout at me when he detects anything I haven't been thinking of, often intentionally when I want him to spread an interface mutation to guide me on what now needs to be done.
+There's so many framework and tools in the ecosystem, TypeScript is layer now widely shared between all of them, allowing to expose a meaningful user interface to anyone understand TypeScript agnostically of the stack under the hood.
 
 ## The problematic flags
 
@@ -203,6 +208,16 @@ const {id, name, birthDate} = props.user //birthDate will always be null
 ```
 
 Of course this example is trivial, anyone testing its application will be able to analyze it pretty fast, this is a representation.
+Also exist great tools such as that allow centralizing and transpiling an contract API through a `TypeScript` utils. That could be shared between the front and the back.
+
+- Zodios
+- ts-rest
+- Trpc
+
+For handling legacy, or when you don't have the hand on the back or maybe it's just not a Node.js one. Zodios might be your deal.
+Following this great tool `zodios-to-client` that will generate a Zodios instance that you could only import front side based on the OpenApi specification of the API you're dealing with.
+This might really be a time gain/boost if you're handling massive volume of endpoints.
+Note that it's ship with `Zod` that could allow runtime type validation :eyes:
 
 ### <BaseAnchor label="Benefic routine" />
 
