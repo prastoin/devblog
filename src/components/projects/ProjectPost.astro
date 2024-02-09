@@ -1,7 +1,7 @@
 ---
 import { Picture } from "@astrojs/image/components";
 import BaseElementHeading from "../kit/BaseElementHeading.astro";
-import BaseProseSection from "../kit/BaseProseSection.astro";
+import BaseProse from "../kit/BaseProse.astro";
 import BaseSection from "../kit/BaseSection.astro";
 import BaseIcon from "../kit/BaseIcon.astro";
 import { CollectionEntry } from "astro:content";
@@ -92,9 +92,9 @@ const { Content } = await render();
         }
       </header>
 
-      <BaseProseSection>
+      <BaseProse>
         <Content />
-      </BaseProseSection>
+      </BaseProse>
     </article>
   </BaseSection>
 </>

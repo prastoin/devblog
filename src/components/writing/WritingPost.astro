@@ -1,6 +1,6 @@
 ---
 import { CollectionEntry } from "astro:content";
-import BaseProseSection from "../kit/BaseProseSection.astro";
+import BaseProse from "../kit/BaseProse.astro";
 import BaseSection from "../kit/BaseSection.astro";
 import BasePageHeading from "../kit/BasePageHeading.astro";
 export interface Props {
@@ -11,7 +11,7 @@ const { title, publishDate } = Astro.props.frontmatter;
 ---
 
 <BaseSection>
-  <article>
+  <article class="max-w-prose">
     <header class="mb-4 font-bold text-primary">
       <BasePageHeading>
         {title}
@@ -19,8 +19,8 @@ const { title, publishDate } = Astro.props.frontmatter;
       <span class="italic">{publishDate}</span>
     </header>
 
-    <BaseProseSection>
+    <BaseProse>
       <slot />
-    </BaseProseSection>
+    </BaseProse>
   </article>
 </BaseSection>

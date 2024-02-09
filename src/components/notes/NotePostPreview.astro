@@ -2,7 +2,7 @@
 import { CollectionEntry } from "astro:content";
 import BaseElementHeading from "../kit/BaseElementHeading.astro";
 import BaseHr from "../kit/BaseHr.astro";
-import BaseProseSection from "../kit/BaseProseSection.astro";
+import BaseProse from "../kit/BaseProse.astro";
 import BaseSection from "../kit/BaseSection.astro";
 import BaseLink from "../kit/BaseLink.astro";
 export interface Props {
@@ -37,9 +37,9 @@ const noteUrl = `/notes/${slug}`;
         <span class="italic">{publishDate}</span>
       </header>
 
-      <BaseProseSection>
+      <BaseProse>
         <Content />
-      </BaseProseSection>
+      </BaseProse>
     </article>
   </BaseSection>
 </>

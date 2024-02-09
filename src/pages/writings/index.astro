@@ -24,7 +24,7 @@ const allWritingEntries = (await getCollection("writings")).sort(
   <BaseBody>
     <div class="flex flex-col justify-evenly">
       <BasePageHeading>Writings</BasePageHeading>
-      <div aria-label="Blog post list">
+      <div>
         {
           allWritingEntries.map((entry, index) => (
             <WritingPostPreview

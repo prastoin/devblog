@@ -4,7 +4,6 @@ import BaseElementHeading from "../kit/BaseElementHeading.astro";
 import BaseHr from "../kit/BaseHr.astro";
 import BaseLink from "../kit/BaseLink.astro";
 import BaseParagraph from "../kit/BaseParagraph.astro";
-import BaseSection from "../kit/BaseSection.astro";
 export interface Props {
   writingEntryIndex: number;
   writingEntry: CollectionEntry<"writings">;
@@ -23,7 +22,9 @@ const writingUrl = `/writings/${slug}`;
 
 <Fragment>
   {showBaseHr && <BaseHr />}
-  <BaseSection>
+  <article
+    class="w-full h-fit bg-white dark:bg-slate-800 rounded-lg py-4 px-3 md:py-8 md:px-6 ring-1 ring-slate-800/5 shadow-xl"
+  >
     <header class="mb-4 font-bold text-primary">
       <BaseElementHeading>
         <BaseLink href={writingUrl}>
@@ -40,5 +41,5 @@ const writingUrl = `/writings/${slug}`;
     </BaseParagraph>
 
     <BaseLink href={writingUrl}>Read more</BaseLink>
-  </BaseSection>
+  </article>
 </Fragment>
