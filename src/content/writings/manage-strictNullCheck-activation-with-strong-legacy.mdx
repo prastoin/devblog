@@ -244,18 +244,18 @@ When having existing legacy one of the main focus should be not appending new on
 In this way, as possible, defining new standardization with teammates is really necessary. Such as when creating anything from scratch, components models etc, make them strictly typed.
 When updating anything carrying legacy, as much as possible, either fix it or only add strictly typed updates.
 
-Something anyone, when having to handle `TypeScript` legacy has been thinking abouth, is to attribute scoped rules to a specific folder.
-Such as lets way you wanna refactor only `featureA` your goal would be to apply a very strict `tsconfig` to its folder only.
-From what I've been able to find this is not something doable.
-Also this has its limitations regarding features sharing or being dependent to each others.
+Something anyone, when having to handle `TypeScript` legacy has been thinking about, is to attribute scoped rules to a specific folder.
+Such as lets say we've just refactored `featureA` our goal would be to apply a very strict `tsconfig` to its folder only.  
+With `TypeScript` [Configuration Inheritance](https://www.typescriptlang.org/tsconfig#extends) it's possible !
 
-But what can be done is to say only focus on a given feature to refactor from bottom to the top, types model views functions etc.
+In this way we could enable strict compilation on specific paths, that would also be checked through `cicd` across time.
+But we should keep in mind that it also has its limitations regarding features sharing or being dependent to each others.  
 Note that running a `tsc` compilation within your `cicd` not only within your framework build step, that might not even run type-check, is always a good practice to also cover tests files.
 
 ## 8. <a name='Conclusion'></a>Conclusion
 
-There's not finite number of ways to approach such a `TypeScript` refactor. It relies on so many app related factors. Also can be notified `JavaScript` project migrating toward a `TypeScript`, where legacy would be incorrectly labelled.
-Anyway this way from today, the main things I would focus on in aim to enhance a `TypeScript` project with a permissive configuration.
+There's not finite number of ways to approach such a `TypeScript` refactor. Can be notified `JavaScript` project migrating to a `TypeScript` one, where legacy would be incorrectly labelled.  
+Anyway these were, as of today, the main points I would focus on to enhance strictness of a `TypeScript` project with a too permissive configuration.  
 If you have any suggestion, questions or wanna share your approach I would be really interested, just ping me !
 
 Thanks for reading
