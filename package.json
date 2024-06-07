@@ -31,10 +31,8 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@astrojs/image": "^0.16.5",
     "@astrojs/mdx": "^0.18.3",
     "@astrojs/react": "^3.5.0",
-    "@astrojs/renderer-react": "^0.5.0",
     "@astrojs/sitemap": "^1.2.2",
     "@astrojs/tailwind": "^5.1.0",
     "@xstate/react": "^2.0.0",
