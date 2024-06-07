@@ -1,0 +1,29 @@
+---
+title: Things I would like to see on GitHub Actions
+publishDate: 7 jun 2024
+description: TODO
+---
+
+import BaseAnchor from "../../components/kit/BaseAnchor.astro";
+
+----- Draft
+
+From Jenkins:
+
+- Ternaries
+- workflow_call and workflow_dispatch common args
+- Invoke reusable workflow Using a specific environment.
+  - to be able to compute env related variables to be provided as reusable workflow input
+- Required is not really required secrets
+- Dynamic input declaration, such as Jenkins Active Choices plugin
+- Grouping workflows in the UI as folders
+- Being able to add a dynamic label to "deploy your app with github" entries
+- Conditional jobs `needs`
+
+Should dig deeper before speaking:
+
+- Secrets and vars repo/org auto-completion
+- Validating vars and secret before running a pipeline / AKA unknown secrets ?
+- Versioning variables and having a configuration as code
+
+---
