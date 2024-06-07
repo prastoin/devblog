@@ -1,0 +1,196 @@
+---
+title: 42 ft_transcendance peer review recap
+publishDate: 10 apr 2024
+description: This document is a recap of 42's final common core project correction. It
+---
+
+import BaseAnchor from "../../components/kit/BaseAnchor.astro";
+
+# Introduction's introduction
+
+This document might be quite though to read for someone outside 42. In a nutshell `ft_transcendance` is the final project of the 42 common core.
+
+This is a `Pong` web integration that should handle multiplayer, friends list etc.. In principle this is very first touch of web dev for 42 students.
+The subject's required stack cycles every 6 months, during this correction the stack was `React` and `NestJs` with `TypeScript`.
+
+I've been correcting or reviewing/mentoring several ft_transcendance last years, and the following errors occurred nearly each time.
+That's it enjoy your reading
+
+## <BaseAnchor label="Introduction"/>
+
+Hello there, your project rocks !
+@coviccinelle and I had the occasion to do some peer review through an interview.
+We had a look to your ft_transcendance and this is my very subjective and personal recap of the notions that might be interesting for you to dig deeper !
+
+## <BaseAnchor label="Table of content" />
+
+- [Introduction](#introduction)
+  - [Table of content](#table-of-content)
+  - [TypeScript configuration](#typescript-configuration)
+  - [Continuous integration \& continuous deployment](#continuous-integration--continuous-deployment)
+  - [Implementing tests](#implementing-tests)
+  - [Create pull request](#create-pull-request)
+  - [Optional:](#optional)
+  - [Use a mono-repo](#use-a-mono-repo)
+  - [Give it life !](#give-it-life-)
+
+## <BaseAnchor label="TypeScript configuration"/>
+
+TypeScript'strictness has been disabled for both your front and back packages.
+This leads to undetermined behavior or unsafe access to wrongly typed data.
+For more information have a look to:
+
+- [strict](https://www.typescriptlang.org/tsconfig#strict) flag
+- [strictNullChecks](https://www.typescriptlang.org/tsconfig#strictNullChecks) flag
+
+Bonus interesting flag [noUncheckedIndexedAccess](https://www.typescriptlang.org/tsconfig#noUncheckedIndexedAccess)
+
+To start the refactor you should switch back on strictness of your applications tsconfig
+[Front](https://github.com/coviccinelle/ft_42_transcendence/blob/master/vite/tsconfig.json) and [back](https://github.com/coviccinelle/ft_42_transcendence/blob/master/nest/tsconfig.json):
+
+```diff
+{
+    // ...
+    "compilerOptions": {
+        // ...
+
+        /* Linting */
+-       "strict": false,
++       "strict": true,
++       "noImplicitAny": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+-       "noFallthroughCasesInSwitch": true
++       "noFallthroughCasesInSwitch": false
+      },
+    // ...
+}
+```
+
+Gives the following ts-errors with `tsc --noEmit`
+
+```sh
+No errors !
+```
+
+Quite suspicious ! After looking deeper it seems like your front applications is nearly not typed at all.
+
+Please consider:
+
+- Strictly typing your [Axios response body](https://stackoverflow.com/questions/62217642/react-and-typescript-which-types-for-an-axios-response) using Axios APIs [generics](https://github.com/axios/axios/blob/7d6bddba2d8de29c263feaef4c40daa50cb4b176/index.d.ts#L146) or using a runtime schema validator such as [zod](https://zod.dev/). (What are TypeScript [Generics ?](https://www.typescriptlang.org/docs/handbook/2/generics.html))
+- Idem for all `useState` hooks
+
+To guide you and ease weak point detection and avoid inserting any new untyped code, please consider adding the following linting plugins to your project:
+
+- [no-explicit-any](https://typescript-eslint.io/rules/no-explicit-any/)
+- [no-unsafe-return](https://typescript-eslint.io/rules/no-unsafe-return/#:~:text=This%20rule%20disallows%20returning%20any,that's%20expecting%20a%20specific%20type.)
+- [no-unsafe-assignment](https://typescript-eslint.io/rules/no-unsafe-assignment/)
+
+Note: There's already several existing linting errors, run `npm run lint` to run your application linter.
+
+Back
+
+```diff
+{
+  // ...
+  "compilerOptions": {
+    // ...
+    "skipLibCheck": true,
+-   "strictNullChecks": false,
+-   "noImplicitAny": false,
+-   "strictBindCallApply": false,
+-   "forceConsistentCasingInFileNames": false,
+-   "noFallthroughCasesInSwitch": false
++   "strict": true,
++   "strictNullChecks": true,
+  }
+}
+```
+
+If you have issue declaring your models please refer to this [issue](https://github.com/nestjs/nest/issues/4178).
+That either suggest to use TypeScript [Definite Assignment Assertions](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-7.html#definite-assignment-assertions). Keep in mind that disabling `strictPropertyInitialization` flag is an overall lack of strictness.
+
+Gives the following ts-errors with `tsc --noEmit`
+
+```sh
+Found 54 errors in 15 files.
+
+Errors  Files
+     1  src/app.controller.ts:6
+     7  src/auth/auth.controller.ts:36
+     1  src/auth/auth.service.ts:7
+     2  src/auth/strategies/ft.strategy.ts:43
+     1  src/auth/utils/ft.utils.ts:15
+     2  src/chat/chat.controller.spec.ts:2
+     7  src/chat/chat.controller.ts:58
+     4  src/chat/chat.gateway.ts:64
+     6  src/chat/chat.service.ts:56
+     8  src/game/game-manager.ts:20
+     7  src/game/game.ts:1
+     2  src/main.ts:77
+     3  src/passport.adapter.ts:16
+     1  src/users/users.controller.ts:55
+     2  src/users/users.service.ts:200
+```
+
+I would recommend fix each `TypeScript` features by features to avoid having one big refactor PR
+
+## <BaseAnchor label="Continuous integration & continuous deployment"/>
+
+CICD's goal is to have a protected default branch (main, master..) by `CI/CD` covered pull-requests only.
+This would attest default branch' stability
+
+There's a lot of CICD solutions ( CircleCI, Jenkins, Travis ) and some native to git server solutions such as ( GitHubActions, Bitbucket, GitLab ) etc
+
+I recommend that you start using [GitHubActions](https://docs.github.com/fr/actions) to implement the following steps for both your back and front:
+
+- Install dependencies
+- Lint your project
+- Run a TypeScript compilation
+- Run your project's tests
+- Build your application
+
+CICD should be triggered for any new pull-request toward your default branch, and just after a default branch update. I would recommend setting up [GitHub branches rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule) requiring a passing CICD + at least one collaborator review per PR.
+
+## <BaseAnchor label="Implementing tests"/>
+
+We've been discussing [testingjavascript.com](https://testingjavascript.com), this is in my opinion a pretty good paper describing the JavaScript testing ecosystem, feel free to implement the tests you feel like the most.
+Please note that integration testing and e2e testing differences are becoming IMO more and more thine, their definition might differ between teams and developers.
+
+Some references per testing type  
+Unit testing:
+
+- [vitest](https://vitest.dev/)
+- [jest](https://jestjs.io/fr/)
+
+Integration testing:
+
+- [testing-library](https://testing-library.com/)
+- [Cypress component testing](https://docs.cypress.io/guides/component-testing/overview)
+
+e2e testing:
+
+- [Cypress](https://docs.cypress.io/guides/overview/why-cypress)
+- [Playwright](https://playwright.dev/)
+
+Cypress might be a good deal, even if it might be quite tedious to install and setup in the first place.
+
+## <BaseAnchor label="Create pull request"/>
+
+Creating PRs is daily task for any developers working as a team. I would suggest that for any updates related to this issue comes with a pull-request and in the best of the world reviews.
+As explained in the cicd section, 99% of the time to be able to merge your work on master will require a PR passing the cicd steps and having `n` approvers. Which means that your PR should be the more readable as possible, as far as the git diff itself but also the PR description !
+
+## <BaseAnchor label="Optional:"/>
+
+To go even further
+
+## <BaseAnchor label="Use a mono-repo"/>
+
+At the moment you have your api and your back in // folders. They're sharing nothing but it fact they could !
+Using a monorepo would allow to create a `types` package to be shared between your front and back such as data model and more !
+It also allows centralizing dependencies and commands, you might want to have a look to [lerna](https://lerna.js.org/), [Nx](https://nx.dev/) and [turborepo](https://turbo.build/repo)
+
+## <BaseAnchor label="Give it life !"/>
+
+Deploy your application in production ! Using hosting service such as `Azure, Aws, Sender, CleverCloud`...  
+And plug it to your CICD using GitHubActions !
