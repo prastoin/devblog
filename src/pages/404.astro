@@ -1,0 +1,23 @@
+---
+import BaseHead from "../components/kit/BaseHead.astro";
+import BaseBody from "../components/kit/BaseBody.astro";
+import "../styles/global.css";
+import BasePageHeading from "../components/kit/BasePageHeading.astro";
+import BaseLink from "../components/kit/BaseLink.astro";
+
+const title = "Paul Rastoin | 404";
+const description =
+  "Welcome to my devblog, I'm Paul Rastoin a Full-Stack Web developper from the south of France. Feel free to browse my notes nor writings.";
+const permalink = "https://paul.rastoin.dev/";
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} permalink={permalink} />
+  </head>
+
+  <BaseBody>
+    <BasePageHeading>404 Not found</BasePageHeading>
+    <BaseLink href={"/"}>Go back to a safe place</BaseLink>
+  </BaseBody>
+</html>
