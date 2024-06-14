@@ -22,9 +22,9 @@ export interface Typegen0 {
   };
   missingImplementations: {
     actions: never;
-    services: never;
-    guards: never;
     delays: never;
+    guards: never;
+    services: never;
   };
   eventsCausingActions: {
     "Apply dark theme to document":
@@ -50,6 +50,14 @@ export interface Typegen0 {
       | "GO_LIGHT"
       | "done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]";
   };
+  eventsCausingDelays: {
+    LOCALSTORAGE_RETRY_DELAY: "error.platform.(machine).Retrieving color theme from localStorage:invocation[0]";
+  };
+  eventsCausingGuards: {
+    "Browser media preference is dark": "GO_DEFAULT";
+    "Retrieved dark from localStorage": "done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]";
+    "Retrieved light from localStorage": "done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]";
+  };
   eventsCausingServices: {
     "Retrieve color theme from localStorage":
       | "GO_DARK"
@@ -57,14 +65,6 @@ export interface Typegen0 {
       | "GO_LIGHT"
       | "xstate.after(LOCALSTORAGE_RETRY_DELAY)#(machine).Wait for localStorage retry"
       | "xstate.init";
-  };
-  eventsCausingGuards: {
-    "Browser media preference is dark": "GO_DEFAULT";
-    "Retrieved dark from localStorage": "done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]";
-    "Retrieved light from localStorage": "done.invoke.(machine).Retrieving color theme from localStorage:invocation[0]";
-  };
-  eventsCausingDelays: {
-    LOCALSTORAGE_RETRY_DELAY: "error.platform.(machine).Retrieving color theme from localStorage:invocation[0]";
   };
   matchesStates:
     | "Retrieving color theme from localStorage"
