@@ -39,7 +39,6 @@ const readingCollection = defineCollection({
   schema: z
     .object({
       articleLink: z.string().url(),
-      description: z.string(),
       articleDate: z.string(),
       date: z.string(),
       tags: z.string().array(),
