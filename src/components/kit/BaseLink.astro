@@ -1,14 +1,23 @@
 ---
+import BaseIcon from "./BaseIcon.astro";
 export interface Props {
   href: string;
+  leaveWebsite?: boolean;
 }
 
-const { href } = Astro.props;
+const { href, leaveWebsite } = Astro.props;
 ---
 
 <a
   href={href}
-  class="text-primary hover:text-secondary hover:underline font-medium"
+  class="text-primary hover:text-secondary hover:underline font-medium inline-flex items-center"
 >
   <slot />
+  {
+    leaveWebsite && (
+      <div class="pl-1">
+        <BaseIcon name="akar-icons:link-out" size="s" />
+      </div>
+    )
+  }
 </a>
