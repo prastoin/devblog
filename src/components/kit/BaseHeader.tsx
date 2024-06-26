@@ -29,6 +29,13 @@ const HeaderLinks: React.FC = () => (
     >
       Writings
     </a>
+
+    <a
+      href="/reading"
+      className="text-primary hover:text-secondary hover:underline font-medium"
+    >
+      Reading
+    </a>
   </>
 );
 
@@ -55,21 +62,18 @@ const BaseHeader: React.FC = () => {
           >
             <span
               aria-hidden="true"
-              className={`h-0.5 w-6 bg-gray-600 transform transition duration-500 ease-in-out ${
-                burgerMenuIsExpanded === true ? "rotate-45 absolute" : ""
-              }`}
+              className={`h-0.5 w-6 bg-gray-600 transform transition duration-500 ease-in-out ${burgerMenuIsExpanded === true ? "rotate-45 absolute" : ""
+                }`}
             />
             <span
               aria-hidden="true"
-              className={`h-0.5 w-6 bg-gray-600 transform transition duration-500 ease-in-out ${
-                burgerMenuIsExpanded === true ? "opacity-0" : ""
-              }`}
+              className={`h-0.5 w-6 bg-gray-600 transform transition duration-500 ease-in-out ${burgerMenuIsExpanded === true ? "opacity-0" : ""
+                }`}
             />
             <span
               aria-hidden="true"
-              className={`h-0.5 w-6 bg-gray-600 transform  transition duration-500 ease-in-out ${
-                burgerMenuIsExpanded === true ? "-rotate-45 absolute" : ""
-              }`}
+              className={`h-0.5 w-6 bg-gray-600 transform  transition duration-500 ease-in-out ${burgerMenuIsExpanded === true ? "-rotate-45 absolute" : ""
+                }`}
             />
           </button>
 
@@ -80,9 +84,8 @@ const BaseHeader: React.FC = () => {
 
         {/* push content down small screen header content */}
         <div
-          className={`md:hidden flex w-full h-full flex flex-col text-lg overflow-hidden ${
-            burgerMenuIsExpanded === true ? "h-fit-content" : "h-0"
-          }`}
+          className={`md:hidden flex w-full h-full flex flex-col text-lg overflow-hidden ${burgerMenuIsExpanded === true ? "h-fit-content" : "h-0"
+            }`}
         >
           <HeaderLinks />
         </div>
