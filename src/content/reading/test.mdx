@@ -1,0 +1,33 @@
+---
+articleLink: https://paul.rastoin.dev/projects
+description: This is a description
+date: 25 jun 2024
+tags: [Testing, TypeScript, Playwright]
+author: Baptiste Devessier
+title: First reading occurence
+articleDate: 42 jan 2000
+---
+
+While implementing some authentication logic on an adonis project. I needed at some point to throw a specific http code status
+In this case a **403 forbidden**.
+
+Adonis thanks to it's [global exceptions handler](https://docs.adonisjs.com/guides/exception-handling#handling-exceptions-globally) will manage exceptions for you.
+
+```ts
+Route.get("dashboard", async ({ auth, response }) => {
+  //If someCode comes to throw an error,
+  //then adonis global exception listener will handle it
+  await auth.Authenfication();
+
+  // business logic
+});
+
+//Instead of usually
+Route.get("dashboard", async ({ auth, response }) => {
+  if (!auth.isLoggedIn) {
+    return response.status(401).send("Unauthenticated");
+  }
+
+  // business logic
+});
+```

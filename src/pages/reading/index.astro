@@ -1,0 +1,35 @@
+---
+import BaseBody from "../../components/kit/BaseBody.astro";
+import BaseHead from "../../components/kit/BaseHead.astro";
+import "../../styles/global.css";
+import BasePageHeading from "../../components/kit/BasePageHeading.astro";
+import { getCollection } from "astro:content";
+import ReadingPreview from "../../components/reading/ReadingPreview.astro";
+
+const title = "Paul Rastoin | Reading";
+const description =
+  "I definitely want to keep a trace of this thing I've just read";
+const permalink = "https://paul.rastoin.dev/reading/";
+const allReading = (await getCollection("reading")).sort(
+  (a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf()
+);
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} permalink={permalink} />
+  </head>
+
+  <BaseBody>
+    <BasePageHeading>Reading</BasePageHeading>
+    <section aria-label="Reading section list">
+      {
+        allReading.map((readingEntry, index) => (
+          <ReadingPreview index={index} entry={readingEntry} />
+        ))
+      }
+    </section>
+  </BaseBody>
+
+
+</html>

@@ -1,0 +1,49 @@
+---
+import BaseHead from "../components/kit/BaseHead.astro";
+import BaseBody from "../components/kit/BaseBody.astro";
+import "../styles/global.css";
+import type { CollectionEntry } from "astro:content";
+import BaseSection from "../components/kit/BaseSection.astro";
+import BaseElementHeading from "../components/kit/BaseElementHeading.astro";
+import BaseProse from "../components/kit/BaseProse.astro";
+import BaseLink from "../components/kit/BaseLink.astro";
+
+interface Props {
+  entry: CollectionEntry<"reading">;
+}
+
+const {
+  data: { author, date, title: readingTitle, articleLink },
+  slug,
+} = Astro.props.entry;
+const title = `Paul Rastoin | ${readingTitle}`;
+const description =
+  "I definitely want to keep a trace of this thing I've just read";
+const permalink = `https://paul.rastoin.dev/reading/${slug}/`;
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} permalink={permalink} />
+  </head>
+
+  <BaseBody>
+    <BaseSection>
+      <article>
+        <header class="mb-4 font-bold text-primary">
+          <BaseElementHeading>
+            <BaseLink href={articleLink} leaveWebsite>
+              {readingTitle}
+            </BaseLink>
+          </BaseElementHeading>
+          <span>by {author}</span>
+          <span class="italic">{date}</span>
+        </header>
+
+        <BaseProse>
+          <slot />
+        </BaseProse>
+      </article>
+    </BaseSection>
+  </BaseBody>
+</html>
