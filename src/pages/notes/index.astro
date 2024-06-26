@@ -12,8 +12,8 @@ const description =
 const permalink = "https://paul.rastoin.dev/notes/";
 const allNotes = (await getCollection("notes")).sort(
   (a, b) =>
-    new Date(b.data.publishDate).valueOf() -
-    new Date(a.data.publishDate).valueOf()
+    new Date(b.data.publishDate || 0).valueOf() -
+    new Date(a.data.publishDate || 0).valueOf()
 );
 ---
 
