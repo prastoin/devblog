@@ -10,6 +10,7 @@ const writingCollection = defineCollection({
     })
     .strict(),
 });
+
 const projectCollection = defineCollection({
   schema: z
     .object({
@@ -24,6 +25,7 @@ const projectCollection = defineCollection({
     })
     .strict(),
 });
+
 const noteCollection = defineCollection({
   schema: z
     .object({
@@ -32,9 +34,23 @@ const noteCollection = defineCollection({
     })
     .strict(),
 });
+
+const readingCollection = defineCollection({
+  schema: z
+    .object({
+      articleLink: z.string().url(),
+      description: z.string(),
+      articleDate: z.string(),
+      date: z.string(),
+      tags: z.string().array(),
+      author: z.string(),
+      title: z.string()
+    }).strict()
+})
 // 3. Export a single `collections` object to register your collection(s)
 export const collections = {
   writings: writingCollection,
   projects: projectCollection,
   notes: noteCollection,
+  reading: readingCollection
 };

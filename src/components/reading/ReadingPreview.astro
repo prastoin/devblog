@@ -1,0 +1,49 @@
+---
+import { CollectionEntry } from "astro:content";
+import BaseElementHeading from "../kit/BaseElementHeading.astro";
+import BaseHr from "../kit/BaseHr.astro";
+import BaseProse from "../kit/BaseProse.astro";
+import BaseSection from "../kit/BaseSection.astro";
+import BaseLink from "../kit/BaseLink.astro";
+export interface Props {
+  index: number;
+  entry: CollectionEntry<"reading">;
+}
+const {
+  index,
+  entry: {
+    data: { author, date, articleLink, title },
+    render,
+    slug,
+  },
+} = Astro.props;
+const showHrElement = index !== 0;
+const { Content } = await render();
+const readingUrl = `/reading/${slug}`;
+---
+
+<>
+  {showHrElement && <BaseHr />}
+  <BaseSection>
+    <article>
+      <header class="mb-4 font-bold text-primary">
+        <BaseElementHeading>
+          <BaseLink href={readingUrl}>
+            <span class="font-bold">
+              {title}
+            </span>
+          </BaseLink>
+        </BaseElementHeading>
+        <p class="flex">
+          <span class="font-bold">By {author}</span>
+          <span class="italic">{date}</span>
+        </p>
+        <BaseLink href={articleLink} leaveWebsite>Read the article</BaseLink>
+      </header>
+
+      <BaseProse>
+        <Content />
+      </BaseProse>
+    </article>
+  </BaseSection>
+</>
